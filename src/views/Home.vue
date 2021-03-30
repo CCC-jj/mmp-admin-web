@@ -60,6 +60,7 @@
           <div class="viewContent">
             <router-view v-if="isRouterAlive"></router-view>
           </div>
+          <div style="height:1px;margin:24px;"></div>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -136,7 +137,7 @@ export default {
     // height: 100%;
     .viewContent {
       margin: 24px 16px;
-      height: 100%;
+      height: auto;
     }
   }
   .trigger {

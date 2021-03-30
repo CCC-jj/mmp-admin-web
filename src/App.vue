@@ -31,4 +31,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+.ant-input-disabled{
+  color: rgb(80, 80, 80) !important;
+}
+.ant-select-selection__rendered{
+  color: rgb(80, 80, 80) !important
+}
 </style>
