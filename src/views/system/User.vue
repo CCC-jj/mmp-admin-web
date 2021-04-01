@@ -639,7 +639,7 @@ const columns = [
   },
   {
     title: '用户姓名',
-    dataIndex: 'ortherName',
+    dataIndex: 'otherNameotherName',
   },
   {
     title: '所属角色',
@@ -663,7 +663,7 @@ for (let i = 0; i < 8; i++) {
   dataSource.push({
     key: i,
     name: '超级管理员',
-    ortherName: 'administrator',
+    otherName: 'administrator',
     sort: i + 2,
     department: 'Fizz-Gateway公司,部门1,部门4',
   })
@@ -795,7 +795,7 @@ export default {
       wrapperCol: { span: 16 },
       queryInfo: {
         name: '',
-        ortherName: '',
+        otherName: '',
       },
       rules: {},
       search: true,

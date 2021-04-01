@@ -3,7 +3,7 @@
     <!-- 搜索栏 -->
     <transition name="mask">
       <div class="search" v-show="search">
-        <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol" @keyup.enter.native="onSubmit">
+        <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
           <a-row>
             <a-col :span="6">
               <a-form-model-item label="角色名称" prop="name">
@@ -45,8 +45,8 @@
           <a-form-model-item has-feedback label="角色名称" prop="name">
             <a-input v-model="addForm.name" />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="角色别名" prop="ortherName">
-            <a-input v-model="addForm.ortherName" />
+          <a-form-model-item has-feedback label="角色别名" prop="otherName">
+            <a-input v-model="addForm.otherName" />
           </a-form-model-item>
           <a-form-model-item label="上级角色" prop="superior">
             <a-select v-model="addForm.superior" allowClear show-search placeholder="Select a person" option-filter-prop="children" :filter-option="filterOption">
@@ -132,7 +132,7 @@
       </a-table>
       <a-modal destroyOnClose v-model="viewVisible" title="查看" :footer="null">
         <p>角色名称： {{viewInfo.name}}</p>
-        <p>角色别名： {{viewInfo.ortherName}}</p>
+        <p>角色别名： {{viewInfo.otherName}}</p>
         <p>上级角色： {{viewInfo.superior}}</p>
         <p>角色名称： {{viewInfo.sort}}</p>
       </a-modal>
@@ -149,8 +149,8 @@
           <a-form-model-item has-feedback label="角色名称" prop="name">
             <a-input v-model="editForm.name" />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="角色别名" prop="ortherName">
-            <a-input v-model="editForm.ortherName" />
+          <a-form-model-item has-feedback label="角色别名" prop="otherName">
+            <a-input v-model="editForm.otherName" />
           </a-form-model-item>
           <a-form-model-item label="上级角色" prop="superior">
             <a-select v-model="editForm.superior" allowClear show-search placeholder="Select a person" option-filter-prop="children" :filter-option="filterOption">
@@ -191,7 +191,7 @@ const columns = [
   },
   {
     title: '角色别名',
-    dataIndex: 'ortherName',
+    dataIndex: 'otherName',
   },
   {
     title: '角色排序',
@@ -209,7 +209,7 @@ for (let i = 0; i < 8; i++) {
   dataSource.push({
     key: i,
     name: '超级管理员',
-    ortherName: 'administrator',
+    otherName: 'administrator',
     sort: i + 2,
   })
 }
@@ -261,13 +261,11 @@ export default {
   inject: ['reloadCard'],
   data() {
     return {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 16 },
       queryInfo: {
         name: '',
-        ortherName: '',
+        otherName: '',
       },
-      rules: {},
+      queryRules: {},
       search: true,
       dataSource,
       columns,
@@ -277,13 +275,13 @@ export default {
       addLoading: false, // 保存新增
       addForm: {
         name: '',
-        ortherName: '',
+        otherName: '',
         superior: undefined,
         sort: null,
       },
       addRules: {
         name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-        ortherName: [{ required: true, message: '请输入角色别名', trigger: 'blur' }],
+        otherName: [{ required: true, message: '请输入角色别名', trigger: 'blur' }],
         sort: [{ required: true, message: '请输入角色排序', trigger: 'blur' }],
       },
       authorityVisible: false, //角色权限配置
@@ -325,20 +323,20 @@ export default {
       targetKeys: ['3', '4', '5'],
       viewInfo: {
         name: '',
-        ortherName: '',
+        otherName: '',
         superior: undefined,
         sort: null,
       },
       editVisible: false, // 编辑对话框
       editForm: {
         name: '',
-        ortherName: '',
+        otherName: '',
         superior: undefined,
         sort: null,
       },
       editRules: {
         name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-        ortherName: [{ required: true, message: '请输入角色别名', trigger: 'blur' }],
+        otherName: [{ required: true, message: '请输入角色别名', trigger: 'blur' }],
         sort: [{ required: true, message: '请输入角色排序', trigger: 'blur' }],
       },
       editLoading: false,
@@ -351,7 +349,7 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.queryRuleForm.validate((valid) => {
         if (valid) {
           alert('1')
         } else {
@@ -361,7 +359,7 @@ export default {
       })
     },
     resetForm() {
-      this.$refs.ruleForm.resetFields()
+      this.$refs.queryRuleForm.resetFields()
     },
     // 勾选表单数据
     onSelectChange(selectedRowKeys) {
@@ -437,7 +435,7 @@ export default {
     showSearch() {
       this.search = !this.search
     },
-    // 穿梭框
+    // 列显隐穿梭框
     transferFilterOption(inputValue, option) {
       return option.description.indexOf(inputValue) > -1
     },
@@ -506,7 +504,7 @@ export default {
   // margin: 24px 16px;
   // margin-bottom: 24px;
   padding: 24px;
-  // min-height: 280px;
+  min-height: 280px;
   .search{
     height: 65px;
     overflow: hidden;

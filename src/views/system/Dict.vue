@@ -389,13 +389,16 @@ export default {
 .dict {
   display: flex;
   justify-content: space-between;
+  min-height: 280px;
   .dictList {
     width: 45%;
+    min-height: 280px;
     background: #fff;
     padding: 16px;
   }
   .dictDetails {
     width: 54%;
+    height: 100%;
     background: #fff;
     padding: 16px;
   }
