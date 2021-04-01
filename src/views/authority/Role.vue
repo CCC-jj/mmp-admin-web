@@ -1,32 +1,37 @@
 <template>
   <div class="role">
-    <div class="search" v-show="search">
-      <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-row>
-          <a-col :span="6">
-            <a-form-model-item label="角色名称" prop="name">
-              <a-input placeholder="角色名称" v-model="queryInfo.name" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6">
-            <a-form-model-item label="角色别名" prop="otherName">
-              <a-input placeholder="角色别名" v-model="queryInfo.otherName" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="6">
-            <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
-              <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
-                搜索
-              </a-button>
-              <a-button icon="delete" @click="resetForm">
-                清空
-              </a-button>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-      </a-form-model>
-    </div>
+    <!-- 搜索栏 -->
+    <transition name="mask">
+      <div class="search" v-show="search">
+        <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol" @keyup.enter.native="onSubmit">
+          <a-row>
+            <a-col :span="6">
+              <a-form-model-item label="角色名称" prop="name">
+                <a-input placeholder="角色名称" v-model="queryInfo.name" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item label="角色别名" prop="otherName">
+                <a-input placeholder="角色别名" v-model="queryInfo.otherName" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
+                <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
+                  搜索
+                </a-button>
+                <a-button icon="delete" @click="resetForm">
+                  清空
+                </a-button>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </a-form-model>
+      </div>
+    </transition>
+    <!-- 操作按钮 -->
     <div class="operationButton" style="margin-bottom:20px;">
+      <!-- 新增对话框 -->
       <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="addVisible" title="新增" @ok="addHandleOk" @cancel="addHandleCancel">
         <template slot="footer">
           <a-button key="submit" type="primary" :loading="addLoading" icon="plus-circle" @click="addHandleOk">
@@ -64,6 +69,7 @@
           </a-form-model-item>
         </a-form-model>
       </a-modal>
+      <!-- 角色权限配置对话框 -->
       <a-modal v-model="authorityVisible" title="角色权限配置" @ok="authorityHandleOk">
         <a-tabs default-active-key="1" @change="callback">
           <a-tab-pane key="1" tab="菜单权限">
@@ -105,8 +111,9 @@
         </a-col>
       </a-row>
     </div>
+    <!-- 角色表格 -->
     <div class="table">
-      <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `每页10条，共 ${total} 条`}) }">
+      <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
         <template slot="action" slot-scope="text,record">
           <a-space :size="15">
             <a @click="toView(record)">
@@ -480,12 +487,30 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@keyframes mask-in {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 65px;
+  }
+}
+.mask-enter-active {
+  animation: mask-in 0.2s linear;
+}
+.mask-leave-active {
+  animation: mask-in 0.2s reverse linear;
+}
 .role {
   background: #fff;
   // margin: 24px 16px;
   // margin-bottom: 24px;
   padding: 24px;
   // min-height: 280px;
+  .search{
+    height: 65px;
+    overflow: hidden;
+  }
   .table {
     a {
       font-size: 12px;

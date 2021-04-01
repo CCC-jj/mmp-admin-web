@@ -17,32 +17,34 @@
 
     <div class="userRight">
       <!-- 搜索栏 -->
-      <div class="search" v-show="search">
-        <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="登录账号" prop="name">
-                <a-input placeholder="登录账号" v-model="queryInfo.name" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="用户姓名" prop="otherName">
-                <a-input placeholder="用户姓名" v-model="queryInfo.otherName" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
-                <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
-                  搜索
-                </a-button>
-                <a-button icon="delete" @click="resetForm">
-                  清空
-                </a-button>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </div>
+      <transition name="mask">
+        <div class="search" v-show="search">
+          <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol" @keyup.enter.native="onSubmit">
+            <a-row>
+              <a-col :span="6">
+                <a-form-model-item label="登录账号" prop="name">
+                  <a-input placeholder="登录账号" v-model="queryInfo.name" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="用户姓名" prop="otherName">
+                  <a-input placeholder="用户姓名" v-model="queryInfo.otherName" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
+                  <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
+                    搜索
+                  </a-button>
+                  <a-button icon="delete" @click="resetForm">
+                    清空
+                  </a-button>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
+        </div>
+      </transition>
 
       <div class="operationButton" style="margin-bottom:20px;">
         <!-- 新增抽屉 -->
@@ -80,13 +82,13 @@
                 </template>
                 <a-row>
                   <a-col :span="12">
-                    <a-form-model-item label="用户昵称" prop="nickName">
-                      <a-input v-model="addForm.nickName" placeholder="请输入用户昵称" />
+                    <a-form-model-item label="用户昵称" prop="nick">
+                      <a-input v-model="addForm.nick" placeholder="请输入用户昵称" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
-                    <a-form-model-item label="用户姓名" prop="name">
-                      <a-input v-model="addForm.name" placeholder="请输入用户姓名" />
+                    <a-form-model-item label="用户姓名" prop="userName">
+                      <a-input v-model="addForm.userName" placeholder="请输入用户姓名" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -212,10 +214,10 @@
           textAlign: 'right',
           zIndex: 1,
         }">
-            <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="addOnClose('addDrawerVisible')">
+            <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="OnClose('addDrawerVisible')">
               取消
             </a-button>
-            <a-button icon="plus-circle" type="primary" @click="addOnClose('addDrawerVisible')">
+            <a-button icon="plus-circle" type="primary" @click="OnSave('addDrawerVisible')">
               保存
             </a-button>
           </div>
@@ -285,13 +287,13 @@
                 </template>
                 <a-row>
                   <a-col :span="12">
-                    <a-form-model-item label="用户昵称" prop="nickName">
-                      <a-input disabled v-model="viewForm.nickName" placeholder="请输入用户昵称" />
+                    <a-form-model-item label="用户昵称" prop="nick">
+                      <a-input disabled v-model="viewForm.nick" placeholder="请输入用户昵称" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
-                    <a-form-model-item label="用户姓名" prop="name">
-                      <a-input disabled v-model="viewForm.name" placeholder="请输入用户姓名" />
+                    <a-form-model-item label="用户姓名" prop="userName">
+                      <a-input disabled v-model="viewForm.userName" placeholder="请输入用户姓名" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -432,13 +434,13 @@
                 </template>
                 <a-row>
                   <a-col :span="12">
-                    <a-form-model-item label="用户昵称" prop="nickName">
-                      <a-input v-model="addForm.nickName" placeholder="请输入用户昵称" />
+                    <a-form-model-item label="用户昵称" prop="nick">
+                      <a-input v-model="addForm.nick" placeholder="请输入用户昵称" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
-                    <a-form-model-item label="用户姓名" prop="name">
-                      <a-input v-model="addForm.name" placeholder="请输入用户姓名" />
+                    <a-form-model-item label="用户姓名" prop="userName">
+                      <a-input v-model="addForm.userName" placeholder="请输入用户姓名" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -573,7 +575,7 @@
           </div>
         </a-drawer>
         <!-- 表格数据 -->
-        <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `每页10条，共 ${total} 条`}) }">
+        <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
           <template slot="sort" slot-scope="text">
             <a-tag color="blue">
               {{text}}
@@ -607,6 +609,7 @@
 
 <script>
 import moment from 'moment'
+import { createUser } from '@/api/user'
 
 const getParentKey = (key, tree) => {
   let parentKey
@@ -802,8 +805,8 @@ export default {
         account: '',
         password: '',
         checkPwd: '',
-        nickName: '',
-        name: '',
+        nick: '',
+        userName: '',
         mobile: '',
         email: '',
         sex: undefined,
@@ -817,11 +820,11 @@ export default {
         account: [{ required: true, message: '请输入登录账号', trigger: 'blur' }],
         password: [{ required: true, validator: validatePass, trigger: 'change' }],
         checkPwd: [{ required: true, validator: validatecheckPwd, trigger: 'change' }],
-        nickName: [{ required: true, message: '请输入用户昵称', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入用户姓名', trigger: 'blur' }],
-        role: [{ required: true, message: '请选择所属角色', trigger: 'blur' }],
-        department: [{ required: true, message: '请选择所属部门', trigger: 'blur' }],
-        post: [{ required: true, message: '请选择所属岗位', trigger: 'blur' }],
+        nick: [{ required: true, message: '请输入用户昵称', trigger: 'blur' }],
+        userName: [{ required: true, message: '请输入用户姓名', trigger: 'blur' }],
+        role: [{ required: false, message: '请选择所属角色', trigger: 'blur' }],
+        department: [{ required: false, message: '请选择所属部门', trigger: 'blur' }],
+        post: [{ required: false, message: '请选择所属岗位', trigger: 'blur' }],
       },
       customStyle:
         'background: #fff;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden',
@@ -962,8 +965,8 @@ export default {
       viewDrawerVisible: false,
       viewForm: {
         account: 'admin',
-        nickName: '超级管理员',
-        name: '超级管理员',
+        nick: '超级管理员',
+        userName: '超级管理员',
         mobile: '13555555555',
         email: '123456@qq.com',
         sex: '未知',
@@ -1032,6 +1035,23 @@ export default {
     // 新增
     add() {
       this.addDrawerVisible = true
+    },
+    OnSave(drawerName) {
+      this.$refs.addRuleForm.validate((valid) => {
+        if (valid) {
+          createUser(this.addForm)
+            .then((res) => {
+              console.log(res)
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+          this[drawerName] = false
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     OnClose(drawerName) {
       this[drawerName] = false
@@ -1195,6 +1215,20 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@keyframes mask-in {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 65px;
+  }
+}
+.mask-enter-active {
+  animation: mask-in 0.2s linear;
+}
+.mask-leave-active {
+  animation: mask-in 0.2s reverse linear;
+}
 .user {
   display: flex;
   justify-content: space-between;
@@ -1210,6 +1244,10 @@ export default {
     background: #fff;
     padding: 24px;
     min-height: 280px;
+    .search {
+      height: 65px;
+      overflow: hidden;
+    }
     .table {
       a {
         font-size: 12px;

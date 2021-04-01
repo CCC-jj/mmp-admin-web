@@ -56,7 +56,7 @@
             <router-link to="/login">退出</router-link>
           </div>
         </a-layout-header>
-        <a-layout-content :style="{  }">
+        <a-layout-content>
           <div class="viewContent">
             <router-view v-if="isRouterAlive"></router-view>
           </div>

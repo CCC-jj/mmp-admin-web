@@ -15,7 +15,7 @@
             </a-input>
           </a-form-model-item>
           <div class="forget">
-            <!-- <a-checkbox v-model="ruleForm.checked"> 1个月内免登陆 </a-checkbox> -->
+            <a-checkbox v-model="ruleForm.checked"> 1个月内免登陆 </a-checkbox>
             <!-- <router-link to="/forgetpwd">忘记密码</router-link> -->
           </div>
           <a-form-model-item :wrapper-col="{ span: 24, offset: 0 }">
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-// import { Login } from '@/api/account'
+import { Login } from '@/api/account'
 import md5 from 'md5'
 export default {
   name: 'Login',
@@ -82,27 +82,27 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // let password = md5(this.ruleForm.password)
-          // if (
-          //   this.getCookie('password-admin') &&
-          //   this.ruleForm.password == this.getCookie('password-admin')
-          // ) {
-          //   password = this.getCookie('password-admin')
-          // }
-          // Login(this.ruleForm.mobile, password).then((res) => {
-          //   // this.$store.dispatch('userInfo',res.data)
-          //   if (res.success) {
-          //     let userInfo = JSON.stringify(res.data)
-          //     localStorage.setItem('token', res.data.token)
-          //     localStorage.setItem('userInfo', userInfo)
-          //     this.setUserInfo()
+          let password = md5(this.ruleForm.password)
+          if (
+            this.getCookie('password-admin') &&
+            this.ruleForm.password == this.getCookie('password-admin')
+          ) {
+            password = this.getCookie('password-admin')
+          }
+          let timestamp = Math.round(new Date().getTime() / 1000)
+          let sign = md5(timestamp + ':123456')
+          Login(sign, timestamp, 1, this.ruleForm.mobile, password).then((res) => {
+            // this.$store.dispatch('userInfo',res.data)
+            if (res.success) {
+              localStorage.setItem('token', res.data)
+              this.setUserInfo()
               this.$router.push('/')
               this.$message.success('登录成功')
-          //   } else {
-          //     this.$message.warning(res.message)
-          //     return false
-          //   }
-          // })
+            } else {
+              this.$message.warning(res.message)
+              return false
+            }
+          })
         } else {
           return false
         }

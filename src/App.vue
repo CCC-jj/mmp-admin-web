@@ -31,10 +31,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-.ant-input-disabled{
+/* 滚动条宽度 */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 10px;
+}
+/* 滚动条的滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: #c9c9c9;
+  border-radius: 3px;
+}
+.ant-input-disabled {
   color: rgb(80, 80, 80) !important;
 }
-.ant-select-selection__rendered{
-  color: rgb(80, 80, 80) !important
+.ant-select-selection__rendered {
+  color: rgb(80, 80, 80) !important;
 }
 </style>
