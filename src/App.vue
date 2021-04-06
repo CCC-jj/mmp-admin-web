@@ -41,10 +41,18 @@ export default {
   background-color: #c9c9c9;
   border-radius: 3px;
 }
+/* 禁用状态字体颜色 */
 .ant-input-disabled {
-  color: rgb(80, 80, 80) !important;
+  color: rgba(0, 0, 0, 0.65) !important;
 }
 .ant-select-selection__rendered {
-  color: rgb(80, 80, 80) !important;
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+.ant-input-number-disabled {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+/* 表格英文强制换行 */
+.ant-table-tbody > tr > td {
+  word-break: break-all;
 }
 </style>

@@ -38,42 +38,85 @@
     <!-- 操作按钮 -->
     <div class="operationButton" style="margin-bottom:20px;">
       <!-- 新增对话框 -->
-      <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="addVisible" title="新增" @ok="addHandleOk" @cancel="addHandleCancel">
-        <template slot="footer">
-          <a-button key="submit" type="primary" :loading="addLoading" icon="plus-circle" @click="addHandleOk">
+      <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="actionVisible" :title="actionTitle" @ok="actionHandleOk" @cancel="actionHandleCancel" :afterClose="afterClose">
+        <template v-if="!viewVisible" slot="footer">
+          <a-button key="submit" type="primary" :loading="actionLoading" icon="plus-circle" @click="actionHandleOk">
             保存
           </a-button>
-          <a-button key="back" icon="close-circle" @click="addHandleCancel">
+          <a-button key="back" icon="close-circle" @click="actionHandleCancel">
             取消
           </a-button>
         </template>
-        <!-- <a-form-model ref="addRuleForm" :model="addForm" :rules="addRules" :label-col="{span:3}" :wrapper-col="{span:21}">
-          <a-form-model-item has-feedback label="角色名称" prop="name">
-            <a-input v-model="addForm.name" />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="角色别名" prop="otherName">
-            <a-input v-model="addForm.otherName" />
-          </a-form-model-item>
-          <a-form-model-item label="上级角色" prop="superior">
-            <a-select v-model="addForm.superior" allowClear show-search placeholder="Select a person" option-filter-prop="children" :filter-option="filterOption">
-              <a-select-option value="超级管理员">
-                超级管理员
-              </a-select-option>
-              <a-select-option value="用户">
-                用户
-              </a-select-option>
-              <a-select-option value="管理员">
-                管理员
-              </a-select-option>
-              <a-select-option value="开发人员">
-                开发人员
-              </a-select-option>
-            </a-select>
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="角色排序" prop="sort">
-            <a-input-number v-model="addForm.sort" style="width: 100%;" />
-          </a-form-model-item>
-        </a-form-model> -->
+        <template v-else slot="footer">
+          <a-button key="back" type="primary" icon="close-circle" @click="actionHandleCancel">
+            关闭
+          </a-button>
+        </template>
+        <a-form-model ref="actionRuleForm" :model="actionForm" :rules="actionRules" :label-col="{span:6}" :wrapper-col="{span:18}">
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="菜单名称" prop="name">
+                <a-input :disabled="viewVisible" v-model="actionForm.name" placeholder="请输入菜单名称" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="路由地址" prop="address">
+                <a-input :disabled="viewVisible" v-model="actionForm.address" placeholder="请输入路由地址" />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item label="上级菜单" prop="upMenu">
+                <a-tree-select :disabled="viewVisible||childVisible" v-model="actionForm.upMenu" :tree-data="upMenuTreeData" show-search style="width: 100%" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择上级菜单" searchPlaceholder="输入关键字进行过滤" allow-clear tree-default-expand-all>
+                </a-tree-select>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="菜单图标" prop="icon">
+                <a-input :disabled="viewVisible" v-model="actionForm.icon" placeholder="请选择菜单图标" />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="菜单编号" prop="no">
+                <a-input :disabled="viewVisible" v-model="actionForm.no" placeholder="请输入菜单编号" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="菜单类型" prop="type">
+                <a-radio-group :disabled="viewVisible" name="radioGroup" v-model="actionForm.type">
+                  <a-radio value="菜单">
+                    菜单
+                  </a-radio>
+                  <a-radio value="按钮">
+                    按钮
+                  </a-radio>
+                </a-radio-group>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="菜单别名" prop="otherName">
+                <a-input :disabled="viewVisible" v-model="actionForm.otherName" placeholder="请输入菜单别名" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item has-feedback label="菜单排序" prop="sort">
+                <a-input-number :disabled="viewVisible" v-model="actionForm.sort" placeholder="请输入菜单排序" style="width: 100%;" />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="24">
+              <a-form-model-item has-feedback label="菜单备注" :labelCol="{span: 3}" :wrapperCol="{span: 21}" prop="remarke">
+                <a-input :disabled="viewVisible" v-model="actionForm.remarke" placeholder="请输入菜单备注" />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+        </a-form-model>
       </a-modal>
       <a-row type="flex" justify="space-between">
         <a-col>
@@ -119,7 +162,7 @@
                 <a-icon type="delete" /> 删除
               </a>
             </a-popconfirm>
-            <a>
+            <a @click="addChild(record)">
               <a-icon type="plus" /> 新增子项
             </a>
           </a-space>
@@ -234,8 +277,54 @@ export default {
       },
       queryRules: {},
       // 新增对话框
-      addVisible: false,
-      addLoading: false,
+      actionTitle: '',
+      actionVisible: false,
+      actionLoading: false,
+      actionForm: {
+        name: '',
+        address: '',
+        upMenu: undefined,
+        icon: '',
+        no: '',
+        type: undefined,
+        otherName: '',
+        sort: '',
+        remarke: '',
+      },
+      actionRules: {
+        name: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
+        icon: [{ required: true, message: '请选择菜单图标', trigger: 'change' }],
+        no: [{ required: true, message: '请输入菜单编号', trigger: 'blur' }],
+        type: [{ required: true, message: '请选择菜单类型', trigger: 'change' }],
+        otherName: [{ required: true, message: '请输入菜单别名', trigger: 'blur' }],
+        sort: [{ required: true, message: '请输入菜单排序', trigger: 'blur' }],
+      },
+      // 上级菜单
+      upMenuTreeData: [
+        {
+          title: '系统管理',
+          value: '系统管理',
+          scopedSlots: { title: 'title' },
+          children: [
+            { title: '用户管理', value: '用户管理', scopedSlots: { title: 'title' } },
+            { title: '机构管理', value: '机构管理', scopedSlots: { title: 'title' } },
+          ],
+        },
+        {
+          title: '权限管理',
+          value: '权限管理',
+          scopedSlots: { title: 'title' },
+          children: [
+            { title: '角色管理', value: '角色管理', scopedSlots: { title: 'title' } },
+            { title: '数据权限', value: '数据权限', scopedSlots: { title: 'title' } },
+          ],
+        },
+        {
+          title: '网关管理',
+          value: '网关管理',
+          scopedSlots: { title: 'title' },
+        },
+      ],
       // 列显隐
       drawerVisible: false,
       // 穿梭框
@@ -272,8 +361,13 @@ export default {
       dataSource,
       tableLoading: false,
       selectedRowKeys: [],
+      // 查看
+      viewVisible: false,
+      // 新增子项
+      childVisible: false,
     }
   },
+  mounted() {},
   methods: {
     // 搜索栏
     onSubmit() {
@@ -291,25 +385,31 @@ export default {
     },
     // 新增
     add() {
-      this.addVisible = true
+      this.actionVisible = true
+      this.actionTitle = '新增'
     },
-    addHandleOk() {
-      // this.addLoading = true
-      // this.$refs.addRuleForm.validate((valid) => {
-      //   this.addLoading = false
+    actionHandleOk() {
+      // this.actionLoading = true
+      // this.$refs.actionRuleForm.validate((valid) => {
+      //   this.actionLoading = false
       //   if (valid) {
-      this.addVisible = false
+      this.actionVisible = false
       //     this.$message.success('新增成功')
-      //     this.$refs.addRuleForm.resetFields()
+      //     this.$refs.actionRuleForm.resetFields()
       //   } else {
       //     console.log('error submit!!')
       //     return false
       //   }
       // })
     },
-    addHandleCancel() {
-      this.addVisible = false
-      // this.$refs.addRuleForm.resetFields()
+    actionHandleCancel() {
+      this.actionVisible = false
+      // this.$refs.actionRuleForm.resetFields()
+    },
+    afterClose() {
+      this.viewVisible = false
+      this.childVisible = false
+      this.actionForm = this.$options.data().actionForm
     },
     // 刷新此页面
     refresh() {
@@ -344,6 +444,35 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+    // 查看
+    toView(record) {
+      console.log(record)
+      this.actionVisible = true
+      this.viewVisible = true
+      this.actionTitle = '查看'
+      Object.assign(this.actionForm, record)
+    },
+    // 编辑
+    toEdit(record) {
+      console.log(record)
+      this.actionVisible = true
+      this.actionTitle = '编辑'
+      Object.assign(this.actionForm, record)
+    },
+    // 删除
+    onDelete(key) {
+      const data = [...this.dataSource]
+      this.dataSource = data.filter((item) => item.key !== key)
+      this.$message.success('删除成功！')
+    },
+    // 新增子项
+    addChild(record) {
+      console.log(record)
+      this.actionVisible = true
+      this.actionTitle = '新增'
+      this.childVisible = true
+      this.actionForm.upMenu = record.name
     },
   },
 }

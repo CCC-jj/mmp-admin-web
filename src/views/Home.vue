@@ -40,6 +40,9 @@
             <a-menu-item key="8" value="Param">
               <a-icon type="message" />参数管理
             </a-menu-item>
+            <a-menu-item key="9" value="Client">
+              <a-icon type="appstore" />客户端管理
+            </a-menu-item>
           </a-sub-menu>
           <a-menu-item key="1" value="Account">
             <a-icon type="user" />

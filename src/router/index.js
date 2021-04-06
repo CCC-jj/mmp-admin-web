@@ -92,6 +92,12 @@ const routes = [
         component: () => import('../views/system/Param.vue'),
         meta: { title: '参数管理', key: '8', path: 'Param', subMenu: 'sub3' },
       },
+      {
+        path: '/system/client',
+        name: 'Client',
+        component: () => import('../views/system/Client.vue'),
+        meta: { title: '客户端管理', key: '9', path: 'Client', subMenu: 'sub3' },
+      },
     ],
   },
 ]

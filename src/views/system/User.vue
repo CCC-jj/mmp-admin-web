@@ -48,8 +48,8 @@
 
       <div class="operationButton" style="margin-bottom:20px;">
         <!-- 新增抽屉 -->
-        <a-drawer class="addDrawer" title="新增" width="50%" :visible="addDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('addDrawerVisible')">
-          <a-form-model ref="addRuleForm" :model="addForm" :rules="addRules" v-bind="{labelCol: { span: 6 }, wrapperCol: { span: 18 }}">
+        <a-drawer class="actionDrawer" :title="actionTitle" width="50%" :visible="actionDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('actionDrawerVisible')">
+          <a-form-model ref="actionRuleForm" :model="actionForm" :rules="actionRules" v-bind="{labelCol: { span: 6 }, wrapperCol: { span: 18 }}">
             <a-collapse :default-active-key="['1','2','3']" :bordered="false" expand-icon-position="right">
               <template #expandIcon="props">
                 <a-icon type="caret-right" :rotate="props.isActive ? 90 : 0" />
@@ -61,17 +61,17 @@
                 <a-row>
                   <a-col :span="24">
                     <a-form-model-item label="登录账号" prop="account" :labelCol="{span: 3}" :wrapperCol="{span: 21}">
-                      <a-input v-model="addForm.account" placeholder="请输入登录账号" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.account" placeholder="请输入登录账号" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
-                    <a-form-model-item label="密码" prop="password">
-                      <a-input v-model="addForm.password" type="password" placeholder="请输入密码" />
+                    <a-form-model-item v-if="actionTitle==='新增'" label="密码" prop="password">
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.password" type="password" placeholder="请输入密码" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
-                    <a-form-model-item label="确认密码" prop="checkPwd">
-                      <a-input v-model="addForm.checkPwd" type="password" placeholder="请输入确认密码" />
+                    <a-form-model-item v-if="actionTitle==='新增'" label="确认密码" prop="checkPwd">
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.checkPwd" type="password" placeholder="请输入确认密码" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -83,31 +83,31 @@
                 <a-row>
                   <a-col :span="12">
                     <a-form-model-item label="用户昵称" prop="nick">
-                      <a-input v-model="addForm.nick" placeholder="请输入用户昵称" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.nick" placeholder="请输入用户昵称" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
                     <a-form-model-item label="用户姓名" prop="userName">
-                      <a-input v-model="addForm.userName" placeholder="请输入用户姓名" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.userName" placeholder="请输入用户姓名" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
                 <a-row>
                   <a-col :span="12">
                     <a-form-model-item label="手机号码" prop="mobile">
-                      <a-input v-model="addForm.mobile" placeholder="请输入手机号码" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.mobile" placeholder="请输入手机号码" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
                     <a-form-model-item label="电子邮箱" prop="email">
-                      <a-input v-model="addForm.email" placeholder="请输入电子邮箱" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.email" placeholder="请输入电子邮箱" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
                 <a-row>
                   <a-col :span="12">
                     <a-form-model-item label="用户性别" prop="sex">
-                      <a-select v-model="addForm.sex" placeholder="请选择用户性别">
+                      <a-select :disabled="viewDrawerVisible" v-model="actionForm.sex" placeholder="请选择用户性别">
                         <a-select-option value="男">
                           男
                         </a-select-option>
@@ -122,7 +122,7 @@
                   </a-col>
                   <a-col :span="12">
                     <a-form-model-item label="用户生日" prop="birth">
-                      <a-date-picker disabled v-model="addForm.birth" placeholder="请选择用户生日" valueFormat="value" style="width:100%;" />
+                      <a-date-picker :disabled="viewDrawerVisible" v-model="actionForm.birth" @change="changeActionbirth" placeholder="请选择用户生日" valueFormat="value" style="width:100%;" />
                     </a-form-model-item>
                   </a-col>
                 </a-row>
@@ -134,76 +134,34 @@
                 <a-row>
                   <a-col :span="12">
                     <a-form-model-item label="用户编号" prop="number">
-                      <a-input v-model="addForm.number" placeholder="请输入用户编号" />
+                      <a-input :disabled="viewDrawerVisible" v-model="actionForm.number" placeholder="请输入用户编号" />
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
                     <a-form-model-item label="所属角色" prop="role">
-                      <a-select show-search mode="multiple" :value="addForm.role" @search="(value) => addOnSearch(value,'role',roleTreeData,dataListRole)" placeholder="请选择所属角色 输入搜索" @change="(value, option) => changeaddSelect(value, option,'role','addroleCheckedKeys')">
-                        <div slot="dropdownRender">
-                          <div @mousedown="e => e.preventDefault()">
-                            <a-tree :checkedKeys="addroleCheckedKeys" checkable checkStrictly :expanded-keys="addroleExpandedKeys" :auto-expand-parent="addroleAutoExpandParent" :tree-data="roleTreeData" @expand="(expandedKeys)=>addOnExpand(expandedKeys,'addroleExpandedKeys','addroleAutoExpandParent')" @check="(checkedKeys)=>addOnCheck(checkedKeys,'role','addroleCheckedKeys')">
-                              <template slot="title" slot-scope="{ title }">
-                                <span v-if="title.indexOf(searchValueRole) > -1">
-                                  {{ title.substr(0, title.indexOf(searchValueRole)) }}
-                                  <span style="color: #f50">{{ searchValueRole }}</span>
-                                  {{ title.substr(title.indexOf(searchValueRole) + searchValueRole.length) }}
-                                </span>
-                                <span v-else>{{ title }}</span>
-                              </template>
-                            </a-tree>
-                          </div>
-                        </div>
-                      </a-select>
+                      <a-tree-select :disabled="viewDrawerVisible" show-search treeCheckable treeCheckStrictly style="width: 100%" :tree-data="roleTreeData" :value="actionRoleSelectedKeys" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择所属角色 输入搜索" allow-clear multiple tree-default-expand-all @change="(value)=>treeSelectOnChange(value, 'actionRoleSelectedKeys','role')">
+                      </a-tree-select>
                     </a-form-model-item>
                   </a-col>
                 </a-row>
                 <a-row>
                   <a-col :span="12">
                     <a-form-model-item label="所属部门" prop="department">
-                      <a-select show-search mode="multiple" :value="addForm.department" @search="(value) => addOnSearch(value,'department',gData,dataTreeList)" placeholder="请选择所属部门 输入搜索" @change="(value, option) => changeaddSelect(value, option,'department','departmentCheckedKeys')">
-                        <div slot="dropdownRender">
-                          <div @mousedown="e => e.preventDefault()">
-                            <a-tree :checkedKeys="departmentCheckedKeys" checkable checkStrictly :expanded-keys="departmentExpandedKeys" :auto-expand-parent="departmentAutoExpandParent" :tree-data="gData" @expand="(expandedKeys)=>addOnExpand(expandedKeys,'departmentExpandedKeys','departmentAutoExpandParent')" @check="(checkedKeys)=>addOnCheck(checkedKeys,'department','departmentCheckedKeys')">
-                              <template slot="title" slot-scope="{ title }">
-                                <span v-if="title.indexOf(searchValueDepartment) > -1">
-                                  {{ title.substr(0, title.indexOf(searchValueDepartment)) }}
-                                  <span style="color: #f50">{{ searchValueDepartment }}</span>
-                                  {{ title.substr(title.indexOf(searchValueDepartment) + searchValueDepartment.length) }}
-                                </span>
-                                <span v-else>{{ title }}</span>
-                              </template>
-                            </a-tree>
-                          </div>
-                        </div>
-                      </a-select>
+                      <a-tree-select :disabled="viewDrawerVisible" show-search treeCheckable :replaceFields="{value: 'key'}" treeCheckStrictly style="width: 100%" :tree-data="gData" :value="actionDepartmentSelectedKeys" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择所属部门 输入搜索" allow-clear multiple tree-default-expand-all @change="(value)=>treeSelectOnChange(value, 'actionDepartmentSelectedKeys','department')">
+                      </a-tree-select>
                     </a-form-model-item>
                   </a-col>
                   <a-col :span="12">
                     <a-form-model-item label="所属岗位" prop="post">
-                      <a-select show-search mode="multiple" :value="addForm.post" @search="(value) => addOnSearch(value,'post',postTreeData,dataListPost)" placeholder="请选择所属岗位 输入搜索" @change="(value, option) => changeaddSelect(value, option,'post','postCheckedKeys')">
-                        <div slot="dropdownRender">
-                          <div @mousedown="e => e.preventDefault()">
-                            <a-tree :checkedKeys="postCheckedKeys" checkable checkStrictly :expanded-keys="postExpandedKeys" :auto-expand-parent="postAutoExpandParent" :tree-data="postTreeData" @expand="(expandedKeys)=>addOnExpand(expandedKeys,'postExpandedKeys','postAutoExpandParent')" @check="(checkedKeys)=>addOnCheck(checkedKeys,'post','postCheckedKeys')">
-                              <template slot="title" slot-scope="{ title }">
-                                <span v-if="title.indexOf(searchValuePost) > -1">
-                                  {{ title.substr(0, title.indexOf(searchValuePost)) }}
-                                  <span style="color: #f50">{{ searchValuePost }}</span>
-                                  {{ title.substr(title.indexOf(searchValuePost) + searchValuePost.length) }}
-                                </span>
-                                <span v-else>{{ title }}</span>
-                              </template>
-                            </a-tree>
-                          </div>
-                        </div>
-                      </a-select>
+                      <a-tree-select :disabled="viewDrawerVisible" show-search treeCheckable treeCheckStrictly style="width: 100%" :tree-data="postTreeData" :value="actionPostSelectedKeys" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择所属部门 输入搜索" allow-clear multiple tree-default-expand-all @change="(value)=>treeSelectOnChange(value, 'actionPostSelectedKeys','post')">
+                      </a-tree-select>
                     </a-form-model-item>
                   </a-col>
                 </a-row>
               </a-collapse-panel>
             </a-collapse>
           </a-form-model>
-          <div :style="{
+          <div v-if="!viewDrawerVisible" :style="{
           position: 'absolute',
           right: 0,
           bottom: 0,
@@ -214,10 +172,10 @@
           textAlign: 'right',
           zIndex: 1,
         }">
-            <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="OnClose('addDrawerVisible')">
+            <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="OnClose('actionDrawerVisible')">
               取消
             </a-button>
-            <a-button icon="plus-circle" type="primary" @click="OnSave('addDrawerVisible')">
+            <a-button icon="plus-circle" type="primary" @click="OnSave('actionDrawerVisible')">
               保存
             </a-button>
           </div>
@@ -263,7 +221,7 @@
       <!-- 表格 -->
       <div class="table">
         <!-- 查看 -->
-        <a-drawer class="addDrawer" title="查看" width="50%" :visible="viewDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('viewDrawerVisible')">
+        <!-- <a-drawer class="addDrawer" title="查看" width="50%" :visible="viewDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('viewDrawerVisible')">
           <a-form-model ref="viewRuleForm" :model="viewForm" :rules="viewRules" v-bind="{labelCol: { span: 6 }, wrapperCol: { span: 18 }}">
             <a-collapse :default-active-key="['1','2','3']" :bordered="false" expand-icon-position="right">
               <template #expandIcon="props">
@@ -408,9 +366,9 @@
               </a-collapse-panel>
             </a-collapse>
           </a-form-model>
-        </a-drawer>
+        </a-drawer> -->
         <!-- 编辑 -->
-        <a-drawer class="addDrawer" title="编辑" width="50%" :visible="editDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('editDrawerVisible')">
+        <!-- <a-drawer class="addDrawer" title="编辑" width="50%" :visible="editDrawerVisible" :body-style="{ paddingBottom: '80px' }" @close="OnClose('editDrawerVisible')">
           <a-form-model ref="addRuleForm" :model="addForm" :rules="addRules" v-bind="{labelCol: { span: 6 }, wrapperCol: { span: 18 }}">
             <a-collapse :default-active-key="['1','2','3']" :bordered="false" expand-icon-position="right">
               <template #expandIcon="props">
@@ -573,7 +531,7 @@
               保存
             </a-button>
           </div>
-        </a-drawer>
+        </a-drawer> -->
         <!-- 表格数据 -->
         <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
           <template slot="sort" slot-scope="text">
@@ -639,7 +597,7 @@ const columns = [
   },
   {
     title: '用户姓名',
-    dataIndex: 'otherNameotherName',
+    dataIndex: 'otherName',
   },
   {
     title: '所属角色',
@@ -680,8 +638,8 @@ export default {
       } else if (!reg.test(value)) {
         callback(new Error('密码必须包含数字和字母'))
       } else {
-        if (this.addForm.checkPwd !== '') {
-          this.$refs.addRuleForm.validateField('checkPwd')
+        if (this.actionForm.checkPwd !== '') {
+          this.$refs.actionRuleForm.validateField('checkPwd')
         }
         callback()
       }
@@ -689,7 +647,7 @@ export default {
     let validatecheckPwd = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入新密码'))
-      } else if (value !== this.addForm.password) {
+      } else if (value !== this.actionForm.password) {
         callback(new Error('两次密码不一致！'))
       } else {
         callback()
@@ -800,8 +758,9 @@ export default {
       rules: {},
       search: true,
       // 新增
-      addDrawerVisible: false,
-      addForm: {
+      actionTitle: '',
+      actionDrawerVisible: false,
+      actionForm: {
         account: '',
         password: '',
         checkPwd: '',
@@ -812,11 +771,11 @@ export default {
         sex: undefined,
         birth: null,
         number: '',
-        role: ['超级管理员', '用户', '0-1-0-1'],
+        role: [],
         department: ['公司2', '部门21', '部门212', '公司3', '部门22'],
         post: ['首席技术官', '普通员工'],
       },
-      addRules: {
+      actionRules: {
         account: [{ required: true, message: '请输入登录账号', trigger: 'blur' }],
         password: [{ required: true, validator: validatePass, trigger: 'change' }],
         checkPwd: [{ required: true, validator: validatecheckPwd, trigger: 'change' }],
@@ -829,100 +788,90 @@ export default {
       customStyle:
         'background: #fff;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden',
       // 新增所属角色
-      addroleCheckedKeys: [], // 复选框
-      addroleExpandedKeys: [], // 展开指定的树节点
-      addroleAutoExpandParent: true, // 是否自动展开父节点
-      searchValueRole: '', // 搜索内容
-      dataListRole: [],
+      actionRoleSelectedKeys: [],
+      // addroleCheckedKeys: [], // 复选框
+      // addroleExpandedKeys: [], // 展开指定的树节点
+      // addroleAutoExpandParent: true, // 是否自动展开父节点
+      // searchValueRole: '', // 搜索内容
+      // dataListRole: [],
       // 新增所属部门
-      departmentCheckedKeys: [],
-      departmentExpandedKeys: [],
-      departmentAutoExpandParent: true,
-      searchValueDepartment: '',
+      actionDepartmentSelectedKeys: [],
+      // departmentCheckedKeys: [],
+      // departmentExpandedKeys: [],
+      // departmentAutoExpandParent: true,
+      // searchValueDepartment: '',
       // dataListDepartment: [],
       // 新增所属岗位
       postTreeData: [
         {
-          key: '首席执行官',
+          value: '首席执行官',
           title: '首席执行官',
-          scopedSlots: { title: 'title' },
           children: [
             {
-              key: '222',
+              value: '222',
               title: '222',
-              scopedSlots: { title: 'title' },
             },
           ],
         },
         {
-          key: '首席运营官',
+          value: '首席运营官',
           title: '首席运营官',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '首席财务官',
+          value: '首席财务官',
           title: '首席财务官',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '首席技术官',
+          value: '首席技术官',
           title: '首席技术官',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '首席信息官',
+          value: '首席信息官',
           title: '首席信息官',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '技术经理',
+          value: '技术经理',
           title: '技术经理',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '人力经理',
+          value: '人力经理',
           title: '人力经理',
-          scopedSlots: { title: 'title' },
         },
         {
-          key: '普通员工',
+          value: '普通员工',
           title: '普通员工',
-          scopedSlots: { title: 'title' },
         },
       ], // 岗位树形控件数据
-      postCheckedKeys: [],
-      postExpandedKeys: [],
-      postAutoExpandParent: true,
-      searchValuePost: '',
-      dataListPost: [],
+      actionPostSelectedKeys: [],
+      // postCheckedKeys: [],
+      // postExpandedKeys: [],
+      // postAutoExpandParent: true,
+      // searchValuePost: '',
+      // dataListPost: [],
 
       // 用户角色配置
       userRoleVisible: false,
       roleTreeData: [
         {
           title: '超级管理员',
-          key: '超级管理员',
-          scopedSlots: { title: 'title' },
+          value: '超级管理员',
         },
         {
           title: '用户',
-          key: '用户',
-          scopedSlots: { title: 'title' },
+          value: '用户',
           children: [
-            { title: '0-1-0-0', key: '0-1-0-0', scopedSlots: { title: 'title' } },
-            { title: '0-1-0-1', key: '0-1-0-1', scopedSlots: { title: 'title' } },
-            { title: '0-1-0-2', key: '0-1-0-2', scopedSlots: { title: 'title' } },
+            { title: '0-1-0-0', value: '0-1-0-0' },
+            { title: '0-1-0-1', value: '0-1-0-1' },
+            { title: '0-1-0-2', value: '0-1-0-2' },
           ],
         },
         {
           title: '管理员',
-          key: '管理员',
-          scopedSlots: { title: 'title' },
+          value: '管理员',
         },
         {
           title: '开发人员',
-          key: '开发人员',
-          scopedSlots: { title: 'title' },
+          value: '开发人员',
         },
       ],
       roleCheckedKeys: [],
@@ -963,28 +912,28 @@ export default {
       selectedRowKeys: [],
       // 查看
       viewDrawerVisible: false,
-      viewForm: {
-        account: 'admin',
-        nick: '超级管理员',
-        userName: '超级管理员',
-        mobile: '13555555555',
-        email: '123456@qq.com',
-        sex: '未知',
-        birth: '1996-02-05',
-        number: '',
-        role: undefined,
-        department: undefined,
-        post: undefined,
-      },
-      viewRules: {},
+      // viewForm: {
+      //   account: 'admin',
+      //   nick: '超级管理员',
+      //   userName: '超级管理员',
+      //   mobile: '13555555555',
+      //   email: '123456@qq.com',
+      //   sex: '未知',
+      //   birth: '1996-02-05',
+      //   number: '',
+      //   role: undefined,
+      //   department: undefined,
+      //   post: undefined,
+      // },
+      // viewRules: {},
       // 编辑
-      editDrawerVisible: false,
+      // editDrawerVisible: false,
     }
   },
   mounted() {
     // this.generateListRole(this.roleTreeData, this.dataListRole)
     this.generateList(this.gData, this.dataTreeList)
-    this.generateList(this.roleTreeData, this.dataListRole)
+    // this.generateList(this.roleTreeData, this.dataListRole)
   },
   methods: {
     moment,
@@ -1034,12 +983,13 @@ export default {
     },
     // 新增
     add() {
-      this.addDrawerVisible = true
+      this.actionDrawerVisible = true
+      this.actionTitle = '新增'
     },
     OnSave(drawerName) {
-      this.$refs.addRuleForm.validate((valid) => {
+      this.$refs.actionRuleForm.validate((valid) => {
         if (valid) {
-          createUser(this.addForm)
+          createUser(this.actionForm)
             .then((res) => {
               console.log(res)
             })
@@ -1047,6 +997,7 @@ export default {
               console.error(err)
             })
           this[drawerName] = false
+          this.viewDrawerVisible = false
         } else {
           console.log('error submit!!')
           return false
@@ -1055,65 +1006,75 @@ export default {
     },
     OnClose(drawerName) {
       this[drawerName] = false
+      this.viewDrawerVisible = false
     },
     // 新增生日日期
-    changeAddbirth(date, dateString) {
+    changeActionbirth(date, dateString) {
       console.log(date, dateString)
-      this.viewForm.birth = dateString
+      this.actionForm.birth = dateString
     },
     // 新增所属角色
     // 搜索所属角色
-    addOnSearch(value, type, dateTree, dataList) {
-      const ExpandedKeys = dataList
-        .map((item) => {
-          if (item.title.indexOf(value) > -1) {
-            return getParentKey(item.key, dateTree)
-          }
-          return null
-        })
-        .filter((item, i, self) => item && self.indexOf(item) === i)
-      switch (type) {
-        case 'role':
-          Object.assign(this, {
-            addroleExpandedKeys: ExpandedKeys,
-            searchValueRole: value,
-            addroleAutoExpandParent: true,
-          })
-          break
-        case 'department':
-          Object.assign(this, {
-            departmentExpandedKeys: ExpandedKeys,
-            searchValueDepartment: value,
-            departmentAutoExpandParent: true,
-          })
-          break
-        case 'post':
-          Object.assign(this, {
-            postExpandedKeys: ExpandedKeys,
-            searchValuePost: value,
-            postAutoExpandParent: true,
-          })
-      }
+    treeSelectOnChange(value, keys, name) {
+      let keysList = []
+      this[keys] = value
+      value.forEach((item) => {
+        keysList.push(item.value)
+      })
+      this.actionForm[name] = keysList
+      console.log(value, this.actionForm[name])
     },
+    // addOnSearch(value, type, dateTree, dataList) {
+    //   const ExpandedKeys = dataList
+    //     .map((item) => {
+    //       if (item.title.indexOf(value) > -1) {
+    //         return getParentKey(item.key, dateTree)
+    //       }
+    //       return null
+    //     })
+    //     .filter((item, i, self) => item && self.indexOf(item) === i)
+    //   switch (type) {
+    //     case 'role':
+    //       Object.assign(this, {
+    //         addroleExpandedKeys: ExpandedKeys,
+    //         searchValueRole: value,
+    //         addroleAutoExpandParent: true,
+    //       })
+    //       break
+    //     case 'department':
+    //       Object.assign(this, {
+    //         departmentExpandedKeys: ExpandedKeys,
+    //         searchValueDepartment: value,
+    //         departmentAutoExpandParent: true,
+    //       })
+    //       break
+    //     case 'post':
+    //       Object.assign(this, {
+    //         postExpandedKeys: ExpandedKeys,
+    //         searchValuePost: value,
+    //         postAutoExpandParent: true,
+    //       })
+    //   }
+    // },
     // 改变所属角色选择框
-    changeaddSelect(value, option, name, keysName) {
-      console.log(value, option)
-      // console.log(this.addroleCheckedKeys)
-      this[keysName] = value
-      this.addForm[name] = value
-    },
-    addOnExpand(expandedKeys, keysName, parent) {
-      console.log('onExpand', expandedKeys)
-      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-      // or, you can remove all expanded children keys.
-      this[keysName] = expandedKeys
-      this[parent] = false
-    },
-    addOnCheck(checkedKeys, name, keysName) {
-      console.log('onCheck', checkedKeys)
-      this[keysName] = checkedKeys.checked
-      this.addForm[name] = checkedKeys.checked
-    },
+    // changeaddSelect(value, option, name, keysName) {
+    //   console.log(value, option)
+    //   // console.log(this.addroleCheckedKeys)
+    //   this[keysName] = value
+    //   this.addForm[name] = value
+    // },
+    // addOnExpand(expandedKeys, keysName, parent) {
+    //   console.log('onExpand', expandedKeys)
+    //   // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+    //   // or, you can remove all expanded children keys.
+    //   this[keysName] = expandedKeys
+    //   this[parent] = false
+    // },
+    // addOnCheck(checkedKeys, name, keysName) {
+    //   console.log('onCheck', checkedKeys)
+    //   this[keysName] = checkedKeys.checked
+    //   this.addForm[name] = checkedKeys.checked
+    // },
     // 角色配置
     roleSetting() {
       this.userRoleVisible = true
@@ -1135,7 +1096,7 @@ export default {
     roleOnCheck(checkedKeys) {
       console.log('onCheck', checkedKeys)
       this.roleCheckedKeys = checkedKeys
-      this.addForm.role = checkedKeys.checked
+      // this.addForm.role = checkedKeys.checked
     },
     // 密码重置
     resetPassword() {
@@ -1187,22 +1148,19 @@ export default {
     toView(record) {
       console.log(record)
       // this.viewInfo = record
+      this.actionDrawerVisible = true
       this.viewDrawerVisible = true
+      this.actionTitle = '查看'
     },
-    viewOnClose() {
-      this.viewDrawerVisible = false
-    },
+    // viewOnClose() {
+    //   this.viewDrawerVisible = false
+    // },
     // 编辑
     toEdit(record) {
       console.log(record)
       // this.editForm = record
-      this.editDrawerVisible = true
-      this.addroleCheckedKeys = this.addForm.role
-      this.departmentCheckedKeys = this.addForm.department
-      this.postCheckedKeys = this.addForm.post
-    },
-    editOnClose() {
-      this.editDrawerVisible = false
+      this.actionDrawerVisible = true
+      this.actionTitle = '编辑'
     },
     // 删除
     onDelete(key) {
@@ -1255,18 +1213,18 @@ export default {
     }
   }
 }
-.addDrawer /deep/ .ant-collapse {
+.actionDrawer /deep/ .ant-collapse {
   background-color: #ffffff;
 }
-.addDrawer /deep/ .ant-collapse-item {
+.actionDrawer /deep/ .ant-collapse-item {
   margin-bottom: 0 !important;
 }
-.addDrawer /deep/ .ant-collapse-header {
+.actionDrawer /deep/ .ant-collapse-header {
   border-bottom: 1px solid #eee;
   margin-bottom: 30px;
   font-size: 16px;
 }
-// .addDrawer /deep/ .ant-collapse-content-box{
+// .actionDrawer /deep/ .ant-collapse-content-box{
 //   // padding: 24px 16px !important;
 // }
 </style>
