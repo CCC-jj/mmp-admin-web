@@ -126,14 +126,15 @@
           <a @click="toUser(record)">
             <a-icon type="edit" /> 用户授权
           </a>
-          <!-- <a @click="toUser(record)">
-            <a-icon type="edit" /> 取消授权
-          </a> -->
         </a-space>
       </template>
     </a-table>
-    <a-modal destroyOnClose width="300px" v-model="userVisible" title="用户授权" @ok="userHandleOk" @cancel="userHandleCancel" :afterClose="userAfterClose">
-      <!-- <a-tree checkable :tree-data="userTreeData" :replace-fields="replaceFields" @select="useronSelect" @check="useronCheck" /> -->
+    <a-drawer width="50%" title="用户授权" placement="right" :visible="userVisible" :after-visible-change="userafterVisibleChange" @close="userdrawerOnClose">
+      <div style="margin:0 auto;">
+        <a-transfer :listStyle="{width:'40%',height:'500px'}" :titles="['未授权','已授权']" :operations="['授权', '取消']" :data-source="userTreeData.user" show-search :filter-option="transferFilterOption" :target-keys="userTargetKeys" :render="record => record.title" @change="usertransferHandleChange" @search="usertransferHandleSearch" />
+      </div>
+    </a-drawer>
+    <!-- <a-modal destroyOnClose width="300px" v-model="userVisible" title="用户授权" @ok="userHandleOk" @cancel="userHandleCancel" :afterClose="userAfterClose">
       <a-row v-for="(item, index) in userTreeData.user" :key="index">
         <a-col :span="24" style="margin-bottom:10px;">
           <a-checkbox :checked="item.forAuth" :value="item.userId" @change="(e)=>useronChange(e,item)">
@@ -141,7 +142,7 @@
           </a-checkbox>
         </a-col>
       </a-row>
-    </a-modal>
+    </a-modal> -->
   </div>
 </template>
 
@@ -258,17 +259,8 @@ export default {
       viewVisible: false,
       // 用户授权
       userVisible: false,
-      userTreeData: {
-        clientId: '001',
-        clientName: '',
-        user: [
-          { userId: '1', userName: 'admin', account: 'admin', forAuth: false },
-          { userId: '18608413791', userName: 'tang', account: '18608413791', forAuth: true },
-          { userId: '18374504613', userName: 'chen', account: '18374504613', forAuth: false },
-          { userId: '18711003110', userName: '朱鸿奎', account: '18711003110', forAuth: false },
-          { userId: '13982079998', userName: '管理员', account: '13982079998', forAuth: true },
-        ],
-      },
+      userTreeData: {},
+      userTargetKeys: [],
       enableList: [],
       // replaceFields: {
       //   title: 'userName',
@@ -446,10 +438,28 @@ export default {
     // 用户授权
     toUser(record) {
       this.userVisible = true
+      let targetKeys = []
       userClient(record.clientId)
         .then((res) => {
           if (res.success) {
             this.userTreeData = res.data
+            this.userTreeData.user = res.data.user.map((item) => {
+              return {
+                key: item.userId,
+                title: item.userName,
+                account: item.account,
+                forAuth: item.forAuth,
+                description: item.userName,
+              }
+            })
+            res.data.user.forEach((item) => {
+              if (item.forAuth) {
+                targetKeys.push(item.key)
+              }
+            })
+            this.userTargetKeys = targetKeys
+            console.log(this.userTargetKeys, res.data.user)
+            console.log(this.userTreeData)
           } else {
             this.$message.warning(res.message)
           }
@@ -458,13 +468,42 @@ export default {
           console.error(err)
         })
     },
-    userHandleOk() {
+    // userHandleOk() {
+    //   this.userVisible = false
+    // },
+    userdrawerOnClose() {
       this.userVisible = false
     },
-    userHandleCancel() {
-      this.userVisible = false
+    userafterVisibleChange(val) {
+      console.log('visible', val)
     },
-    userAfterClose() {},
+    // 用户授权穿梭框
+    usertransferHandleChange(targetKeys, direction, moveKeys) {
+      console.log(targetKeys, direction, moveKeys)
+
+      let list = targetKeys.map((item) => {
+        return {
+          clientId: this.userTreeData.clientId,
+          userId: item,
+        }
+      })
+      console.log(list, targetKeys)
+      enableAccredit(list)
+        .then((res) => {
+          console.log(res)
+          if (res.success) {
+            this.userTargetKeys = targetKeys
+          }
+          this.$message.info(res.message)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    usertransferHandleSearch(dir, value) {
+      console.log('search:', dir, value)
+    },
+    // userAfterClose() {},
     // useronSelect(selectedKeys, info) {
     //   console.log('selected', selectedKeys, info)
     // },
@@ -473,20 +512,20 @@ export default {
     // },
     useronChange(e, item) {
       const checked = e.target.checked
-      const value = e.target.value
-      // item.forAuth = checked
-      enableAccredit([{ clientId: this.userTreeData.clientId, userId: value }])
-        .then((res) => {
-          if (res.success) {
-            item.forAuth = checked
-          } else {
-            item.forAuth = !checked
-          }
-          this.$message.info(res.message)
-        })
-        .catch((err) => {
-          console.error(err)
-        })
+      // const value = e.target.value
+      item.forAuth = checked
+      // enableAccredit([{ clientId: this.userTreeData.clientId, userId: value }])
+      //   .then((res) => {
+      //     if (res.success) {
+      //       item.forAuth = checked
+      //     } else {
+      //       item.forAuth = !checked
+      //     }
+      //     this.$message.info(res.message)
+      //   })
+      //   .catch((err) => {
+      //     console.error(err)
+      //   })
     },
   },
 }
@@ -516,4 +555,7 @@ export default {
     overflow: hidden;
   }
 }
+// .ant-btn-icon-only.ant-btn-sm{
+//   width: 75px !important;
+// }
 </style>
