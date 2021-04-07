@@ -126,11 +126,21 @@
           <a @click="toUser(record)">
             <a-icon type="edit" /> 用户授权
           </a>
+          <!-- <a @click="toUser(record)">
+            <a-icon type="edit" /> 取消授权
+          </a> -->
         </a-space>
       </template>
     </a-table>
-    <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="userVisible" title="用户授权" @ok="userHandleOk" @cancel="userHandleCancel" :afterClose="userAfterClose">
-      <a-tree checkable :tree-data="userTreeData" :replace-fields="replaceFields" @select="useronSelect" @check="useronCheck" />
+    <a-modal destroyOnClose width="300px" v-model="userVisible" title="用户授权" @ok="userHandleOk" @cancel="userHandleCancel" :afterClose="userAfterClose">
+      <!-- <a-tree checkable :tree-data="userTreeData" :replace-fields="replaceFields" @select="useronSelect" @check="useronCheck" /> -->
+      <a-row v-for="(item, index) in userTreeData.user" :key="index">
+        <a-col :span="24" style="margin-bottom:10px;">
+          <a-checkbox :checked="item.forAuth" :value="item.userId" @change="(e)=>useronChange(e,item)">
+            {{item.userName}}
+          </a-checkbox>
+        </a-col>
+      </a-row>
     </a-modal>
   </div>
 </template>
@@ -142,6 +152,7 @@ import {
   modifyClient,
   disableClient,
   userClient,
+  enableAccredit,
 } from '@/api/system/client'
 const columns = [
   {
@@ -247,18 +258,23 @@ export default {
       viewVisible: false,
       // 用户授权
       userVisible: false,
-      userTreeData: [
-        { userId: '1', userName: 'admin', account: 'admin', auth: false },
-        { userId: '18608413791', userName: 'tang', account: '18608413791', auth: false },
-        { userId: '18374504613', userName: 'chen', account: '18374504613', auth: false },
-        { userId: '18711003110', userName: '朱鸿奎', account: '18711003110', auth: false },
-        { userId: '13982079998', userName: '管理员', account: '13982079998', auth: false },
-      ],
-      replaceFields: {
-        title: 'userName',
-        key: 'userId',
-        selectable: 'auth',
+      userTreeData: {
+        clientId: '001',
+        clientName: '',
+        user: [
+          { userId: '1', userName: 'admin', account: 'admin', forAuth: false },
+          { userId: '18608413791', userName: 'tang', account: '18608413791', forAuth: true },
+          { userId: '18374504613', userName: 'chen', account: '18374504613', forAuth: false },
+          { userId: '18711003110', userName: '朱鸿奎', account: '18711003110', forAuth: false },
+          { userId: '13982079998', userName: '管理员', account: '13982079998', forAuth: true },
+        ],
       },
+      enableList: [],
+      // replaceFields: {
+      //   title: 'userName',
+      //   key: 'userId',
+      //   selectable: 'auth',
+      // },
     }
   },
   mounted() {
@@ -270,7 +286,6 @@ export default {
       this.tableLoading = true
       getClientList(this.queryInfo)
         .then((res) => {
-          console.log(res)
           if (res.success) {
             this.dataSource = res.data
             this.total = res.count
@@ -312,7 +327,6 @@ export default {
           if (this.actionTitle === '新增') {
             createClient(this.actionForm)
               .then((res) => {
-                console.log(res)
                 if (res.success) {
                   this.actionVisible = false
                   this.$message.success('新增成功')
@@ -328,7 +342,6 @@ export default {
           } else if (this.actionTitle === '编辑') {
             modifyClient(this.actionForm)
               .then((res) => {
-                console.log(res)
                 if (res.success) {
                   this.actionVisible = false
                   this.$message.success('修改成功')
@@ -415,7 +428,6 @@ export default {
     onChangeClientStatus(checked) {
       disableClient(this.actionForm.clientId)
         .then((res) => {
-          console.log(res)
           if (res.success) {
             this.actionForm.clientStatus = checked ? 1 : 2
           }
@@ -433,12 +445,14 @@ export default {
     },
     // 用户授权
     toUser(record) {
-      console.log(record)
       this.userVisible = true
       userClient(record.clientId)
         .then((res) => {
-          console.log(res)
-          this.userTreeData = res.data.user
+          if (res.success) {
+            this.userTreeData = res.data
+          } else {
+            this.$message.warning(res.message)
+          }
         })
         .catch((err) => {
           console.error(err)
@@ -451,11 +465,28 @@ export default {
       this.userVisible = false
     },
     userAfterClose() {},
-    useronSelect(selectedKeys, info) {
-      console.log('selected', selectedKeys, info)
-    },
-    useronCheck(checkedKeys, info) {
-      console.log('onCheck', checkedKeys, info)
+    // useronSelect(selectedKeys, info) {
+    //   console.log('selected', selectedKeys, info)
+    // },
+    // useronCheck(checkedKeys, info) {
+    //   console.log('onCheck', checkedKeys, info)
+    // },
+    useronChange(e, item) {
+      const checked = e.target.checked
+      const value = e.target.value
+      // item.forAuth = checked
+      enableAccredit([{ clientId: this.userTreeData.clientId, userId: value }])
+        .then((res) => {
+          if (res.success) {
+            item.forAuth = checked
+          } else {
+            item.forAuth = !checked
+          }
+          this.$message.info(res.message)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
   },
 }

@@ -50,3 +50,12 @@ export function userClient(clientId) {
     },
   })
 }
+
+// 授权用户-取消授权
+export function enableAccredit(params) {
+  return request({
+    url: 'client/accredit/enable',
+    method: 'post',
+    data: params,
+  })
+}
