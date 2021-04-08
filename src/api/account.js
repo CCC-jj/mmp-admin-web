@@ -14,23 +14,11 @@ export function Login(sign, timestamp, loginType, mobile, password) {
   })
 }
 
-// 修改密码
-export function changePassword(oldPassword, password) {
+// 统一登出
+export function Logout(sign, timestamp) {
   return request({
-    url: '/api/account/changePassword',
-    method: 'post',
-    data: {
-      oldPassword: oldPassword,
-      password: password,
-    },
-  })
-}
-
-// 退出登录
-export function Logout() {
-  return request({
-    url: '/api/account/logout',
+    url: 'union/logout',
     method: 'get',
-    // headers: { "Content-Type": "x-www-form-urlencoded" },
+    headers: { sign: sign, timestamp: timestamp },
   })
 }

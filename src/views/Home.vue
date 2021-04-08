@@ -52,12 +52,36 @@
       </a-layout-sider>
       <a-layout class="rightLayout">
         <a-layout-header style="background: #fff; padding: 0">
-          <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="() => (collapsed = !collapsed)" />
-          <div class="headerUser">
-            <a>admin</a>
-            <router-link to="/">首页</router-link>
-            <router-link to="/login">退出</router-link>
+          <div>
+            <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="() => (collapsed = !collapsed)" />
+            <!-- <div class="headerUser"> -->
+            <!-- <a>admin</a> -->
+
+            <router-link to="/">
+              <a-icon type="appstore" theme="filled" style="margin-right:5px;" /> 首页
+            </router-link>
+
           </div>
+
+          <a-dropdown>
+            <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+              admin
+              <a-icon type="down" />
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <router-link to="/home">首页</router-link>
+              </a-menu-item>
+              <a-menu-item>
+                <router-link to="/account/userInfo">个人信息</router-link>
+              </a-menu-item>
+              <a-menu-item style="border-top:1px solid #eee;">
+                <a @click="logout">退出登录</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+
+          <!-- </div> -->
         </a-layout-header>
         <a-layout-content>
           <div class="viewContent">
@@ -129,6 +153,25 @@ export default {
         this.opensubKey = latestOpenKey ? [latestOpenKey] : []
       }
     },
+    logout() {
+      this.$confirm({
+        title: '退出确认',
+        // centered: true,
+        content: '确定要退出系统吗？',
+        onOk: () => {
+          this.$store
+            .dispatch('account/LoginOut')
+            .then(() => {
+              this.$message.success('退出成功')
+              this.$router.push('/login')
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        },
+        onCancel() {},
+      })
+    },
   },
 }
 </script>
@@ -161,10 +204,13 @@ export default {
     color: #fff;
     overflow: hidden;
   }
-  .headerUser {
+  .ant-layout-header {
     float: right;
     display: flex;
+    justify-content: space-between;
+    // width: ;
     a {
+      color: #303133;
       padding: 0 20px;
     }
   }

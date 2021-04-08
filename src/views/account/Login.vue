@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { Login } from '@/api/account'
+// import { Login } from '@/api/account'
 import md5 from 'md5'
 export default {
   name: 'Login',
@@ -89,20 +89,33 @@ export default {
           ) {
             password = this.getCookie('password-admin')
           }
-          let timestamp = Math.round(new Date().getTime() / 1000)
-          let sign = md5(timestamp + ':123456')
-          Login(sign, timestamp, 1, this.ruleForm.mobile, password).then((res) => {
-            // this.$store.dispatch('userInfo',res.data)
-            if (res.success) {
-              localStorage.setItem('token', res.data)
-              this.setUserInfo()
+          // let timestamp = Math.round(new Date().getTime() / 1000)
+          // let sign = md5(timestamp + ':123456')
+          this.$store
+            .dispatch('account/LoginByUsername', {
+              username: this.ruleForm.mobile,
+              password: password,
+            })
+            .then(() => {
               this.$router.push('/')
+              this.setUserInfo()
               this.$message.success('登录成功')
-            } else {
-              this.$message.warning(res.message)
-              return false
-            }
-          })
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+          // Login(sign, timestamp, 1, this.ruleForm.mobile, password).then((res) => {
+          //   // this.$store.dispatch('userInfo',res.data)
+          //   if (res.success) {
+          //     localStorage.setItem('token', res.data)
+          //     this.setUserInfo()
+          //     this.$router.push('/')
+          //     this.$message.success('登录成功')
+          //   } else {
+          //     this.$message.warning(res.message)
+          //     return false
+          //   }
+          // })
         } else {
           return false
         }
