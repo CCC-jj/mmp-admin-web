@@ -278,11 +278,10 @@ export default {
       this.tableLoading = true
       getClientList(this.queryInfo)
         .then((res) => {
+          this.dataSource = res.data
           if (res.success) {
-            this.dataSource = res.data
             this.total = res.count
           } else {
-            this.dataSource = res.data
             this.$message.warning(res.message)
           }
           this.tableLoading = false
@@ -293,14 +292,6 @@ export default {
     },
     // 搜索栏
     onSubmit() {
-      // this.$refs.queryRuleForm.validate((valid) => {
-      //   if (valid) {
-      //     alert('1')
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      // })
       this.queryInfo.page = 1
       this.getTableList()
     },

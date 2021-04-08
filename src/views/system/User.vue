@@ -22,13 +22,18 @@
           <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol" @keyup.enter.native="onSubmit">
             <a-row>
               <a-col :span="6">
-                <a-form-model-item label="登录账号" prop="name">
-                  <a-input placeholder="登录账号" v-model="queryInfo.name" />
+                <a-form-model-item label="登录账号" prop="userName">
+                  <a-input placeholder="登录账号" v-model="queryInfo.userName" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="6">
-                <a-form-model-item label="用户姓名" prop="otherName">
-                  <a-input placeholder="用户姓名" v-model="queryInfo.otherName" />
+                <a-form-model-item label="用户姓名" prop="realName">
+                  <a-input placeholder="用户姓名" v-model="queryInfo.realName" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="手机" prop="mobile">
+                  <a-input placeholder="手机" v-model="queryInfo.mobile" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="6">
@@ -108,14 +113,17 @@
                   <a-col :span="12">
                     <a-form-model-item label="用户性别" prop="sex">
                       <a-select :disabled="viewDrawerVisible" v-model="actionForm.sex" placeholder="请选择用户性别">
-                        <a-select-option value="男">
+                        <a-select-option :value="0">
+                          保密
+                        </a-select-option>
+                        <a-select-option :value="1">
                           男
                         </a-select-option>
-                        <a-select-option value="女">
+                        <a-select-option :value="2">
                           女
                         </a-select-option>
-                        <a-select-option value="未知">
-                          未知
+                        <a-select-option :value="9">
+                          未说明
                         </a-select-option>
                       </a-select>
                     </a-form-model-item>
@@ -190,7 +198,7 @@
           <a-col>
             <a-space>
               <a-button type="primary" icon="plus" @click="add">新增</a-button>
-              <a-button type="danger" icon="delete">删除</a-button>
+              <!-- <a-button type="danger" icon="delete">删除</a-button> -->
               <a-button icon="user" @click="roleSetting">角色配置</a-button>
               <a-button icon="sync" @click="resetPassword">密码重置</a-button>
               <a-button icon="upload">导出</a-button>
@@ -533,16 +541,19 @@
           </div>
         </a-drawer> -->
         <!-- 表格数据 -->
-        <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
-          <template slot="sort" slot-scope="text">
-            <a-tag color="blue">
-              {{text}}
+        <a-table :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.userId}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfo.limit, total: total, current: queryInfo.page, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="tableChange">
+          <template slot="roleName" slot-scope="text">
+            <a-tag color="blue" v-for="(item,index) in text" :key="index">
+              {{item}}
             </a-tag>
           </template>
-          <template slot="department" slot-scope="text">
-            <a-tag color="blue">
-              {{text}}
+          <template slot="client" slot-scope="text">
+            <a-tag color="blue" v-for="(item,index) in text" :key="index">
+              {{item}}
             </a-tag>
+          </template>
+          <template slot="status" slot-scope="text,record">
+            <a-switch :checked="text===1?true:false" checked-children="启用" un-checked-children="禁用" @change="(checked,event)=>changeStatus(checked,event,record)"></a-switch>
           </template>
           <template slot="action" slot-scope="text,record">
             <a-space :size="15">
@@ -552,11 +563,11 @@
               <a @click="toEdit(record)">
                 <a-icon type="edit" /> 编辑
               </a>
-              <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+              <!-- <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.userId)">
                 <a href="javascript:;">
                   <a-icon type="delete" /> 删除
                 </a>
-              </a-popconfirm>
+              </a-popconfirm> -->
             </a-space>
           </template>
         </a-table>
@@ -567,7 +578,7 @@
 
 <script>
 import moment from 'moment'
-import { createUser } from '@/api/user'
+import { getUserList, createUser, activeUser, queryUser, resetPassword } from '@/api/system/user'
 
 const getParentKey = (key, tree) => {
   let parentKey
@@ -593,39 +604,48 @@ const columns = [
   },
   {
     title: '登录账户',
-    dataIndex: 'name',
+    dataIndex: 'account',
   },
   {
     title: '用户姓名',
-    dataIndex: 'otherName',
+    dataIndex: 'userName',
+  },
+  {
+    title: '手机号码',
+    dataIndex: 'mobile',
   },
   {
     title: '所属角色',
-    dataIndex: 'sort',
-    scopedSlots: { customRender: 'sort' },
+    dataIndex: 'roleName',
+    scopedSlots: { customRender: 'roleName' },
   },
   {
-    title: '所属部门',
-    dataIndex: 'department',
-    scopedSlots: { customRender: 'department' },
+    title: '已授权客户端',
+    dataIndex: 'client',
+    scopedSlots: { customRender: 'client' },
+  },
+  {
+    title: '账号状态',
+    dataIndex: 'status',
+    scopedSlots: { customRender: 'status' },
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'action' },
     align: 'center',
-    width: '250px',
+    width: '150px',
   },
 ]
-const dataSource = []
-for (let i = 0; i < 8; i++) {
-  dataSource.push({
-    key: i,
-    name: '超级管理员',
-    otherName: 'administrator',
-    sort: i + 2,
-    department: 'Fizz-Gateway公司,部门1,部门4',
-  })
-}
+// const dataSource = []
+// for (let i = 0; i < 8; i++) {
+//   dataSource.push({
+//     key: i,
+//     account: '超级管理员',
+//     userName: 'administrator',
+//     sort: i + 2,
+//     department: 'Fizz-Gateway公司,部门1,部门4',
+//   })
+// }
 export default {
   name: 'User',
   inject: ['reloadCard'],
@@ -752,8 +772,13 @@ export default {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
       queryInfo: {
-        name: '',
-        otherName: '',
+        limit: 10,
+        mobile: '',
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
+        realName: '',
+        userName: '',
       },
       rules: {},
       search: true,
@@ -772,8 +797,8 @@ export default {
         birth: null,
         number: '',
         role: [],
-        department: ['公司2', '部门21', '部门212', '公司3', '部门22'],
-        post: ['首席技术官', '普通员工'],
+        department: [],
+        post: [],
       },
       actionRules: {
         account: [{ required: true, message: '请输入登录账号', trigger: 'blur' }],
@@ -906,10 +931,11 @@ export default {
       targetKeys: ['1', '2', '3', '4'],
 
       // 表格
-      dataSource,
+      dataSource: [],
       columns,
-      roleLoading: false, //加载中
+      tableLoading: false, //加载中
       selectedRowKeys: [],
+      total: 0,
       // 查看
       viewDrawerVisible: false,
       // viewForm: {
@@ -932,11 +958,29 @@ export default {
   },
   mounted() {
     // this.generateListRole(this.roleTreeData, this.dataListRole)
+    this.getTableList()
     this.generateList(this.gData, this.dataTreeList)
     // this.generateList(this.roleTreeData, this.dataListRole)
   },
   methods: {
     moment,
+    getTableList() {
+      this.tableLoading = true
+      getUserList(this.queryInfo)
+        .then((res) => {
+          console.log(res)
+          this.dataSource = res.data
+          if (res.success) {
+            this.total = res.count
+          } else {
+            this.$message.warning(res.message)
+          }
+          this.tableLoading = false
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     // 树状控件
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys
@@ -968,15 +1012,10 @@ export default {
         autoExpandParent: true,
       })
     },
+    // 搜索栏
     onSubmit() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          alert('1')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.queryInfo.page = 1
+      this.getTableList()
     },
     resetForm() {
       this.$refs.ruleForm.resetFields()
@@ -989,15 +1028,18 @@ export default {
     OnSave(drawerName) {
       this.$refs.actionRuleForm.validate((valid) => {
         if (valid) {
-          createUser(this.actionForm)
-            .then((res) => {
-              console.log(res)
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-          this[drawerName] = false
-          this.viewDrawerVisible = false
+          if (this.actionTitle === '新增') {
+            createUser(this.actionForm)
+              .then((res) => {
+                console.log(res)
+                this[drawerName] = false
+                this.viewDrawerVisible = false
+                this.$message.success('新增成功')
+              })
+              .catch((err) => {
+                console.error(err)
+              })
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -1007,6 +1049,7 @@ export default {
     OnClose(drawerName) {
       this[drawerName] = false
       this.viewDrawerVisible = false
+      this.$refs.actionRuleForm.resetFields()
     },
     // 新增生日日期
     changeActionbirth(date, dateString) {
@@ -1100,23 +1143,34 @@ export default {
     },
     // 密码重置
     resetPassword() {
-      this.$confirm({
-        title: '确定将选择账号密码重置为【******】?',
-        centered: true,
-        okText: '确定',
-        cancelText: '取消',
-        maskClosable: true,
-        closable: true,
-        onOk: () => {
-          this.$message.success('重置成功！')
-        },
-        onCancel: () => {},
-      })
-    },
-    // 勾选表格数据
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.warning('请至少选择一条数据')
+      } else {
+        this.$confirm({
+          title: '确定将选择账号密码重置为【123456】?',
+          centered: true,
+          okText: '确定',
+          cancelText: '取消',
+          maskClosable: true,
+          closable: true,
+          onOk: () => {
+            this.selectedRowKeys.forEach((item) => {
+              resetPassword(item)
+                .then((res) => {
+                  if (res.success) {
+                    this.$message.success('重置成功')
+                  } else {
+                    this.$message.error(res.message)
+                  }
+                })
+                .catch((err) => {
+                  console.error(err)
+                })
+            })
+          },
+          onCancel: () => {},
+        })
+      }
     },
     // 刷新此页面
     refresh() {
@@ -1144,13 +1198,47 @@ export default {
     transferHandleSearch(dir, value) {
       console.log('search:', dir, value)
     },
+    // 勾选表格数据
+    onSelectChange(selectedRowKeys) {
+      console.log('selectedRowKeys changed: ', selectedRowKeys)
+      this.selectedRowKeys = selectedRowKeys
+    },
+    // 翻页等表格操作
+    tableChange(pagination) {
+      this.queryInfo.page = pagination.current
+      this.getTableList()
+    },
+    // 改变状态开关
+    changeStatus(checked, event, record) {
+      activeUser(record.userId)
+        .then((res) => {
+          if (res.success) {
+            record.status = checked ? 1 : 2
+            this.$message.success(checked ? '启用成功' : '禁用成功')
+          } else {
+            this.$message.warning(res.message)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     // 查看
     toView(record) {
-      console.log(record)
-      // this.viewInfo = record
+      this.actionTitle = '查看'
       this.actionDrawerVisible = true
       this.viewDrawerVisible = true
-      this.actionTitle = '查看'
+      queryUser(record.userId)
+        .then((res) => {
+          if (res.success) {
+            this.actionForm = res.data
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
     // viewOnClose() {
     //   this.viewDrawerVisible = false
@@ -1158,14 +1246,14 @@ export default {
     // 编辑
     toEdit(record) {
       console.log(record)
-      // this.editForm = record
+      this.actionForm = record
       this.actionDrawerVisible = true
       this.actionTitle = '编辑'
     },
     // 删除
     onDelete(key) {
       const data = [...this.dataSource]
-      this.dataSource = data.filter((item) => item.key !== key)
+      this.dataSource = data.filter((item) => item.userId !== key)
       this.$message.success('删除成功！')
     },
   },

@@ -1,22 +1,27 @@
 <template>
   <div class="appInfo">
     <h1 class="title">应用信息</h1>
-		<a-descriptions bordered>
-      <a-descriptions-item label="AppId（应用Id）" :span="3">
-        {{appInfo.appId}}
+    <a-descriptions bordered>
+      <a-descriptions-item label="客户端代码" :span="3">
+        {{appInfo.clientId}}
       </a-descriptions-item>
-      <a-descriptions-item label="AppSecret（应用密钥）" :span="3">
-				{{appInfo.appSecret}}
+      <a-descriptions-item label="客户端名称" :span="3">
+        {{appInfo.clientName}}
       </a-descriptions-item>
-      <a-descriptions-item label="接口地址" :span="3">
-        {{appInfo.apiUrl}}
+      <a-descriptions-item label="客户端秘钥" :span="3">
+        {{appInfo.clientSecret}}
+      </a-descriptions-item>
+      <a-descriptions-item label="客户端状态" :span="3">
+        <span v-if="appInfo.clientStatus===1">正常</span>
+        <span v-else-if="appInfo.clientStatus===2">禁用</span>
+        <span v-else>已删除</span>
       </a-descriptions-item>
     </a-descriptions>
   </div>
 </template>
 
 <script>
-// import { getAppAccount } from '@/api/app'
+import { getClientInfo } from '@/api/account'
 export default {
   name: 'AppInfo',
   data() {
@@ -25,17 +30,17 @@ export default {
     }
   },
   mounted() {
-    // getAppAccount()
-    //   .then((result) => {
-    //     if (result.success) {
-    //       this.appInfo = result.data
-    //     } else {
-    //       this.$message.warning(result.message)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //   })
+    getClientInfo()
+      .then((res) => {
+        if (res.success) {
+          this.appInfo = res.data
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   },
 }
 </script>
@@ -51,7 +56,7 @@ export default {
   height: 65px;
 	padding: 20px 0;
 } */
-.appInfo /deep/ .ant-descriptions-item-label{
-	width: 25%;
+.appInfo /deep/ .ant-descriptions-item-label {
+  width: 25%;
 }
 </style>

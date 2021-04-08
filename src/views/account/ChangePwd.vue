@@ -23,8 +23,8 @@
 </template>
 
 <script>
-// import { changePassword } from '@/api/account'
-// import md5 from 'md5'
+import { changePassword } from '@/api/account'
+import md5 from 'md5'
 export default {
   name: 'ChangePwd',
   data() {
@@ -35,12 +35,14 @@ export default {
       callback()
     }
     let validatePass = (rule, value, callback) => {
-      const reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/)
+      // const reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/)
       if (value === '' || value.length < 6) {
         callback(new Error('密码需在六位数及以上'))
-      } else if (!reg.test(value)) {
-        callback(new Error('密码必须包含数字和字母'))
-      } else {
+      }
+      //  else if (!reg.test(value)) {
+      //   callback(new Error('密码必须包含数字和字母'))
+      // }
+      else {
         if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass')
         }
@@ -84,24 +86,34 @@ export default {
         decodeURIComponent(value) +
         (expiredays == null ? '' : ';expires=' + exdate.toGMTString())
     },
+    clearCookie() {
+      // eslint-disable-next-line no-useless-escape
+      var keys = document.cookie.match(/[^ =;]+(?=\=)/g)
+      console.log(keys)
+      if (keys) {
+        for (var i = keys.length; i--; )
+          document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString()
+      }
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // changePassword(md5(this.ruleForm.oldPwd), md5(this.ruleForm.pass)).then((res) => {
-          //   if (res.success) {
-          //     this.$notification.success({
-          //       message: '提示',
-          //       description: '修改成功,请重新登录',
-          //     })
-          //     this.$refs[formName].resetFields()
-          //     localStorage.removeItem('token')
-          //     this.setCookie('account-healthcard', '', -1)
-          //     this.setCookie('password-healthcard', '', -1)
-          //     this.$router.push('/login')
-          //   } else {
-          //     this.$message.warning(res.message)
-          //   }
-          // })
+          changePassword(md5(this.ruleForm.pass), md5(this.ruleForm.oldPwd)).then((res) => {
+            if (res.success) {
+              this.$notification.success({
+                message: '提示',
+                description: '修改成功,请重新登录',
+              })
+              this.$refs[formName].resetFields()
+              localStorage.removeItem('token')
+              this.clearCookie()
+              // this.setCookie('account-admin', '', -1)
+              // this.setCookie('password-admin', '', -1)
+              this.$router.push('/login')
+            } else {
+              this.$message.warning(res.message)
+            }
+          })
           // alert('修改成功')
         } else {
           console.log('error submit!!')
