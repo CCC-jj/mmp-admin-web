@@ -11,13 +11,13 @@
             <a-form-model ref="queryListRuleForm" :model="queryInfoList" :rules="queryRulesList" :label-col="{span: 6}" :wrapper-col="{span: 18}" @keyup.enter.native="onSubmit('queryListRuleForm')">
               <a-row :gutter="16">
                 <a-col :span="12">
-                  <a-form-model-item label="字典编号" prop="no">
-                    <a-input placeholder="字典编号" v-model="queryInfoList.no" />
+                  <a-form-model-item label="字典编号" prop="dictType">
+                    <a-input placeholder="字典编号" v-model="queryInfoList.dictType" />
                   </a-form-model-item>
                 </a-col>
                 <a-col :span="12">
-                  <a-form-model-item label="字典名称" prop="name">
-                    <a-input placeholder="字典名称" v-model="queryInfoList.name" />
+                  <a-form-model-item label="字典名称" prop="dictName">
+                    <a-input placeholder="字典名称" v-model="queryInfoList.dictName" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -39,44 +39,39 @@
         <!-- 操作按钮 -->
         <div class="operationButton" style="margin-bottom:16px;">
           <!-- 新增对话框 -->
-          <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="addListVisible" :title="actionTitle" @ok="addListHandleOk" @cancel="addListHandleCancel">
+          <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="actionListVisible" :title="actionTitle" @ok="actionListHandleOk" @cancel="actionListHandleCancel" :afterClose="actionAfterClose">
             <template slot="footer">
-              <a-button key="submit" type="primary" :loading="addListLoading" icon="plus-circle" @click="addListHandleOk">
+              <a-button key="submit" type="primary" :loading="actionListLoading" icon="plus-circle" @click="actionListHandleOk">
                 保存
               </a-button>
-              <a-button key="back" icon="close-circle" @click="addListHandleCancel">
+              <a-button key="back" icon="close-circle" @click="actionListHandleCancel">
                 取消
               </a-button>
             </template>
-            <a-form-model ref="addRuleForm" :model="addDictListForm" :rules="addDictListRules" :label-col="{span:6}" :wrapper-col="{span:18}">
-              <a-row>
+            <a-form-model ref="addRuleForm" :model="actionDictListForm" :rules="addDictListRules" :label-col="{span:6}" :wrapper-col="{span:18}">
+              <a-row :gutter="12">
                 <a-col :span="24">
-                  <a-form-model-item :labelCol="{span: 3}" :wrapperCol="{span: 21}" has-feedback label="字典编号" prop="no">
-                    <a-input v-model="addDictListForm.no" placeholder="请输入字典编号" />
+                  <a-form-model-item :labelCol="{span: 3}" :wrapperCol="{span: 21}" has-feedback label="字典编号" prop="dictType">
+                    <a-input :disabled="isEdit" v-model="actionDictListForm.dictType" placeholder="请输入字典编号" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
-              <a-row>
+              <a-row :gutter="12">
                 <a-col :span="12">
-                  <a-form-model-item has-feedback label="字典名称" prop="name">
-                    <a-input v-model="addDictListForm.name" placeholder="请输入字典名称" />
+                  <a-form-model-item has-feedback label="字典名称" prop="dictName">
+                    <a-input :disabled="isEdit" v-model="actionDictListForm.dictName" placeholder="请输入字典名称" />
                   </a-form-model-item>
                 </a-col>
                 <a-col :span="12">
-                  <a-form-model-item has-feedback label="字典排序" prop="sort">
-                    <a-input-number v-model="addDictListForm.sort" style="width: 100%;" placeholder="请输入字典排序" />
+                  <a-form-model-item label="字典值状态" prop="dictStatus">
+                    <a-switch :checked="actionDictListForm.dictStatus===1?true:false" checked-children="启用" un-checked-children="禁用" @change="changeDictStatus"></a-switch>
                   </a-form-model-item>
                 </a-col>
               </a-row>
-              <a-row>
-                <a-col :span="12">
-                  <a-form-model-item label="封存" prop="archive">
-                    <a-switch v-model="addDictListForm.archive" checked-children="是" un-checked-children="否" />
-                  </a-form-model-item>
-                </a-col>
-                <a-col :span="12">
-                  <a-form-model-item has-feedback label="字典备注" prop="remark">
-                    <a-input v-model="addDictListForm.remark" placeholder="请输入字典备注" />
+              <a-row :gutter="12">
+                <a-col :span="24">
+                  <a-form-model-item :labelCol="{span: 3}" :wrapperCol="{span: 21}" has-feedback label="字典备注" prop="dictRemark">
+                    <a-input v-model="actionDictListForm.dictRemark" placeholder="请输入字典备注" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -86,7 +81,7 @@
             <a-col>
               <a-space>
                 <a-button type="primary" icon="plus" @click="addDictList">新增</a-button>
-                <a-button type="danger" icon="delete">删除</a-button>
+                <!-- <a-button type="danger" icon="delete">删除</a-button> -->
               </a-space>
             </a-col>
             <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" @close="drawerOnClose">
@@ -110,78 +105,66 @@
           </a-row>
         </div>
         <!-- 字典表格 -->
-        <a-table :scroll="{ x: 600 }" :loading="listLoading" bordered :data-source="dataSourceList" :columns="columnsList" :row-selection="{selectedRowKeys: selectedRowKeysList, onChange: onSelectChangeList}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }" :customRow="customRow">
-          <template slot="archive" slot-scope="text">
-            <a-tag color="blue">
-              {{text ? '是' : '否'}}
-            </a-tag>
+        <a-table :scroll="{ x: 600 }" :loading="listLoading" bordered :data-source="dataSourceList" :columns="columnsList" :row-selection="{selectedRowKeys: selectedRowKeysList, onChange: onSelectChangeList}" :rowKey="(record, index) => {return record.dictType}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfoList.limit, total: total, current: queryInfoList.page, showTotal: ((total) => {return `共 ${total} 条`}) }" :customRow="customRow">
+          <template slot="dictStatus" slot-scope="text">
+            <!-- <a-switch :checked="text===1?true:false" checked-children="启用" un-checked-children="禁用" @change="(checked,event)=>changeStatus(checked,event,record)"></a-switch> -->
+            <span v-if="text===1">启用</span>
+            <span v-else>禁用</span>
           </template>
           <template slot="action" slot-scope="text,record">
-            <a-space :size="15" @mousedown="e => e.preventDefault()">
+            <a-space :size="15">
               <a @click="toEdit(record)" style="font-size:12px;">
                 <a-icon type="edit" /> 编辑
               </a>
-              <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+              <!-- <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.dictType)">
                 <a href="javascript:;" style="font-size:12px;">
                   <a-icon type="delete" /> 删除
                 </a>
-              </a-popconfirm>
+              </a-popconfirm> -->
             </a-space>
           </template>
         </a-table>
       </div>
     </div>
     <div class="dictDetails">
-      <DictDetails v-if="isAliveDetails" :detailsTitle="detailsTitle"></DictDetails>
+      <DictDetails v-if="isAliveDetails" :detailsTitle="detailsTitle" :dictType="dictType"></DictDetails>
     </div>
   </div>
 </template>
 
 <script>
 import DictDetails from '@/components/DictDetails'
+import { getDictList, addDictList, editDictList } from '@/api/system/dict'
 const columnsList = [
   {
     title: '#',
     align: 'center',
     customRender: (text, record, index) => `${index + 1}`,
-    width: '30px',
+    width: '50px',
     fixed: 'left',
   },
   {
     title: '字典编号',
-    dataIndex: 'no',
+    dataIndex: 'dictType',
   },
   {
     title: '字典名称',
-    dataIndex: 'name',
+    dataIndex: 'dictName',
   },
-  // {
-  //   title: '字典排序',
-  //   dataIndex: 'sort',
-  // },
   {
-    title: '封存',
-    dataIndex: 'archive',
-    scopedSlots: { customRender: 'archive' },
+    title: '字典值状态',
+    dataIndex: 'dictStatus',
+    scopedSlots: { customRender: 'dictStatus' },
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'action' },
     align: 'center',
-    width: '150px',
+    width: '100px',
     fixed: 'right',
   },
 ]
-const dataSourceList = []
-for (let i = 0; i < 8; i++) {
-  dataSourceList.push({
-    key: i,
-    no: 'menu_category',
-    name: '菜单类型',
-    sort: i + 2,
-    archive: false,
-  })
-}
+
 export default {
   name: 'Dict',
   inject: ['reloadCard'],
@@ -198,26 +181,28 @@ export default {
       // 字典列表搜索
       searchList: true,
       queryInfoList: {
-        no: '',
-        name: '',
+        dictName: '',
+        dictType: '',
+        limit: 10,
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
       },
       queryRulesList: {},
       // 新增字典列表
       actionTitle: '新增',
-      addListVisible: false,
-      addListLoading: false,
-      addDictListForm: {
-        no: '',
-        name: '',
-        sort: '',
-        archive: false,
-        remark: '',
+      actionListVisible: false,
+      actionListLoading: false,
+      actionDictListForm: {
+        dictType: '',
+        dictName: '',
+        dictStatus: 2,
+        dictRemark: '',
       },
       addDictListRules: {
-        no: [{ required: true, message: '请输入字典编号', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
-        sort: [{ required: true, message: '请输入字典排序', trigger: 'blur' }],
-        archive: [{ required: true, message: '请选择是否封存', trigger: 'change' }],
+        dictType: [{ required: true, message: '请输入字典编号', trigger: 'blur' }],
+        dictName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
+        dictStatus: [{ required: true, message: '请选择是否封存', trigger: 'change' }],
       },
       // 列显隐
       drawerVisible: false,
@@ -251,15 +236,39 @@ export default {
       targetKeys: ['1', '2', '3', '4'],
       // 字典表格
       columnsList,
-      dataSourceList,
+      dataSourceList: [],
       listLoading: false,
       selectedRowKeysList: [],
+      total: 0,
+      // 编辑
+      isEdit: false,
 
       isAliveDetails: true,
       detailsTitle: '暂无',
+      dictType: '',
     }
   },
+  mounted() {
+    this.getTableList()
+  },
   methods: {
+    getTableList() {
+      this.listLoading = true
+      getDictList(this.queryInfoList)
+        .then((res) => {
+          console.log(res)
+          this.dataSourceList = res.data
+          if (res.success) {
+            this.total = res.count
+          } else {
+            this.$message.warning(res.message)
+          }
+          this.listLoading = false
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     // 刷新路由组件
     reloadDetails() {
       this.isAliveDetails = false
@@ -269,14 +278,9 @@ export default {
     },
     // 提交搜索
     onSubmit(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('1')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      console.log(formName)
+      this.queryInfoList.page = 1
+      this.getTableList()
     },
     // 重置搜索框
     resetForm(formName) {
@@ -284,16 +288,51 @@ export default {
     },
     // 新增字典列表
     addDictList() {
-      this.addListVisible = true
+      this.actionListVisible = true
       this.actionTitle = '新增'
     },
-    addListHandleOk() {
-      this.addListVisible = false
-      this.addDictListForm = this.$options.data().addDictListForm
+    // 保存
+    actionListHandleOk() {
+      if (this.actionTitle === '新增') {
+        addDictList(this.actionDictListForm)
+          .then((res) => {
+            if (res.success) {
+              this.$message.success('新增成功')
+              this.actionListVisible = false
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      } else {
+        editDictList(this.actionDictListForm)
+          .then((res) => {
+            if (res.success) {
+              this.$message.success('编辑成功')
+              this.actionListVisible = false
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      }
     },
-    addListHandleCancel() {
-      this.addListVisible = false
-      this.addDictListForm = this.$options.data().addDictListForm
+    // 取消
+    actionListHandleCancel() {
+      this.actionListVisible = false
+    },
+    // 对话框关闭
+    actionAfterClose() {
+      this.isEdit = false
+      this.actionDictListForm = this.$options.data().actionDictListForm
+    },
+    // 改变字典值状态
+    changeDictStatus(checked) {
+      this.actionDictListForm.dictStatus = checked ? 1 : 2
     },
     // 刷新此页面
     refresh() {
@@ -336,18 +375,35 @@ export default {
             // do something
             console.log(event)
             console.log(record, index)
-            this.detailsTitle = record.name
+            this.detailsTitle = record.dictName
+            this.dictType = record.dictType
             // this.$store.commit('dict/changeTitle', record.name)
           },
         },
       }
     },
+    // 改变状态开关
+    changeStatus(checked, event, record) {
+      // activeUser(record.userId)
+      //   .then((res) => {
+      //     if (res.success) {
+      record.dictStatus = checked ? 1 : 2
+      //       this.$message.success(checked ? '启用成功' : '禁用成功')
+      //     } else {
+      //       this.$message.warning(res.message)
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.error(err)
+      //   })
+    },
     // 编辑
     toEdit(record) {
       console.log(record)
-      this.addListVisible = true
+      this.actionListVisible = true
+      this.isEdit = true
       this.actionTitle = '编辑'
-      this.addDictListForm = record
+      this.actionDictListForm = record
     },
     // 删除
     onDelete(key) {

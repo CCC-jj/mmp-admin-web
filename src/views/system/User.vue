@@ -1147,7 +1147,13 @@ export default {
     userRoleOnSave() {
       userAccreditRole({ roleIdList: this.roleCheckedKeys, userIdList: this.selectedRowKeys })
         .then((res) => {
-          console.log(res)
+          if (res.success) {
+            this.$message.success('配置成功')
+            this.userRoleVisible = false
+            this.getTableList()
+          } else {
+            this.$message.error(res.message)
+          }
         })
         .catch((err) => {
           console.error(err)

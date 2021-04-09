@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="index">
     <a-layout id="components-layout-demo-custom-trigger">
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
         <div class="logo">管理后台</div>
@@ -98,7 +98,7 @@
 // @ is an alias to /src
 
 export default {
-  name: 'Home',
+  name: 'Index',
   provide() {
     return {
       reloadCard: this.reloadCard,
