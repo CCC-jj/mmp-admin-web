@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <!-- 部门选择 -->
-    <div class="userLeft">
+    <!-- <div class="userLeft">
       <a-input-search style="margin-bottom: 8px" placeholder="输入关键字进行过滤" @change="onChange" />
       <a-tree :expanded-keys="expandedKeys" :auto-expand-parent="autoExpandParent" :tree-data="gData" @expand="onExpand">
         <template slot="title" slot-scope="{ title }">
@@ -13,7 +13,7 @@
           <span v-else>{{ title }}</span>
         </template>
       </a-tree>
-    </div>
+    </div> -->
 
     <div class="userRight">
       <!-- 搜索栏 -->
@@ -189,8 +189,26 @@
           </div>
         </a-drawer>
         <!-- 角色配置对话框 -->
-        <a-drawer width="400px" :visible="userRoleVisible" title="用户角色配置" @close="userRoleHandleOk">
-          <a-tree v-model="roleCheckedKeys" checkable :expanded-keys="roleExpandedKeys" :auto-expand-parent="roleAutoExpandParent" :selected-keys="roleSelectedKeys" :tree-data="roleTreeData" @expand="roleOnExpand" @select="roleOnSelect" @check="roleOnCheck" />
+        <a-drawer width="400px" :visible="userRoleVisible" title="用户角色配置" @close="userRoleOnClose">
+          <a-tree v-model="roleCheckedKeys" checkable :expanded-keys="roleExpandedKeys" :auto-expand-parent="roleAutoExpandParent" :selected-keys="roleSelectedKeys" :tree-data="roleTreeData" :replaceFields="{ children:'children', title:'roleName', key:'roleId' }" @expand="roleOnExpand" @select="roleOnSelect" @check="roleOnCheck" />
+          <div :style="{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+          zIndex: 1,
+        }">
+            <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="userRoleOnClose">
+              取消
+            </a-button>
+            <a-button icon="plus-circle" type="primary" @click="userRoleOnSave">
+              保存
+            </a-button>
+          </div>
         </a-drawer>
 
         <!-- 操作按钮 -->
@@ -578,7 +596,15 @@
 
 <script>
 import moment from 'moment'
-import { getUserList, createUser, activeUser, queryUser, resetPassword } from '@/api/system/user'
+import {
+  getUserList,
+  createUser,
+  activeUser,
+  queryUser,
+  resetPassword,
+  accreditRoleList,
+  userAccreditRole,
+} from '@/api/system/user'
 
 const getParentKey = (key, tree) => {
   let parentKey
@@ -876,29 +902,7 @@ export default {
 
       // 用户角色配置
       userRoleVisible: false,
-      roleTreeData: [
-        {
-          title: '超级管理员',
-          value: '超级管理员',
-        },
-        {
-          title: '用户',
-          value: '用户',
-          children: [
-            { title: '0-1-0-0', value: '0-1-0-0' },
-            { title: '0-1-0-1', value: '0-1-0-1' },
-            { title: '0-1-0-2', value: '0-1-0-2' },
-          ],
-        },
-        {
-          title: '管理员',
-          value: '管理员',
-        },
-        {
-          title: '开发人员',
-          value: '开发人员',
-        },
-      ],
+      roleTreeData: [],
       roleCheckedKeys: [],
       roleExpandedKeys: [],
       roleSelectedKeys: [],
@@ -1120,10 +1124,35 @@ export default {
     // },
     // 角色配置
     roleSetting() {
-      this.userRoleVisible = true
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.warning('请至少选择一条数据')
+      } else {
+        this.userRoleVisible = true
+        accreditRoleList()
+          .then((res) => {
+            if (res.success) {
+              this.roleTreeData = res.data
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      }
     },
-    userRoleHandleOk() {
+    userRoleOnClose() {
       this.userRoleVisible = false
+    },
+    userRoleOnSave() {
+      userAccreditRole({ roleIdList: this.roleCheckedKeys, userIdList: this.selectedRowKeys })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+      // this.userRoleVisible = false
     },
     roleOnExpand(expandedKeys) {
       console.log('onExpand', expandedKeys)
@@ -1279,14 +1308,14 @@ export default {
   display: flex;
   justify-content: space-between;
   .userLeft {
-    width: 20%;
+    // width: 20%;
     background: #fff;
     padding: 24px;
     // min-height: 280px;
     height: 100%;
   }
   .userRight {
-    width: 79%;
+    width: 100%;
     background: #fff;
     padding: 24px;
     min-height: 280px;

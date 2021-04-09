@@ -26,7 +26,7 @@ export function Logout(sign, timestamp) {
 // 个人信息
 export function getPersonInfo() {
   return request({
-    url: 'center/person',
+    url: 'system/center/person',
     method: 'get',
     headers: { 'Content-Type': 'x-www-form-urlencoded' },
   })
@@ -35,7 +35,7 @@ export function getPersonInfo() {
 // 应用信息
 export function getClientInfo() {
   return request({
-    url: 'center/client',
+    url: 'system/center/client',
     method: 'get',
     headers: { 'Content-Type': 'x-www-form-urlencoded' },
   })
@@ -44,7 +44,7 @@ export function getClientInfo() {
 // 统一登录
 export function changePassword(newPwd, origPwd) {
   return request({
-    url: 'center/change/password',
+    url: 'system/center/change/password',
     method: 'post',
     data: {
       newPwd: newPwd,

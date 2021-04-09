@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 用户列表
 export function getUserList(params) {
   return request({
-    url: 'user/list',
+    url: 'system/user/list',
     method: 'post',
     data: params,
   })
@@ -12,7 +12,7 @@ export function getUserList(params) {
 // 新增用户信息
 export function createUser(params) {
   return request({
-    url: 'user/create',
+    url: 'system/user/create',
     method: 'post',
     data: params,
   })
@@ -21,7 +21,7 @@ export function createUser(params) {
 // 变更用户状态
 export function activeUser(userId) {
   return request({
-    url: 'user/active',
+    url: 'system/user/active',
     method: 'get',
     headers: { 'Content-Type': 'x-www-form-urlencoded' },
     params: {
@@ -33,7 +33,7 @@ export function activeUser(userId) {
 // 查看用户信息
 export function queryUser(userId) {
   return request({
-    url: 'user/query',
+    url: 'system/user/query',
     method: 'get',
     headers: { 'Content-Type': 'x-www-form-urlencoded' },
     params: {
@@ -45,11 +45,29 @@ export function queryUser(userId) {
 // 重置密码
 export function resetPassword(userId) {
   return request({
-    url: 'user/reset/password',
+    url: 'system/user/reset/password',
     method: 'get',
     headers: { 'Content-Type': 'x-www-form-urlencoded' },
     params: {
       userId: userId,
     },
+  })
+}
+
+// 获取授权角色
+export function accreditRoleList() {
+  return request({
+    url: 'system/user/accredit/role/list',
+    method: 'get',
+    headers: { 'Content-Type': 'x-www-form-urlencoded' },
+  })
+}
+
+// 角色授权
+export function userAccreditRole(params) {
+  return request({
+    url: 'system/user/accredit/role',
+    method: 'post',
+    data: params,
   })
 }

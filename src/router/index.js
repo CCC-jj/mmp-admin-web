@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Index from '../views/index.vue'
 import Login from '../views/account/Login.vue'
 
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
@@ -19,14 +19,14 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    name: 'Index',
+    component: Index,
     redirect: '/home',
     children: [
       {
         path: '/home',
-        name: 'Index',
-        component: () => import('../views/index.vue'),
+        name: 'Home',
+        component: () => import('../views/Home.vue'),
         meta: { title: '首页', key: '2', path: 'Index', subMenu: 'sub1' },
       },
       {
