@@ -389,8 +389,8 @@ export default {
     },
     // 翻页等表格操作
     tableChange(pagination) {
-      console.log(pagination, this.queryInfo)
       this.queryInfo.page = pagination.current
+      this.queryInfo.limit = pagination.pageSize
       this.getTableList()
     },
     // 查看

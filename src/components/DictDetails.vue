@@ -52,7 +52,7 @@
           <a-form-model ref="addRuleForm" :model="actionDictDetailsForm" :rules="addDictDetailsRules" :label-col="{span:6}" :wrapper-col="{span:18}">
             <a-row>
               <a-col :span="12">
-                <a-form-model-item :labelCol="{span: 3}" :wrapperCol="{span: 21}" has-feedback label="字典值编号" prop="dictType">
+                <a-form-model-item has-feedback label="字典值编号" prop="dictType">
                   <a-input v-model="actionDictDetailsForm.dictType" placeholder="请输入字典值编号" />
                 </a-form-model-item>
               </a-col>
@@ -116,7 +116,7 @@
         </a-row>
       </div>
       <!-- 字典表格 -->
-      <a-table :scroll="{ x: 900 }" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childValue}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
+      <a-table :scroll="{ x: 900 }" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childName}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
         <template slot="childDefault" slot-scope="text">
           <span v-if="text">是</span>
           <span v-else>否</span>
@@ -199,14 +199,6 @@ const dataSource = []
 export default {
   name: 'DictDetails',
   inject: ['reloadDetails'],
-  props: {
-    detailsTitle: {
-      type: String,
-    },
-    dictType: {
-      type: String,
-    },
-  },
   data() {
     return {
       title: '暂无',
@@ -276,18 +268,13 @@ export default {
       selectedRowKeys: [],
     }
   },
-  watch: {
-    detailsTitle(val, oldVal) {
-      console.log(val, oldVal)
-      this.title = val
-    },
-    dictType(val, oldVal) {
-      console.log(val, oldVal)
-      this.queryInfoDetails.dictType = val
+  methods: {
+    dataLoading(dictName, dictType) {
+      console.log(dictName, dictType);
+      this.title = dictName
+      this.queryInfoDetails.dictType = dictType
       this.getTableList()
     },
-  },
-  methods: {
     getTableList() {
       this.tableLoading = true
       getDictDetail(this.queryInfoDetails)
@@ -330,6 +317,7 @@ export default {
             if (res.success) {
               this.$message.success('新增成功')
               this.actionDetailsVisible = false
+              this.getTableList()
             } else {
               this.$message.error(res.message)
             }
@@ -366,7 +354,8 @@ export default {
     },
     // 刷新此页面
     refresh() {
-      this.reloadDetails()
+      // this.reloadDetails()
+      this.getTableList()
     },
     // 打开列显隐
     showDrawer() {

@@ -105,7 +105,7 @@
           </a-row>
         </div>
         <!-- 字典表格 -->
-        <a-table :scroll="{ x: 600 }" :loading="listLoading" bordered :data-source="dataSourceList" :columns="columnsList" :row-selection="{selectedRowKeys: selectedRowKeysList, onChange: onSelectChangeList}" :rowKey="(record, index) => {return record.dictType}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfoList.limit, total: total, current: queryInfoList.page, showTotal: ((total) => {return `共 ${total} 条`}) }" :customRow="customRow">
+        <a-table :scroll="{ x: 600 }" :loading="listLoading" bordered :data-source="dataSourceList" :columns="columnsList" :row-selection="{selectedRowKeys: selectedRowKeysList, onChange: onSelectChangeList}" :rowKey="(record, index) => {return record.dictType}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfoList.limit, total: total, current: queryInfoList.page, showTotal: ((total) => {return `共 ${total} 条`}) }" :customRow="customRow" @change="tableChange">
           <template slot="dictStatus" slot-scope="text">
             <!-- <a-switch :checked="text===1?true:false" checked-children="启用" un-checked-children="禁用" @change="(checked,event)=>changeStatus(checked,event,record)"></a-switch> -->
             <span v-if="text===1">启用</span>
@@ -127,7 +127,7 @@
       </div>
     </div>
     <div class="dictDetails">
-      <DictDetails v-if="isAliveDetails" :detailsTitle="detailsTitle" :dictType="dictType"></DictDetails>
+      <DictDetails ref="details" v-if="isAliveDetails"></DictDetails>
     </div>
   </div>
 </template>
@@ -299,6 +299,7 @@ export default {
             if (res.success) {
               this.$message.success('新增成功')
               this.actionListVisible = false
+              this.getTableList()
             } else {
               this.$message.error(res.message)
             }
@@ -367,20 +368,27 @@ export default {
       this.selectedRowKeysList = selectedRowKeys
     },
     // 点击表格行
-    customRow(record, index) {
+    customRow(record) {
       return {
         on: {
           // 鼠标单击行
-          click: (event) => {
+          click: () => {
             // do something
-            console.log(event)
-            console.log(record, index)
-            this.detailsTitle = record.dictName
-            this.dictType = record.dictType
+            // console.log(event)
+            // console.log(record, index)
+            // this.detailsTitle = record.dictName
+            // this.dictType = record.dictType
+            this.$refs.details.dataLoading(record.dictName,record.dictType)
             // this.$store.commit('dict/changeTitle', record.name)
           },
         },
       }
+    },
+    // 翻页等表格操作
+    tableChange(pagination) {
+      this.queryInfoList.page = pagination.current
+      this.queryInfoList.limit = pagination.pageSize
+      this.getTableList()
     },
     // 改变状态开关
     changeStatus(checked, event, record) {

@@ -1241,6 +1241,7 @@ export default {
     // 翻页等表格操作
     tableChange(pagination) {
       this.queryInfo.page = pagination.current
+      this.queryInfo.limit = pagination.pageSize
       this.getTableList()
     },
     // 改变状态开关
