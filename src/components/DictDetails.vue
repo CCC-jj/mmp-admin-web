@@ -15,8 +15,8 @@
                 </a-form-model-item>
               </a-col> -->
               <a-col :span="12">
-                <a-form-model-item label="字典值名称" prop="childName">
-                  <a-input placeholder="字典值名称" v-model="queryInfoDetails.childName" />
+                <a-form-model-item label="名称" prop="childName">
+                  <a-input placeholder="名称" v-model="queryInfoDetails.childName" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
@@ -52,8 +52,8 @@
           <a-form-model ref="addRuleForm" :model="actionDictDetailsForm" :rules="addDictDetailsRules" :label-col="{span:6}" :wrapper-col="{span:18}">
             <a-row>
               <a-col :span="12">
-                <a-form-model-item has-feedback label="字典值编号" prop="dictType">
-                  <a-input v-model="actionDictDetailsForm.dictType" placeholder="请输入字典值编号" />
+                <a-form-model-item has-feedback label="字典编号" prop="dictType">
+                  <a-input v-model="actionDictDetailsForm.dictType" placeholder="请输入字典编号" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
@@ -64,19 +64,19 @@
             </a-row>
             <a-row>
               <a-col :span="12">
-                <a-form-model-item has-feedback label="字典值名称" prop="childName">
-                  <a-input v-model="actionDictDetailsForm.childName" placeholder="请输入字典值名称" />
+                <a-form-model-item has-feedback label="名称" prop="childName">
+                  <a-input v-model="actionDictDetailsForm.childName" placeholder="请输入名称" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
-                <a-form-model-item has-feedback label="字典值排序" prop="childSort">
-                  <a-input-number v-model="actionDictDetailsForm.childSort" style="width: 100%;" placeholder="请输入字典值排序" />
+                <a-form-model-item has-feedback label="排序" prop="childSort">
+                  <a-input-number v-model="actionDictDetailsForm.childSort" style="width: 100%;" placeholder="请输入排序" />
                 </a-form-model-item>
               </a-col>
             </a-row>
             <a-row>
               <a-col :span="12">
-                <a-form-model-item label="字典值状态" prop="childStatus">
+                <a-form-model-item label="状态" prop="childStatus">
                   <a-switch :checked="actionDictDetailsForm.childStatus===1?true:false" checked-children="启用" un-checked-children="禁用" @change="changeDictStatus" />
                 </a-form-model-item>
               </a-col>
@@ -97,7 +97,7 @@
           </a-col>
           <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" @close="drawerOnClose">
             <div style="margin:0 auto;">
-              <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
+              <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="selectedTargetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
             </div>
           </a-drawer>
           <a-col>
@@ -116,7 +116,7 @@
         </a-row>
       </div>
       <!-- 字典表格 -->
-      <a-table :scroll="{ x: 900 }" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childName}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
+      <a-table :scroll="scroll()" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childName}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
         <template slot="childDefault" slot-scope="text">
           <span v-if="text">是</span>
           <span v-else>否</span>
@@ -144,6 +144,51 @@
 
 <script>
 import { getDictDetail, addDictDetail, editDictDetail } from '@/api/system/dict'
+const mockData = [
+  {
+    title: '字典编号',
+    key: 'dictType',
+    dataIndex: 'dictType',
+    description: '字典编号',
+  },
+  {
+    title: '名称',
+    key: 'childName',
+    dataIndex: 'childName',
+    description: '名称',
+  },
+  {
+    title: '字典值',
+    key: 'childValue',
+    dataIndex: 'childValue',
+    description: '字典值',
+  },
+  {
+    title: '排序',
+    key: 'childSort',
+    dataIndex: 'childSort',
+    description: '排序',
+  },
+  {
+    title: '状态',
+    key: 'childStatus',
+    dataIndex: 'childStatus',
+    description: '状态',
+    scopedSlots: { customRender: 'childStatus' },
+  },
+  {
+    title: '是否默认',
+    key: 'childDefault',
+    dataIndex: 'childDefault',
+    description: '是否默认',
+    scopedSlots: { customRender: 'childDefault' },
+  },
+]
+const selectedTargetKeys = ['childName', 'childSort', 'childStatus', 'childDefault']
+const selectedData = []
+selectedTargetKeys.forEach((item) => {
+  selectedData.push(mockData.filter((items) => items.key === item)[0])
+})
 const columns = [
   {
     title: '#',
@@ -152,32 +197,7 @@ const columns = [
     width: '50px',
     fixed: 'left',
   },
-  {
-    title: '字典值编号',
-    dataIndex: 'dictType',
-  },
-  {
-    title: '字典值名称',
-    dataIndex: 'childName',
-  },
-  {
-    title: '字典值',
-    dataIndex: 'childValue',
-  },
-  {
-    title: '字典值排序',
-    dataIndex: 'childSort',
-  },
-  {
-    title: '字典值状态',
-    dataIndex: 'childStatus',
-    scopedSlots: { customRender: 'childStatus' },
-  },
-  {
-    title: '是否默认',
-    dataIndex: 'childDefault',
-    scopedSlots: { customRender: 'childDefault' },
-  },
+  ...selectedData,
   {
     title: '操作',
     scopedSlots: { customRender: 'action' },
@@ -221,46 +241,21 @@ export default {
         childName: '',
         childSort: '',
         childValue: '',
-        childStatus: false,
+        childStatus: 2,
         childDefault: false,
       },
       addDictDetailsRules: {
         dictType: [{ required: true, message: '请输入字典编号', trigger: 'blur' }],
-        childName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
-        childSort: [{ required: true, message: '请输入字典排序', trigger: 'blur' }],
+        childName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        childSort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
         childValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }],
-        childStatus: [{ required: true, message: '请选择是否封存', trigger: 'change' }],
+        childStatus: [{ required: true, message: '请选择状态', trigger: 'change' }],
       },
       // 列显隐
       drawerVisible: false,
-      mockData: [
-        {
-          key: '1',
-          title: '字典排序',
-          description: 'description of 字典排序',
-        },
-        {
-          key: '2',
-          title: '字典备注',
-          description: 'description of 字典备注',
-        },
-        {
-          key: '3',
-          title: '字典编号',
-          description: 'description of 字典编号',
-        },
-        {
-          key: '4',
-          title: '字典名称',
-          description: 'description of 字典名称',
-        },
-        {
-          key: '5',
-          title: '封存',
-          description: 'description of 封存',
-        },
-      ],
-      targetKeys: ['1', '2', '3'],
+      mockData,
+      selectedData,
+      selectedTargetKeys,
       // 字典表格
       columns,
       dataSource,
@@ -269,8 +264,17 @@ export default {
     }
   },
   methods: {
+    scroll(){
+      if (this.selectedTargetKeys.length<=4) {
+        console.log('111');
+        return {x:650}
+      }else{
+        console.log('222');
+        return {x:900}
+      }
+    },
     dataLoading(dictName, dictType) {
-      console.log(dictName, dictType);
+      console.log(dictName, dictType)
       this.title = dictName
       this.queryInfoDetails.dictType = dictType
       this.getTableList()
@@ -371,7 +375,30 @@ export default {
     },
     transferHandleChange(targetKeys, direction, moveKeys) {
       console.log(targetKeys, direction, moveKeys)
-      this.targetKeys = targetKeys
+      this.selectedTargetKeys = targetKeys
+      let list = []
+      targetKeys.forEach((item) => {
+        list.push(this.mockData.filter((items) => items.key === item)[0])
+      })
+      this.selectedData = list
+      this.columns = [
+        {
+          title: '#',
+          align: 'center',
+          customRender: (text, record, index) => `${index + 1}`,
+          width: '50px',
+          fixed: 'left',
+        },
+        ...this.selectedData,
+        {
+          title: '操作',
+          scopedSlots: { customRender: 'action' },
+          align: 'center',
+          width: '100px',
+          fixed: 'right',
+        },
+      ]
+      this.scroll()
     },
     transferHandleSearch(dir, value) {
       console.log('search:', dir, value)

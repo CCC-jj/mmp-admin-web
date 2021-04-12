@@ -63,7 +63,7 @@
                   </a-form-model-item>
                 </a-col>
                 <a-col :span="12">
-                  <a-form-model-item label="字典值状态" prop="dictStatus">
+                  <a-form-model-item label="字典状态" prop="dictStatus">
                     <a-switch :checked="actionDictListForm.dictStatus===1?true:false" checked-children="启用" un-checked-children="禁用" @change="changeDictStatus"></a-switch>
                   </a-form-model-item>
                 </a-col>
@@ -135,6 +135,28 @@
 <script>
 import DictDetails from '@/components/DictDetails'
 import { getDictList, addDictList, editDictList } from '@/api/system/dict'
+const mockData = [
+  {
+    title: '字典编号',
+    key: 'dictType',
+    dataIndex: 'dictType',
+    description: '字典编号',
+  },
+  {
+    title: '字典名称',
+    key: 'dictName',
+    dataIndex: 'dictName',
+    description: '字典名称',
+  },
+  {
+    title: '字典状态',
+    key: 'dictStatus',
+    dataIndex: 'dictStatus',
+    description: '字典状态',
+    scopedSlots: { customRender: 'dictStatus' },
+  },
+]
+const selectedData = [...mockData]
 const columnsList = [
   {
     title: '#',
@@ -143,19 +165,7 @@ const columnsList = [
     width: '50px',
     fixed: 'left',
   },
-  {
-    title: '字典编号',
-    dataIndex: 'dictType',
-  },
-  {
-    title: '字典名称',
-    dataIndex: 'dictName',
-  },
-  {
-    title: '字典值状态',
-    dataIndex: 'dictStatus',
-    scopedSlots: { customRender: 'dictStatus' },
-  },
+  ...selectedData,
   {
     title: '操作',
     scopedSlots: { customRender: 'action' },
@@ -164,6 +174,8 @@ const columnsList = [
     fixed: 'right',
   },
 ]
+
+console.log(selectedData)
 
 export default {
   name: 'Dict',
@@ -206,36 +218,64 @@ export default {
       },
       // 列显隐
       drawerVisible: false,
-      mockData: [
-        {
-          key: '1',
-          title: '字典排序',
-          description: 'description of 字典排序',
-        },
-        {
-          key: '2',
-          title: '字典备注',
-          description: 'description of 字典备注',
-        },
-        {
-          key: '3',
-          title: '字典编号',
-          description: 'description of 字典编号',
-        },
-        {
-          key: '4',
-          title: '字典名称',
-          description: 'description of 字典名称',
-        },
-        {
-          key: '5',
-          title: '封存',
-          description: 'description of 封存',
-        },
-      ],
-      targetKeys: ['1', '2', '3', '4'],
+      mockData,
+      // [
+      //   {
+      //     title: '字典编号',
+      //     key: 'dictType',
+      //     dataIndex: 'dictType',
+      //     description: '字典编号',
+      //   },
+      //   {
+      //     title: '字典名称',
+      //     key: 'dictName',
+      //     dataIndex: 'dictName',
+      //     description: '字典名称',
+      //   },
+      //   {
+      //     title: '字典状态',
+      //     key: 'dictStatus',
+      //     dataIndex: 'dictStatus',
+      //     description: '字典状态',
+      //     scopedSlots: { customRender: 'dictStatus' },
+      //   },
+      // ],
+      selectedData,
+      targetKeys: ['dictType', 'dictName', 'dictStatus'],
       // 字典表格
       columnsList,
+      //  [
+      //   {
+      //     title: '#',
+      //     align: 'center',
+      //     customRender: (text, record, index) => `${index + 1}`,
+      //     width: '50px',
+      //     fixed: 'left',
+      //   },
+      //   {
+      //     title: '字典编号',
+      //     key: 'dictType',
+      //     dataIndex: 'dictType',
+      //   },
+      //   {
+      //     title: '字典名称',
+      //     key: 'dictName',
+      //     dataIndex: 'dictName',
+      //   },
+      //   {
+      //     title: '字典状态',
+      //     key: 'dictStatus',
+      //     dataIndex: 'dictStatus',
+      //     scopedSlots: { customRender: 'dictStatus' },
+      //   },
+      //   {
+      //     title: '操作',
+      //     scopedSlots: { customRender: 'action' },
+      //     align: 'center',
+      //     width: '100px',
+      //     fixed: 'right',
+      //   },
+      // ],
       dataSourceList: [],
       listLoading: false,
       selectedRowKeysList: [],
@@ -331,7 +371,7 @@ export default {
       this.isEdit = false
       this.actionDictListForm = this.$options.data().actionDictListForm
     },
-    // 改变字典值状态
+    // 改变字典状态
     changeDictStatus(checked) {
       this.actionDictListForm.dictStatus = checked ? 1 : 2
     },
@@ -354,6 +394,29 @@ export default {
     transferHandleChange(targetKeys, direction, moveKeys) {
       console.log(targetKeys, direction, moveKeys)
       this.targetKeys = targetKeys
+      let list = []
+      targetKeys.forEach((item) => {
+        list.push(this.mockData.filter((items) => items.key === item)[0])
+      })
+      this.selectedData = list
+      this.columnsList = [
+        {
+          title: '#',
+          align: 'center',
+          customRender: (text, record, index) => `${index + 1}`,
+          width: '50px',
+          fixed: 'left',
+        },
+        ...this.selectedData,
+        {
+          title: '操作',
+          scopedSlots: { customRender: 'action' },
+          align: 'center',
+          width: '100px',
+          fixed: 'right',
+        },
+      ]
+      console.log(this.selectedData)
     },
     transferHandleSearch(dir, value) {
       console.log('search:', dir, value)
@@ -378,7 +441,7 @@ export default {
             // console.log(record, index)
             // this.detailsTitle = record.dictName
             // this.dictType = record.dictType
-            this.$refs.details.dataLoading(record.dictName,record.dictType)
+            this.$refs.details.dataLoading(record.dictName, record.dictType)
             // this.$store.commit('dict/changeTitle', record.name)
           },
         },
