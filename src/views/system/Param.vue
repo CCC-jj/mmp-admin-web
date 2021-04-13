@@ -304,7 +304,7 @@ export default {
       this.$refs.actionRuleForm.validate((valid) => {
         if (valid) {
           this.actionLoading = true
-          addParamList()
+          addParamList(this.actionForm)
             .then((res) => {
               console.log(res)
               if (res.success) {

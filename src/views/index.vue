@@ -20,6 +20,12 @@
             <a-menu-item key="3" value="Role">
               <a-icon type="user" />角色管理
             </a-menu-item>
+            <a-menu-item key="10" value="Role">
+              <a-icon type="thunderbolt" />接口权限
+            </a-menu-item>
+            <a-menu-item key="11" value="Role">
+              <a-icon type="bars" />菜单权限
+            </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub3">
             <span slot="title">
