@@ -1,178 +1,191 @@
 <template>
   <div class="menu">
-    <!-- 搜索栏 -->
-    <transition name="mask">
-      <div class="search" v-show="search">
-        <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="菜单名称" prop="name">
-                <a-input placeholder="菜单名称" v-model="queryInfo.name" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="菜单编号" prop="no">
-                <a-input placeholder="菜单编号" v-model="queryInfo.no" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="角色别名" prop="otherName">
-                <a-input placeholder="角色别名" v-model="queryInfo.otherName" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
-                <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
-                  搜索
-                </a-button>
-                <a-button icon="delete" @click="resetForm">
-                  清空
-                </a-button>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </div>
-    </transition>
-
-    <!-- 操作按钮 -->
-    <div class="operationButton" style="margin-bottom:20px;">
-      <!-- 新增对话框 -->
-      <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="actionVisible" :title="actionTitle" @ok="actionHandleOk" @cancel="actionHandleCancel" :afterClose="afterClose">
-        <template v-if="!viewVisible" slot="footer">
-          <a-button key="submit" type="primary" :loading="actionLoading" icon="plus-circle" @click="actionHandleOk">
-            保存
-          </a-button>
-          <a-button key="back" icon="close-circle" @click="actionHandleCancel">
-            取消
-          </a-button>
-        </template>
-        <template v-else slot="footer">
-          <a-button key="back" type="primary" icon="close-circle" @click="actionHandleCancel">
-            关闭
-          </a-button>
-        </template>
-        <a-form-model ref="actionRuleForm" :model="actionForm" :rules="actionRules" :label-col="{span:6}" :wrapper-col="{span:18}">
-          <a-row>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="菜单名称" prop="name">
-                <a-input :disabled="viewVisible" v-model="actionForm.name" placeholder="请输入菜单名称" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="路由地址" prop="address">
-                <a-input :disabled="viewVisible" v-model="actionForm.address" placeholder="请输入路由地址" />
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :span="12">
-              <a-form-model-item label="上级菜单" prop="upMenu">
-                <a-tree-select :disabled="viewVisible||childVisible" v-model="actionForm.upMenu" :tree-data="upMenuTreeData" show-search style="width: 100%" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择上级菜单" searchPlaceholder="输入关键字进行过滤" allow-clear tree-default-expand-all>
-                </a-tree-select>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="菜单图标" prop="icon">
-                <a-input :disabled="viewVisible" v-model="actionForm.icon" placeholder="请选择菜单图标" />
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="菜单编号" prop="no">
-                <a-input :disabled="viewVisible" v-model="actionForm.no" placeholder="请输入菜单编号" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-model-item label="菜单类型" prop="type">
-                <a-radio-group :disabled="viewVisible" name="radioGroup" v-model="actionForm.type">
-                  <a-radio value="菜单">
-                    菜单
-                  </a-radio>
-                  <a-radio value="按钮">
-                    按钮
-                  </a-radio>
-                </a-radio-group>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="菜单别名" prop="otherName">
-                <a-input :disabled="viewVisible" v-model="actionForm.otherName" placeholder="请输入菜单别名" />
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-model-item has-feedback label="菜单排序" prop="sort">
-                <a-input-number :disabled="viewVisible" v-model="actionForm.sort" placeholder="请输入菜单排序" style="width: 100%;" />
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :span="24">
-              <a-form-model-item has-feedback label="菜单备注" :labelCol="{span: 3}" :wrapperCol="{span: 21}" prop="remarke">
-                <a-input :disabled="viewVisible" v-model="actionForm.remarke" placeholder="请输入菜单备注" />
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </a-modal>
-      <a-row type="flex" justify="space-between">
-        <a-col>
-          <a-space>
-            <a-button type="primary" icon="plus" @click="add">新增</a-button>
-            <a-button type="danger" icon="delete">删除</a-button>
-          </a-space>
-        </a-col>
-        <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" :after-visible-change="afterVisibleChange" @close="drawerOnClose">
-          <div style="margin:0 auto;">
-            <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
-          </div>
-        </a-drawer>
-        <a-col>
-          <a-space>
-            <a-tooltip title="刷新">
-              <a-button shape="circle" icon="reload" @click="refresh" />
-            </a-tooltip>
-            <a-tooltip title="显隐">
-              <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
-            </a-tooltip>
-            <a-tooltip title="搜索">
-              <a-button shape="circle" icon="search" @click="showSearch" />
-            </a-tooltip>
-          </a-space>
-        </a-col>
-      </a-row>
-    </div>
-
-    <!-- 菜单表格 -->
-    <div class="table">
-      <a-table :expandIconColumnIndex="2" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
-        <template slot="action" slot-scope="text,record">
-          <a-space :size="15">
-            <a @click="toView(record)">
-              <a-icon type="eye" /> 查看
-            </a>
-            <a @click="toEdit(record)">
-              <a-icon type="edit" /> 编辑
-            </a>
-            <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
-              <a href="javascript:;">
-                <a-icon type="delete" /> 删除
-              </a>
-            </a-popconfirm>
-            <a @click="addChild(record)">
-              <a-icon type="plus" /> 新增子项
-            </a>
-          </a-space>
+    <!-- 客户端选择 -->
+    <div class="menuLeft">
+      <a-input-search style="margin-bottom: 8px" placeholder="输入关键字进行过滤" @search="onSearch" />
+      <a-table size="small" :loading="clientLoading" :columns="[{title: '客户端名称',dataIndex: 'clientName',scopedSlots: { customRender: 'clientName' }}]" :data-source="clientData" :rowKey="(record, index) => {return record.clientId}" :pagination="{ pageSize: 10, total: clientTotal, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="changeClientTable">
+        <template slot="clientName" slot-scope="text,record">
+          <a @click="selectedClient(record)">{{text}}</a>
         </template>
       </a-table>
+    </div>
+
+    <div class="menuRight">
+      <!-- 搜索栏 -->
+      <transition name="mask">
+        <div class="search" v-show="search">
+          <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
+            <a-row>
+              <a-col :span="6">
+                <a-form-model-item label="菜单名称" prop="resName">
+                  <a-input placeholder="菜单名称" v-model="queryInfo.resName" />
+                </a-form-model-item>
+              </a-col>
+              <!-- <a-col :span="6">
+                <a-form-model-item label="菜单编号" prop="no">
+                  <a-input placeholder="菜单编号" v-model="queryInfo.no" />
+                </a-form-model-item>
+              </a-col> -->
+              <!-- <a-col :span="6">
+                <a-form-model-item label="角色别名" prop="otherName">
+                  <a-input placeholder="角色别名" v-model="queryInfo.otherName" />
+                </a-form-model-item>
+              </a-col> -->
+              <a-col :span="6">
+                <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
+                  <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
+                    搜索
+                  </a-button>
+                  <a-button icon="delete" @click="resetForm">
+                    清空
+                  </a-button>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
+        </div>
+      </transition>
+
+      <!-- 操作按钮 -->
+      <div class="operationButton" style="margin-bottom:20px;">
+        <!-- 新增对话框 -->
+        <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="actionVisible" :title="actionTitle" @ok="actionHandleOk" @cancel="actionHandleCancel" :afterClose="afterClose">
+          <template v-if="!viewVisible" slot="footer">
+            <a-button key="submit" type="primary" :loading="actionLoading" icon="plus-circle" @click="actionHandleOk">
+              保存
+            </a-button>
+            <a-button key="back" icon="close-circle" @click="actionHandleCancel">
+              取消
+            </a-button>
+          </template>
+          <template v-else slot="footer">
+            <a-button key="back" type="primary" icon="close-circle" @click="actionHandleCancel">
+              关闭
+            </a-button>
+          </template>
+          <a-form-model ref="actionRuleForm" :model="actionForm" :rules="actionRules" :label-col="{span:6}" :wrapper-col="{span:18}">
+            <a-row>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="菜单名称" prop="name">
+                  <a-input :disabled="viewVisible" v-model="actionForm.name" placeholder="请输入菜单名称" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="路由地址" prop="address">
+                  <a-input :disabled="viewVisible" v-model="actionForm.address" placeholder="请输入路由地址" />
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="12">
+                <a-form-model-item label="上级菜单" prop="upMenu">
+                  <a-tree-select :disabled="viewVisible||childVisible" v-model="actionForm.upMenu" :tree-data="upMenuTreeData" show-search style="width: 100%" :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="请选择上级菜单" searchPlaceholder="输入关键字进行过滤" allow-clear tree-default-expand-all>
+                  </a-tree-select>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="菜单图标" prop="icon">
+                  <a-input :disabled="viewVisible" v-model="actionForm.icon" placeholder="请选择菜单图标" />
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="菜单编号" prop="no">
+                  <a-input :disabled="viewVisible" v-model="actionForm.no" placeholder="请输入菜单编号" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-model-item label="菜单类型" prop="type">
+                  <a-radio-group :disabled="viewVisible" name="radioGroup" v-model="actionForm.type">
+                    <a-radio value="菜单">
+                      菜单
+                    </a-radio>
+                    <a-radio value="按钮">
+                      按钮
+                    </a-radio>
+                  </a-radio-group>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="菜单别名" prop="otherName">
+                  <a-input :disabled="viewVisible" v-model="actionForm.otherName" placeholder="请输入菜单别名" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-model-item has-feedback label="菜单排序" prop="sort">
+                  <a-input-number :disabled="viewVisible" v-model="actionForm.sort" placeholder="请输入菜单排序" style="width: 100%;" />
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span="24">
+                <a-form-model-item has-feedback label="菜单备注" :labelCol="{span: 3}" :wrapperCol="{span: 21}" prop="remarke">
+                  <a-input :disabled="viewVisible" v-model="actionForm.remarke" placeholder="请输入菜单备注" />
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
+        </a-modal>
+        <a-row type="flex" justify="space-between">
+          <a-col>
+            <a-space>
+              <a-button type="primary" icon="plus" @click="add">新增</a-button>
+              <a-button type="danger" icon="delete">删除</a-button>
+            </a-space>
+          </a-col>
+          <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" :after-visible-change="afterVisibleChange" @close="drawerOnClose">
+            <div style="margin:0 auto;">
+              <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
+            </div>
+          </a-drawer>
+          <a-col>
+            <a-space>
+              <a-tooltip title="刷新">
+                <a-button shape="circle" icon="reload" @click="refresh" />
+              </a-tooltip>
+              <a-tooltip title="显隐">
+                <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
+              </a-tooltip>
+              <a-tooltip title="搜索">
+                <a-button shape="circle" icon="search" @click="showSearch" />
+              </a-tooltip>
+            </a-space>
+          </a-col>
+        </a-row>
+      </div>
+
+      <!-- 菜单表格 -->
+      <div class="table">
+        <a-table :expandIconColumnIndex="2" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
+          <template slot="action" slot-scope="text,record">
+            <a-space :size="15">
+              <a @click="toView(record)">
+                <a-icon type="eye" /> 查看
+              </a>
+              <a @click="toEdit(record)">
+                <a-icon type="edit" /> 编辑
+              </a>
+              <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+                <a href="javascript:;">
+                  <a-icon type="delete" /> 删除
+                </a>
+              </a-popconfirm>
+              <a @click="addChild(record)">
+                <a-icon type="plus" /> 新增子项
+              </a>
+            </a-space>
+          </template>
+        </a-table>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getClientList } from '@/api/system/client'
 const columns = [
   {
     title: '#',
@@ -268,12 +281,29 @@ export default {
   inject: ['reloadCard'],
   data() {
     return {
+      queryClientInfo: {
+        clientStatus: 0,
+        limit: 10,
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
+        searchKey: '',
+      },
+      clientTotal: 0,
+      clientData: [],
+      clientLoading: false,
       // 搜索栏
       search: true,
       queryInfo: {
-        name: '',
-        no: '',
-        otherName: '',
+        // name: '',
+        // no: '',
+        // otherName: '',
+        clientId: '',
+        limit: 10,
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
+        resName: '',
       },
       queryRules: {},
       // 新增对话框
@@ -367,8 +397,41 @@ export default {
       childVisible: false,
     }
   },
-  mounted() {},
+  mounted() {
+    this.getClientList()
+  },
   methods: {
+    // 搜索客户端
+    onSearch(value) {
+      this.queryClientInfo.searchKey = value
+      this.queryClientInfo.page = 1
+      this.getClientList()
+    },
+    // 客户端表格
+    getClientList() {
+      this.clientLoading = true
+      getClientList(this.queryClientInfo)
+        .then((res) => {
+          if (res.success) {
+            this.clientData = res.data
+            this.clientTotal = res.count
+          } else {
+            this.$message.warning(res.message)
+          }
+          this.clientLoading = false
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    changeClientTable(pagination) {
+      this.queryClientInfo.page = pagination.current
+      this.getClientList()
+    },
+    selectedClient(record) {
+      console.log(record);
+      this.queryInfo.clientId = record.clientId
+    },
     // 搜索栏
     onSubmit() {
       this.$refs.queryRuleForm.validate((valid) => {
@@ -494,12 +557,26 @@ export default {
   animation: mask-in 0.2s reverse linear;
 }
 .menu {
-  background: #fff;
-  padding: 24px;
+  // background: #fff;
+  // padding: 24px;
   min-height: 280px;
-  .search {
-    height: 65px;
-    overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  .menuLeft {
+    width: 18%;
+    background: #fff;
+    padding: 24px;
+    height: 100%;
+  }
+  .menuRight {
+    width: 81%;
+    background: #fff;
+    padding: 24px;
+    min-height: 280px;
+    .search {
+      height: 65px;
+      overflow: hidden;
+    }
   }
 }
 </style>

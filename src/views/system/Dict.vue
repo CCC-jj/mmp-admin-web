@@ -296,11 +296,9 @@ export default {
       this.listLoading = true
       getDictList(this.queryInfoList)
         .then((res) => {
-          console.log(res)
           this.dataSourceList = res.data
-          if (res.success) {
-            this.total = res.count
-          } else {
+          this.total = res.count
+          if (!res.success) {
             this.$message.warning(res.message)
           }
           this.listLoading = false

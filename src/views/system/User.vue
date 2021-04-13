@@ -1039,6 +1039,7 @@ export default {
                 this[drawerName] = false
                 this.viewDrawerVisible = false
                 this.$message.success('新增成功')
+                this.getTableList()
               })
               .catch((err) => {
                 console.error(err)

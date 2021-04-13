@@ -7,7 +7,7 @@
       <!-- 搜索栏 -->
       <transition name="mask">
         <div class="search" v-show="searchDetails">
-          <a-form-model ref="queryDetailsRuleForm" :model="queryInfoDetails" :rules="queryRulesDetails" :label-col="{span: 6}" :wrapper-col="{span: 18}">
+          <a-form-model ref="queryDetailsRuleForm" :model="queryInfoDetails" :rules="queryRulesDetails" :label-col="{span: 6}" :wrapper-col="{span: 18}" @keyup.enter.native="onSubmit('queryDetailsRuleForm')">
             <a-row :gutter="16">
               <!-- <a-col :span="12">
                 <a-form-model-item label="字典编号" prop="dictType">
@@ -116,7 +116,7 @@
         </a-row>
       </div>
       <!-- 字典表格 -->
-      <a-table :scroll="scroll()" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childName}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
+      <a-table :scroll="scroll()" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.childName}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfoDetails.limit, total: total, current: queryInfoDetails.page, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="tableChange">
         <template slot="childDefault" slot-scope="text">
           <span v-if="text">是</span>
           <span v-else>否</span>
@@ -261,16 +261,17 @@ export default {
       dataSource,
       tableLoading: false,
       selectedRowKeys: [],
+      total: 0,
     }
   },
   methods: {
-    scroll(){
-      if (this.selectedTargetKeys.length<=4) {
-        console.log('111');
-        return {x:650}
-      }else{
-        console.log('222');
-        return {x:900}
+    scroll() {
+      if (this.selectedTargetKeys.length <= 4) {
+        console.log('111')
+        return { x: 650 }
+      } else {
+        console.log('222')
+        return { x: 900 }
       }
     },
     dataLoading(dictName, dictType) {
@@ -283,11 +284,9 @@ export default {
       this.tableLoading = true
       getDictDetail(this.queryInfoDetails)
         .then((res) => {
-          console.log(res)
           this.dataSource = res.data
-          if (res.success) {
-            this.total = res.count
-          } else {
+          this.total = res.count
+          if (!res.success) {
             this.$message.warning(res.message)
           }
           this.tableLoading = false
@@ -411,6 +410,12 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+    // 翻页等表格操作
+    tableChange(pagination) {
+      this.queryInfoDetails.page = pagination.current
+      this.queryInfoDetails.limit = pagination.pageSize
+      this.getTableList()
     },
     // 编辑
     toEdit(record) {

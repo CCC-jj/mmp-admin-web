@@ -6,13 +6,13 @@
         <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
           <a-row>
             <a-col :span="6">
-              <a-form-model-item label="参数名称" prop="name">
-                <a-input placeholder="参数名称" v-model="queryInfo.name" />
+              <a-form-model-item label="参数名称" prop="paramName">
+                <a-input placeholder="参数名称" v-model="queryInfo.paramName" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item label="参数键名" prop="keyName">
-                <a-input placeholder="参数键名" v-model="queryInfo.keyName" />
+              <a-form-model-item label="参数键名" prop="paramKey">
+                <a-input placeholder="参数键名" v-model="queryInfo.paramKey" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
@@ -48,14 +48,29 @@
           </a-button>
         </template>
         <a-form-model ref="actionRuleForm" :model="actionForm" :rules="actionRules" :label-col="{span:3}" :wrapper-col="{span:21}">
-          <a-form-model-item has-feedback label="参数名称" prop="name">
-            <a-input :disabled="viewVisible" v-model="actionForm.name" />
+          <a-form-model-item has-feedback label="参数名称" prop="paramName">
+            <a-input :disabled="viewVisible" v-model="actionForm.paramName" />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="参数键名" prop="keyName">
-            <a-input :disabled="viewVisible" v-model="actionForm.keyName" />
+          <a-form-model-item has-feedback label="参数键名" prop="paramKey">
+            <a-input :disabled="viewVisible" v-model="actionForm.paramKey" />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="参数键值" prop="keyValue">
-            <a-input :disabled="viewVisible" v-model="actionForm.keyValue" />
+          <a-form-model-item has-feedback label="参数键值" prop="paramValue">
+            <a-input :disabled="viewVisible" v-model="actionForm.paramValue" />
+          </a-form-model-item>
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item label="状态" prop="status" :labelCol="{span: 6}" :wrapperCol="{span: 18}">
+                <a-switch :checked="actionForm.status===1?true:false" @change="(checked, event)=>{actionForm.status=checked?1:2}" checked-children="启用" un-checked-children="禁用"></a-switch>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="是否系统内置参数" prop="sysDefault" :labelCol="{span: 8}" :wrapperCol="{span: 16}">
+                <a-switch v-model="actionForm.sysDefault" checked-children="是" un-checked-children="否"></a-switch>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-form-model-item has-feedback label="备注" prop="remark">
+            <a-input v-model="actionForm.remark" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -63,7 +78,7 @@
         <a-col>
           <a-space>
             <a-button type="primary" icon="plus" @click="add">新增</a-button>
-            <a-button type="danger" icon="delete">删除</a-button>
+            <!-- <a-button type="danger" icon="delete">删除</a-button> -->
           </a-space>
         </a-col>
         <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" :after-visible-change="afterVisibleChange" @close="drawerOnClose">
@@ -88,8 +103,14 @@
     </div>
 
     <!-- 表格数据 -->
-    <a-table :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
-      <template slot="action" slot-scope="text,record">
+    <a-table :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.paramKey}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfo.limit, total: total, current: queryInfo.page, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="tableChange">
+      <template slot="sysDefault" slot-scope="text">
+        <span>{{text?'是':'否'}}</span>
+      </template>
+      <template slot="status" slot-scope="text,record">
+        <a-switch :checked="text===1?true:false" @change="(checked,event)=>changeStatus(checked,event,record)"></a-switch>
+      </template>
+      <!-- <template slot="action" slot-scope="text,record">
         <a-space :size="15">
           <a @click="toView(record)">
             <a-icon type="eye" /> 查看
@@ -97,18 +118,19 @@
           <a @click="toEdit(record)">
             <a-icon type="edit" /> 编辑
           </a>
-          <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+          <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.paramKey)">
             <a href="javascript:;">
               <a-icon type="delete" /> 删除
             </a>
           </a-popconfirm>
         </a-space>
-      </template>
+      </template> -->
     </a-table>
   </div>
 </template>
 
 <script>
+import { getParamList, switchParam, addParamList } from '@/api/system/param'
 const columns = [
   {
     title: '#',
@@ -118,54 +140,68 @@ const columns = [
   },
   {
     title: '参数名称',
-    dataIndex: 'name',
+    dataIndex: 'paramName',
   },
   {
     title: '参数键名',
-    dataIndex: 'keyName',
+    dataIndex: 'paramKey',
   },
   {
     title: '参数键值',
-    dataIndex: 'keyValue',
+    dataIndex: 'paramValue',
   },
   {
-    title: '操作',
-    scopedSlots: { customRender: 'action' },
-    align: 'center',
-    width: '250px',
+    title: '是否系统内置参数',
+    dataIndex: 'sysDefault',
+    scopedSlots: { customRender: 'sysDefault' },
   },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    scopedSlots: { customRender: 'status' },
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+  },
+  // {
+  //   title: '操作',
+  //   scopedSlots: { customRender: 'action' },
+  //   align: 'center',
+  //   width: '250px',
+  // },
 ]
 const dataSource = [
-  {
-    key: 1,
-    name: '是否开启注册功能',
-    keyName: 'account.registerUser',
-    keyValue: 'true',
-  },
-  {
-    key: 2,
-    name: '账号初始密码',
-    keyName: 'account.initPassword',
-    keyValue: 'AsdF1234!',
-  },
-  {
-    key: 3,
-    name: '租户默认管理密码',
-    keyName: 'tenant.default.password',
-    keyValue: 'admin',
-  },
-  {
-    key: 4,
-    name: '账号初始密码',
-    keyName: 'tenant.default.accountNumber',
-    keyValue: '100',
-  },
-  {
-    key: 5,
-    name: '账号初始密码',
-    keyName: 'tenant.default.menuCode',
-    keyValue: 'desk,flow,work,monitor,resource,role,user,dept,post,dictbiz,topmenu',
-  },
+  // {
+  //   key: 1,
+  //   name: '是否开启注册功能',
+  //   keyName: 'account.registerUser',
+  //   keyValue: 'true',
+  // },
+  // {
+  //   key: 2,
+  //   name: '账号初始密码',
+  //   keyName: 'account.initPassword',
+  //   keyValue: 'AsdF1234!',
+  // },
+  // {
+  //   key: 3,
+  //   name: '租户默认管理密码',
+  //   keyName: 'tenant.default.password',
+  //   keyValue: 'admin',
+  // },
+  // {
+  //   key: 4,
+  //   name: '账号初始密码',
+  //   keyName: 'tenant.default.accountNumber',
+  //   keyValue: '100',
+  // },
+  // {
+  //   key: 5,
+  //   name: '账号初始密码',
+  //   keyName: 'tenant.default.menuCode',
+  //   keyValue: 'desk,flow,work,monitor,resource,role,user,dept,post,dictbiz,topmenu',
+  // },
 ]
 export default {
   name: 'Param',
@@ -175,8 +211,12 @@ export default {
       // 搜索栏
       search: true,
       queryInfo: {
-        name: '',
-        keyName: '',
+        limit: 10,
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
+        paramKey: '',
+        paramName: '',
       },
       queryRules: {},
       // 新增对话框
@@ -184,14 +224,17 @@ export default {
       actionVisible: false,
       actionLoading: false,
       actionForm: {
-        name: '',
-        keyName: '',
-        keyValue: '',
+        paramName: '',
+        paramKey: '',
+        paramValue: '',
+        remark: '',
+        status: 2,
+        sysDefault: true,
       },
       actionRules: {
-        name: [{ required: true, message: '请输入参数名称', trigger: 'blur' }],
-        keyName: [{ required: true, message: '请输入参数键名', trigger: 'blur' }],
-        keyValue: [{ required: true, message: '请输入参数键值', trigger: 'blur' }],
+        paramName: [{ required: true, message: '请输入参数名称', trigger: 'blur' }],
+        paramKey: [{ required: true, message: '请输入参数键名', trigger: 'blur' }],
+        paramValue: [{ required: true, message: '请输入参数键值', trigger: 'blur' }],
       },
       // 列显隐
       drawerVisible: false,
@@ -219,21 +262,35 @@ export default {
       columns,
       tableLoading: false, //加载中
       selectedRowKeys: [],
+      total: 0,
       // 查看
       viewVisible: false,
     }
   },
+  mounted() {
+    this.getTableList()
+  },
   methods: {
+    getTableList() {
+      this.tableLoading = true
+      getParamList(this.queryInfo)
+        .then((res) => {
+          console.log(res)
+          this.dataSource = res.data
+          this.total = res.count
+          if (!res.success) {
+            this.$message.warning(res.message)
+          }
+          this.tableLoading = false
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     // 搜索栏
     onSubmit() {
-      this.$refs.queryRuleForm.validate((valid) => {
-        if (valid) {
-          alert('1')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.queryInfo.page = 1
+      this.getTableList()
     },
     resetForm() {
       this.$refs.queryRuleForm.resetFields()
@@ -244,18 +301,31 @@ export default {
       this.actionTitle = '新增'
     },
     actionHandleOk() {
-      // this.actionLoading = true
-      // this.$refs.actionRuleForm.validate((valid) => {
-      //   this.actionLoading = false
-      //   if (valid) {
-      this.actionVisible = false
-      //     this.$message.success('新增成功')
-      //     this.$refs.actionRuleForm.resetFields()
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      // })
+      this.$refs.actionRuleForm.validate((valid) => {
+        if (valid) {
+          this.actionLoading = true
+          addParamList()
+            .then((res) => {
+              console.log(res)
+              if (res.success) {
+                this.actionVisible = false
+                this.$message.success('新增成功')
+                this.getTableList()
+              } else {
+                this.$message.warning(res.message)
+              }
+              this.actionLoading = false
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+
+          // this.$refs.actionRuleForm.resetFields()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     actionHandleCancel() {
       this.actionVisible = false
@@ -299,6 +369,27 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+    // 翻页等表格操作
+    tableChange(pagination) {
+      this.queryInfo.page = pagination.current
+      this.queryInfo.limit = pagination.pageSize
+      this.getTableList()
+    },
+    // 改变状态开关
+    changeStatus(checked, event, record) {
+      switchParam(record.paramKey)
+        .then((res) => {
+          if (res.success) {
+            record.status = checked ? 1 : 2
+            this.$message.success(checked ? '启用成功' : '禁用成功')
+          } else {
+            this.$message.warning(res.message)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
     // 查看
     toView(record) {

@@ -6,13 +6,13 @@
         <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
           <a-row>
             <a-col :span="6">
-              <a-form-model-item label="角色名称" prop="name">
-                <a-input placeholder="角色名称" v-model="queryInfo.name" />
+              <a-form-model-item label="角色名称" prop="roleName">
+                <a-input placeholder="角色名称" v-model="queryInfo.roleName" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item label="角色别名" prop="otherName">
-                <a-input placeholder="角色别名" v-model="queryInfo.otherName" />
+              <a-form-model-item label="角色ID" prop="roleId">
+                <a-input placeholder="角色ID" v-model="queryInfo.roleId" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
@@ -32,7 +32,7 @@
     <!-- 操作按钮 -->
     <div class="operationButton" style="margin-bottom:20px;">
       <!-- 新增对话框 -->
-      <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="addVisible" title="新增" @ok="addHandleOk" @cancel="addHandleCancel">
+      <a-modal destroyOnClose :maskClosable="false" width="800px" v-model="addVisible" title="新增" @ok="addHandleOk" @cancel="addHandleCancel" :afterClose="afterClose">
         <template slot="footer">
           <a-button key="submit" type="primary" :loading="addLoading" icon="plus-circle" @click="addHandleOk">
             保存
@@ -42,30 +42,27 @@
           </a-button>
         </template>
         <a-form-model ref="addRuleForm" :model="addForm" :rules="addRules" :label-col="{span:3}" :wrapper-col="{span:21}">
-          <a-form-model-item has-feedback label="角色名称" prop="name">
-            <a-input v-model="addForm.name" />
+          <a-form-model-item has-feedback label="角色名称" prop="roleName">
+            <a-input v-model="addForm.roleName" />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="角色别名" prop="otherName">
+          <!-- <a-form-model-item has-feedback label="角色别名" prop="otherName">
             <a-input v-model="addForm.otherName" />
-          </a-form-model-item>
-          <a-form-model-item label="上级角色" prop="superior">
-            <a-select v-model="addForm.superior" allowClear show-search placeholder="Select a person" option-filter-prop="children" :filter-option="filterOption">
-              <a-select-option value="超级管理员">
-                超级管理员
-              </a-select-option>
-              <a-select-option value="用户">
-                用户
-              </a-select-option>
-              <a-select-option value="管理员">
-                管理员
-              </a-select-option>
-              <a-select-option value="开发人员">
-                开发人员
+          </a-form-model-item> -->
+          <a-form-model-item has-feedback label="上级角色" prop="parentRoleId">
+            <a-select v-model="addForm.parentRoleId" allowClear show-search placeholder="请选择上级角色" option-filter-prop="children" :filter-option="filterOption">
+              <a-select-option v-for="item in dataSource" :key="item.roleId">
+                {{item.roleName}}
               </a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item has-feedback label="角色排序" prop="sort">
-            <a-input-number v-model="addForm.sort" style="width: 100%;" />
+          <a-form-model-item has-feedback label="角色排序" prop="roleSort">
+            <a-input-number v-model="addForm.roleSort" style="width: 100%;" />
+          </a-form-model-item>
+          <a-form-model-item label="角色状态" prop="roleStatus">
+            <a-switch :checked="addForm.roleStatus===1?true:false" @change="(checked,event)=>{addForm.roleStatus=checked?1:2}"></a-switch>
+          </a-form-model-item>
+          <a-form-model-item label="备注" prop="remark">
+            <a-input v-model="addForm.remark" />
           </a-form-model-item>
         </a-form-model>
       </a-modal>
@@ -113,7 +110,10 @@
     </div>
     <!-- 角色表格 -->
     <div class="table">
-      <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
+      <a-table :loading="roleLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.roleId}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: queryInfo.limit, total: total, current: queryInfo.page, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="tableChange">
+        <template slot="roleStatus" slot-scope="text,record">
+          <a-switch :checked="text===1?true:false" @change="(checked,event)=>changeStatus(checked,event,record)"></a-switch>
+        </template>
         <template slot="action" slot-scope="text,record">
           <a-space :size="15">
             <a @click="toView(record)">
@@ -122,7 +122,7 @@
             <a @click="toEdit(record)">
               <a-icon type="edit" /> 编辑
             </a>
-            <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+            <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.roleId)">
               <a href="javascript:;">
                 <a-icon type="delete" /> 删除
               </a>
@@ -178,6 +178,7 @@
 </template>
 
 <script>
+import { getRoleList, activeRole, addRoleList } from '@/api/authority/role'
 const columns = [
   {
     title: '#',
@@ -186,33 +187,33 @@ const columns = [
     width: '60px',
   },
   {
-    title: '角色名称',
-    dataIndex: 'name',
+    title: '角色ID',
+    dataIndex: 'roleId',
   },
   {
-    title: '角色别名',
-    dataIndex: 'otherName',
+    title: '角色名称',
+    dataIndex: 'roleName',
   },
   {
     title: '角色排序',
-    dataIndex: 'sort',
+    dataIndex: 'roleSort',
   },
   {
-    title: '操作',
-    scopedSlots: { customRender: 'action' },
-    align: 'center',
-    width: '250px',
+    title: '角色状态',
+    dataIndex: 'roleStatus',
+    scopedSlots: { customRender: 'roleStatus' },
   },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+  },
+  // {
+  //   title: '操作',
+  //   scopedSlots: { customRender: 'action' },
+  //   align: 'center',
+  //   width: '250px',
+  // },
 ]
-const dataSource = []
-for (let i = 0; i < 8; i++) {
-  dataSource.push({
-    key: i,
-    name: '超级管理员',
-    otherName: 'administrator',
-    sort: i + 2,
-  })
-}
 const treeData = [
   {
     title: '0-0',
@@ -262,27 +263,33 @@ export default {
   data() {
     return {
       queryInfo: {
-        name: '',
-        otherName: '',
+        limit: 10,
+        orderFiled: '',
+        orderType: 'asc',
+        page: 1,
+        roleId: '',
+        roleName: '',
       },
       queryRules: {},
       search: true,
-      dataSource,
+      dataSource: [],
       columns,
       roleLoading: false,
       selectedRowKeys: [],
+      total: 0,
       addVisible: false, // 新增对话框
       addLoading: false, // 保存新增
       addForm: {
-        name: '',
-        otherName: '',
-        superior: undefined,
-        sort: null,
+        roleName: '',
+        parentRoleId: undefined,
+        roleSort: null,
+        roleStatus: 2,
+        remark: '',
       },
       addRules: {
-        name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-        otherName: [{ required: true, message: '请输入角色别名', trigger: 'blur' }],
-        sort: [{ required: true, message: '请输入角色排序', trigger: 'blur' }],
+        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+        parentRoleId: [{ required: true, message: '请选择上级角色', trigger: 'change' }],
+        roleSort: [{ required: true, message: '请输入角色排序', trigger: 'blur' }],
       },
       authorityVisible: false, //角色权限配置
       expandedKeys: ['0-0-0', '0-0-1'],
@@ -347,16 +354,30 @@ export default {
       console.log('onCheck', val)
     },
   },
+  mounted() {
+    this.getTableList()
+  },
   methods: {
+    getTableList() {
+      this.roleLoading = true
+      getRoleList(this.queryInfo)
+        .then((res) => {
+          console.log(res)
+          this.dataSource = res.data
+          this.total = res.count
+          if (!res.success) {
+            this.$message.warning(res.message)
+          }
+          this.roleLoading = false
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    // 搜索
     onSubmit() {
-      this.$refs.queryRuleForm.validate((valid) => {
-        if (valid) {
-          alert('1')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.queryInfo.page = 1
+      this.getTableList()
     },
     resetForm() {
       this.$refs.queryRuleForm.resetFields()
@@ -366,17 +387,48 @@ export default {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
+    // 翻页等表格操作
+    tableChange(pagination) {
+      this.queryInfo.page = pagination.current
+      this.queryInfo.limit = pagination.pageSize
+      this.getTableList()
+    },
+    // 改变状态开关
+    changeStatus(checked, event, record) {
+      activeRole(record.roleId)
+        .then((res) => {
+          if (res.success) {
+            record.roleStatus = checked ? 1 : 2
+            this.$message.success(checked ? '启用成功' : '禁用成功')
+          } else {
+            this.$message.warning(res.message)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     add() {
       this.addVisible = true
     },
     addHandleOk() {
-      this.addLoading = true
       this.$refs.addRuleForm.validate((valid) => {
-        this.addLoading = false
         if (valid) {
-          this.addVisible = false
-          this.$message.success('新增成功')
-          this.$refs.addRuleForm.resetFields()
+          this.addLoading = true
+          addRoleList(this.addForm)
+            .then((res) => {
+              this.addLoading = false
+              if (res.success) {
+                this.addVisible = false
+                this.$message.success('新增成功')
+                this.getTableList()
+              } else {
+                this.$message.warning(res.message)
+              }
+            })
+            .catch((err) => {
+              console.error(err)
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -385,7 +437,11 @@ export default {
     },
     addHandleCancel() {
       this.addVisible = false
-      this.$refs.addRuleForm.resetFields()
+    },
+    // 对话框关闭后回调
+    afterClose() {
+      this.viewVisible = false
+      this.addForm = this.$options.data().addForm
     },
     filterOption(input, option) {
       return (
@@ -505,7 +561,7 @@ export default {
   // margin-bottom: 24px;
   padding: 24px;
   min-height: 280px;
-  .search{
+  .search {
     height: 65px;
     overflow: hidden;
   }
