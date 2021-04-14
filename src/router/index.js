@@ -57,10 +57,28 @@ const routes = [
         ],
       },
       {
+        path: '/doctorManage/doctorList',
+        name: 'doctorList',
+        component: () => import('../views/doctorManage/doctorList.vue'),
+        meta: { title: '医生列表', key: '12', path: 'doctorList', subMenu: 'sub4' }
+      },
+      {
         path: '/authority/role',
-        name: 'Role',
+        name: 'authRole',
         component: () => import('../views/authority/Role.vue'),
-        meta: { title: '角色管理', key: '3', path: 'Role', subMenu: 'sub2' },
+        meta: { title: '角色管理', key: '3', path: 'authRole', subMenu: 'sub2' },
+      },
+      {
+        path: '/authority/api',
+        name: 'authApi',
+        component: () => import('../views/authority/Api.vue'),
+        meta: { title: '接口权限', key: '10', path: 'authApi', subMenu: 'sub2' },
+      },
+      {
+        path: '/authority/role',
+        name: 'authMenu',
+        component: () => import('../views/authority/Menu.vue'),
+        meta: { title: '菜单权限', key: '11', path: 'authMenu', subMenu: 'sub2' },
       },
       {
         path: '/system/user',
