@@ -17,13 +17,13 @@
             <span slot="title">
               <a-icon type="user" /><span>医生管理</span>
             </span>
-            <a-menu-item key="12" value="doctorList">
+            <a-menu-item key="12" value="DoctorList">
               医生列表
             </a-menu-item>
-            <a-menu-item key="13" value="doctorCheck">
+            <a-menu-item key="13" value="DoctorCheck">
               医生审核
             </a-menu-item>
-            <a-menu-item key="14" value="serviceCheck">
+            <a-menu-item key="14" value="ServiceCheck">
               服务审核
             </a-menu-item>
           </a-sub-menu>
@@ -31,27 +31,33 @@
             <span slot="title">
               <a-icon type="lock" /><span>订单管理</span>
             </span>
-            <a-menu-item key="15" value="authRole">
-              <a-icon type="user" />问诊单管理
+            <a-menu-item key="15" value="Questionnaire">
+              问诊单管理
             </a-menu-item>
-            <a-menu-item key="16" value="authApi">
-              <a-icon type="thunderbolt" />挂号单管理
+            <a-menu-item key="16" value="RegisteredOrder">
+              挂号单管理
             </a-menu-item>
-            <a-menu-item key="17" value="authMenu">
-              <a-icon type="bars" />药品订单管理
+            <a-menu-item key="17" value="DrugOrder" disabled>
+              药品订单管理
+            </a-menu-item>
+            <a-menu-item key="18" value="PrCirculationOrder" disabled>
+              处方流转订单管理
+            </a-menu-item>
+            <a-menu-item key="19" value="RefundApply">
+              退款申请
             </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
             <span slot="title">
               <a-icon type="lock" /><span>权限管理</span>
             </span>
-            <a-menu-item key="3" value="authRole">
+            <a-menu-item key="3" value="AuthRole">
               <a-icon type="user" />角色管理
             </a-menu-item>
-            <a-menu-item key="10" value="authApi">
+            <a-menu-item key="10" value="AuthApi">
               <a-icon type="thunderbolt" />接口权限
             </a-menu-item>
-            <a-menu-item key="11" value="authMenu">
+            <a-menu-item key="11" value="AuthMenu">
               <a-icon type="bars" />菜单权限
             </a-menu-item>
           </a-sub-menu>
@@ -143,7 +149,7 @@ export default {
       isRouterAlive: true,
       collapsed: false,
       selectedKey: [],
-      rootSubmenuKeys: ['sub1', 'sub2', 'sub3'],
+      rootSubmenuKeys: ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'],
       opensubKey: ['sub1'],
     }
   },

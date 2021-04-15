@@ -58,27 +58,57 @@ const routes = [
       },
       {
         path: '/doctorManage/doctorList',
-        name: 'doctorList',
-        component: () => import('../views/doctorManage/doctorList.vue'),
-        meta: { title: '医生列表', key: '12', path: 'doctorList', subMenu: 'sub4' }
+        name: 'DoctorList',
+        component: () => import('../views/doctorManage/DoctorList.vue'),
+        meta: { title: '医生列表', key: '12', path: 'DoctorList', subMenu: 'sub4' }
+      },
+      {
+        path: '/doctorManage/doctorCheck',
+        name: 'DoctorCheck',
+        component: () => import('../views/doctorManage/DoctorCheck.vue'),
+        meta: { title: '医生审核', key: '13', path: 'DoctorCheck', subMenu: 'sub4' }
+      },
+      {
+        path: '/doctorManage/serviceCheck',
+        name: 'ServiceCheck',
+        component: () => import('../views/doctorManage/ServiceCheck.vue'),
+        meta: { title: '服务审核', key: '14', path: 'ServiceCheck', subMenu: 'sub4' }
+      },
+      {
+        path: '/orderManage/questionnaire',
+        name: 'Questionnaire',
+        component: () => import('../views/orderManage/Questionnaire.vue'),
+        meta: { title: '问诊单管理', key: '15', path: 'Questionnaire', subMenu: 'sub5' }
+      },
+      {
+        path: '/orderManage/registeredOrder',
+        name: 'RegisteredOrder',
+        component: () => import('../views/orderManage/RegisteredOrder.vue'),
+        meta: { title: '挂号单管理', key: '16', path: 'RegisteredOrder', subMenu: 'sub5' }
+      },
+      {
+        path: '/orderManage/refundApply',
+        name: 'RefundApply',
+        component: () => import('../views/orderManage/RefundApply.vue'),
+        meta: { title: '退款申请', key: '19', path: 'RefundApply', subMenu: 'sub5' }
       },
       {
         path: '/authority/role',
-        name: 'authRole',
+        name: 'AuthRole',
         component: () => import('../views/authority/Role.vue'),
-        meta: { title: '角色管理', key: '3', path: 'authRole', subMenu: 'sub2' },
+        meta: { title: '角色管理', key: '3', path: 'AuthRole', subMenu: 'sub2' },
       },
       {
         path: '/authority/api',
-        name: 'authApi',
+        name: 'AuthApi',
         component: () => import('../views/authority/Api.vue'),
-        meta: { title: '接口权限', key: '10', path: 'authApi', subMenu: 'sub2' },
+        meta: { title: '接口权限', key: '10', path: 'AuthApi', subMenu: 'sub2' },
       },
       {
         path: '/authority/role',
-        name: 'authMenu',
+        name: 'AuthMenu',
         component: () => import('../views/authority/Menu.vue'),
-        meta: { title: '菜单权限', key: '11', path: 'authMenu', subMenu: 'sub2' },
+        meta: { title: '菜单权限', key: '11', path: 'AuthMenu', subMenu: 'sub2' },
       },
       {
         path: '/system/user',

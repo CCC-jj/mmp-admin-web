@@ -73,6 +73,7 @@
         <a-col>
           <a-space>
             <a-button type="primary" icon="plus" @click="addDoctor">新增医生</a-button>
+            <a-button type="danger" icon="delete">删除</a-button>
             <a-button icon="import">批量导入</a-button>
           </a-space>
         </a-col>
@@ -101,6 +102,150 @@
       </a-tabs>
     </div>
 
+    <!-- 医生操作抽屉 -->
+    <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
+      <div class="actionBox">
+        <div class="title">基本信息</div>
+        <a-row type="flex" justify="space-between">
+          <div style="flex:2">
+            <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt="">
+          </div>
+          <div style="flex:8">
+            <a-descriptions :column="2" size="small" bordered>
+              <a-descriptions-item label="ID">
+                <a-input :disabled="viewVisible" placeholder=""></a-input>
+              </a-descriptions-item>
+              <a-descriptions-item label="姓名">
+                <a-input :disabled="viewVisible" placeholder=""></a-input>
+              </a-descriptions-item>
+              <a-descriptions-item label="手机号">
+                <a-input :disabled="viewVisible" placeholder=""></a-input>
+              </a-descriptions-item>
+              <a-descriptions-item label="平台科室">
+                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
+                  <a-select-option value="内科">
+                    内科
+                  </a-select-option>
+                  <a-select-option value="外科">
+                    外科
+                  </a-select-option>
+                  <a-select-option value="骨科">
+                    骨科
+                  </a-select-option>
+                </a-select>
+              </a-descriptions-item>
+              <a-descriptions-item label="性别">
+                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择性别">
+                  <a-select-option value="男">
+                    男
+                  </a-select-option>
+                  <a-select-option value="女">
+                    女
+                  </a-select-option>
+                </a-select>
+              </a-descriptions-item>
+              <a-descriptions-item label="医院">
+                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择医院">
+                  <a-select-option value="成都四六一医院">
+                    成都四六一医院
+                  </a-select-option>
+                  <a-select-option value="湘雅医学院">
+                    湘雅医学院
+                  </a-select-option>
+                </a-select>
+              </a-descriptions-item>
+              <a-descriptions-item label="职称">
+                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择职称">
+                  <a-select-option value="医师">
+                    医师
+                  </a-select-option>
+                  <a-select-option value="副主任医师">
+                    副主任医师
+                  </a-select-option>
+                  <a-select-option value="主任医师">
+                    主任医师
+                  </a-select-option>
+                </a-select>
+              </a-descriptions-item>
+              <a-descriptions-item label="医院科室">
+                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
+                  <a-select-option value="内科">
+                    内科
+                  </a-select-option>
+                  <a-select-option value="外科">
+                    外科
+                  </a-select-option>
+                  <a-select-option value="骨科">
+                    骨科
+                  </a-select-option>
+                </a-select>
+              </a-descriptions-item>
+              <a-descriptions-item label="注册时间">
+                <a-input :disabled="viewVisible" placeholder=""></a-input>
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+        </a-row>
+
+      </div>
+      <div class="actionBox">
+        <div class="title">擅长</div>
+        <a-textarea :disabled="viewVisible" :auto-size="{ minRows: 4, maxRows: 6 }"></a-textarea>
+      </div>
+      <div class="actionBox">
+        <div class="title">简介</div>
+        <a-textarea :disabled="viewVisible" :auto-size="{ minRows: 6, maxRows: 10 }"></a-textarea>
+      </div>
+      <div class="actionBox">
+        <a-modal :visible="previewVisible" :footer="null" @cancel="previewHandleCancel">
+          <img alt="example" style="width: 100%" :src="previewImage" />
+        </a-modal>
+        <div class="title" style="">照片证书</div>
+        <a-row type="flex" style="margin:15px;">
+          <div style="width:100px;">医生照片</div>
+          <div style="flex:9">
+            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="doctorFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'doctorFileList')">
+              <div v-if="doctorFileList.length < 1">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+          </div>
+        </a-row>
+
+        <a-row type="flex" style="margin:15px;">
+          <div style="width:100px;">执业证书</div>
+          <div style="flex:9">
+            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="practiceFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'practiceFileList')">
+              <div v-if="practiceFileList.length < 9">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+          </div>
+        </a-row>
+
+        <a-row type="flex" style="margin:15px;">
+          <div style="width:100px;">职称证书</div>
+          <div style="flex:9">
+            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="jobFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'jobFileList')">
+              <div v-if="jobFileList.length < 9">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+          </div>
+        </a-row>
+
+      </div>
+    </a-drawer>
+
     <!-- 菜单表格 -->
     <div class="table">
       <a-table size="middle" :expandIconColumnIndex="2" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
@@ -126,6 +271,14 @@
 </template>
 
 <script>
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = (error) => reject(error)
+  })
+}
 const columns = [
   // {
   //   title: '#',
@@ -209,6 +362,18 @@ export default {
       columns,
       dataSource,
       selectedRowKeys: [],
+      // 操作医生
+      actionTitle: '新增医生',
+      actionVisible: false,
+
+      // 上传图片
+      previewVisible: false,
+      previewImage: '',
+      doctorFileList: [],
+      practiceFileList: [],
+      jobFileList: [],
+      // 查看医生详情
+      viewVisible: false,
     }
   },
   methods: {
@@ -227,7 +392,11 @@ export default {
       this.$refs.queryRuleForm.resetFields()
     },
     // 新增医生
-    addDoctor() {},
+    addDoctor() {
+      this.actionTitle = '新增医生'
+      this.actionVisible = true
+      this.viewVisible = false
+    },
     refresh() {
       this.reloadCard()
     },
@@ -242,6 +411,35 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+    // 操作抽屉
+    afterActionVisibleChange(val) {
+      console.log('visible', val)
+    },
+    actionOnClose() {
+      this.actionVisible = false
+    },
+    // 上传图片
+    previewHandleCancel() {
+      this.previewVisible = false
+    },
+    async uploadHandlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+    uploadHandleChange({ fileList }, listName) {
+      console.log(fileList, listName)
+      this[listName] = fileList
+    },
+    // 查看医生详情
+    toView(record) {
+      console.log(record)
+      this.actionTitle = '医生详情'
+      this.actionVisible = true
+      this.viewVisible = true
     },
   },
 }
@@ -268,6 +466,16 @@ export default {
   .search {
     height: 65px;
     overflow: hidden;
+  }
+}
+.actionBox {
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  // padding: 5px;
+  .title {
+    font-size: 16px;
+    background: rgb(250, 250, 250);
+    padding: 10px;
   }
 }
 </style>
