@@ -11,8 +11,8 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item label="科室" prop="room">
-                <a-select v-model="queryInfo.room" placeholder="请选择科室">
+              <a-form-model-item label="科室" prop="department">
+                <a-select v-model="queryInfo.department" placeholder="请选择科室">
                   <a-select-option value="内分泌科">
                     内分泌科
                   </a-select-option>
@@ -113,16 +113,16 @@
           <div style="flex:8">
             <a-descriptions :column="2" size="small" bordered>
               <a-descriptions-item label="ID">
-                <a-input :disabled="viewVisible" placeholder=""></a-input>
+                <a-input v-model="doctorInfo.id" :disabled="viewVisible" placeholder=""></a-input>
               </a-descriptions-item>
               <a-descriptions-item label="姓名">
-                <a-input :disabled="viewVisible" placeholder=""></a-input>
+                <a-input v-model="doctorInfo.name" :disabled="viewVisible" placeholder=""></a-input>
               </a-descriptions-item>
               <a-descriptions-item label="手机号">
-                <a-input :disabled="viewVisible" placeholder=""></a-input>
+                <a-input v-model="doctorInfo.mobile" :disabled="viewVisible" placeholder=""></a-input>
               </a-descriptions-item>
               <a-descriptions-item label="平台科室">
-                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
+                <a-select v-model="doctorInfo.ptDepartmanet" :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
                   <a-select-option value="内科">
                     内科
                   </a-select-option>
@@ -135,7 +135,7 @@
                 </a-select>
               </a-descriptions-item>
               <a-descriptions-item label="性别">
-                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择性别">
+                <a-select v-model="doctorInfo.sex" :disabled="viewVisible" style="width:100%;" placeholder="请选择性别">
                   <a-select-option value="男">
                     男
                   </a-select-option>
@@ -145,7 +145,7 @@
                 </a-select>
               </a-descriptions-item>
               <a-descriptions-item label="医院">
-                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择医院">
+                <a-select v-model="doctorInfo.hospital" :disabled="viewVisible" style="width:100%;" placeholder="请选择医院">
                   <a-select-option value="成都四六一医院">
                     成都四六一医院
                   </a-select-option>
@@ -155,7 +155,7 @@
                 </a-select>
               </a-descriptions-item>
               <a-descriptions-item label="职称">
-                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择职称">
+                <a-select v-model="doctorInfo.job" :disabled="viewVisible" style="width:100%;" placeholder="请选择职称">
                   <a-select-option value="医师">
                     医师
                   </a-select-option>
@@ -168,7 +168,7 @@
                 </a-select>
               </a-descriptions-item>
               <a-descriptions-item label="医院科室">
-                <a-select :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
+                <a-select v-model="doctorInfo.department" :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
                   <a-select-option value="内科">
                     内科
                   </a-select-option>
@@ -181,7 +181,7 @@
                 </a-select>
               </a-descriptions-item>
               <a-descriptions-item label="注册时间">
-                <a-input :disabled="viewVisible" placeholder=""></a-input>
+                <a-input v-model="doctorInfo.time" :disabled="viewVisible" placeholder=""></a-input>
               </a-descriptions-item>
             </a-descriptions>
           </div>
@@ -190,11 +190,11 @@
       </div>
       <div class="actionBox">
         <div class="title">擅长</div>
-        <a-textarea :disabled="viewVisible" :auto-size="{ minRows: 4, maxRows: 6 }"></a-textarea>
+        <a-textarea v-model="doctorInfo.goodAt" :disabled="viewVisible" :auto-size="{ minRows: 4, maxRows: 6 }"></a-textarea>
       </div>
       <div class="actionBox">
         <div class="title">简介</div>
-        <a-textarea :disabled="viewVisible" :auto-size="{ minRows: 6, maxRows: 10 }"></a-textarea>
+        <a-textarea v-model="doctorInfo.introduction" :disabled="viewVisible" :auto-size="{ minRows: 6, maxRows: 10 }"></a-textarea>
       </div>
       <div class="actionBox">
         <a-modal :visible="previewVisible" :footer="null" @cancel="previewHandleCancel">
@@ -300,7 +300,7 @@ const columns = [
   },
   {
     title: '科室',
-    dataIndex: 'room',
+    dataIndex: 'department',
   },
   {
     title: '职称',
@@ -336,7 +336,7 @@ for (let i = 0; i < 8; i++) {
     name: '秦山',
     mobile: '18811110000',
     hospital: '北大医院',
-    room: '内科',
+    department: '内科',
     job: '主任医师',
     joinTime: '2020-02-07 21:00:00',
     status: '已通过',
@@ -353,7 +353,7 @@ export default {
       search: true,
       queryInfo: {
         resName: '',
-        room: undefined,
+        department: undefined,
         job: undefined,
       },
       queryRules: {},
@@ -365,6 +365,19 @@ export default {
       // 操作医生
       actionTitle: '新增医生',
       actionVisible: false,
+      doctorInfo: {
+        id: '',
+        name: '',
+        mobile: '',
+        ptDepartmanet: '',
+        sex: '',
+        hospital: '',
+        job: '',
+        department: '',
+        time: '',
+        goodAt: '',
+        introduction: '',
+      },
 
       // 上传图片
       previewVisible: false,

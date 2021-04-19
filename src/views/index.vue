@@ -47,6 +47,20 @@
               退款申请
             </a-menu-item>
           </a-sub-menu>
+          <a-sub-menu key="sub6">
+            <span slot="title">
+              <a-icon type="trademark" /><span>商品管理</span>
+            </span>
+            <a-menu-item key="20" value="DrugList">
+              药品列表
+            </a-menu-item>
+            <a-menu-item key="21" value="DrugSort">
+              药品分类
+            </a-menu-item>
+            <a-menu-item key="22" value="DrugCheck">
+              药品审核
+            </a-menu-item>
+          </a-sub-menu>
           <a-sub-menu key="sub2">
             <span slot="title">
               <a-icon type="lock" /><span>权限管理</span>
@@ -149,7 +163,7 @@ export default {
       isRouterAlive: true,
       collapsed: false,
       selectedKey: [],
-      rootSubmenuKeys: ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'],
+      rootSubmenuKeys: ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6'],
       opensubKey: ['sub1'],
     }
   },

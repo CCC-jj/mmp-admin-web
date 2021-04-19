@@ -46,7 +46,7 @@
                 </a-select>
               </a-form-model-item>
             </a-col>
-						<a-col :span="6">
+            <a-col :span="6">
               <a-form-model-item label="问诊来源" prop="from">
                 <a-select v-model="queryInfo.from" placeholder="请选择问诊来源">
                   <a-select-option value="图文咨询">
@@ -59,6 +59,11 @@
                     视频咨询
                   </a-select-option>
                 </a-select>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item label="日期" prop="data">
+                <a-range-picker v-model="queryInfo.data" />
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
@@ -76,10 +81,10 @@
       </div>
     </transition>
 
-		<div class="operationButton" style="margin-bottom:20px;">
+    <div class="operationButton" style="margin-bottom:20px;">
       <a-row type="flex" justify="space-between">
         <a-col>
-          
+
         </a-col>
         <a-col>
           <a-space>
@@ -116,18 +121,89 @@
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
       <div class="actionBox">
         <div class="title">患者信息</div>
-        <a-row type="flex" justify="space-between">
-          <div style="flex:2">
-            <!-- <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt=""> -->
-          </div>
-          <div style="flex:8">
-
-          </div>
-        </a-row>
-
+        <div class="content">
+          <a-descriptions :column="4">
+            <a-descriptions-item label="患者姓名">
+              {{patientInfo.name}}
+            </a-descriptions-item>
+            <a-descriptions-item label="性别">
+              {{patientInfo.sex}}
+            </a-descriptions-item>
+            <a-descriptions-item label="年龄">
+              {{patientInfo.age}}
+            </a-descriptions-item>
+            <a-descriptions-item label="手机">
+              {{patientInfo.mobile}}
+            </a-descriptions-item>
+            <a-descriptions-item label="病情描述" :span="4">
+              {{patientInfo.description}}
+            </a-descriptions-item>
+            <a-descriptions-item label="就诊情况">
+              {{patientInfo.situation}}
+            </a-descriptions-item>
+            <a-descriptions-item label="预约时间" :span="2">
+              {{patientInfo.appointment}}
+            </a-descriptions-item>
+            <a-descriptions-item label="提交时间">
+              {{patientInfo.submitTime}}
+            </a-descriptions-item>
+          </a-descriptions>
+        </div>
       </div>
+
       <div class="actionBox">
         <div class="title">订单信息</div>
+        <div class="content">
+          <a-descriptions :column="3">
+            <a-descriptions-item label="订单编号">
+              {{orderInfo.no}}
+            </a-descriptions-item>
+            <a-descriptions-item label="订单类型">
+              {{orderInfo.type}}
+            </a-descriptions-item>
+            <a-descriptions-item label="状态">
+              {{orderInfo.status}}
+            </a-descriptions-item>
+            <a-descriptions-item label="应付金额">
+              {{orderInfo.shouldPay}}
+            </a-descriptions-item>
+            <a-descriptions-item label="优惠券">
+              {{orderInfo.coupon}}
+            </a-descriptions-item>
+            <a-descriptions-item label="实际支付">
+              {{orderInfo.pay}}
+            </a-descriptions-item>
+            <a-descriptions-item label="创建时间">
+              {{orderInfo.createTime}}
+            </a-descriptions-item>
+            <a-descriptions-item label="支付方式">
+              {{orderInfo.payMode}}
+            </a-descriptions-item>
+            <a-descriptions-item label="支付时间">
+              {{orderInfo.payTime}}
+            </a-descriptions-item>
+          </a-descriptions>
+        </div>
+      </div>
+
+      <div class="actionBox">
+        <div class="title">接诊信息</div>
+        <div class="content">
+          <a-descriptions :column="2">
+            <a-descriptions-item label="接诊时间">
+              {{admissionInfo.admissionTime}}
+            </a-descriptions-item>
+            <a-descriptions-item label="通话时长">
+              {{admissionInfo.duration}}
+            </a-descriptions-item>
+            <a-descriptions-item label="患者评分" :span="2">
+              <a-rate v-model="admissionInfo.score" disabled />
+            </a-descriptions-item>
+            <a-descriptions-item label="患者评价" :span="2">
+              {{admissionInfo.evaluation}}
+            </a-descriptions-item>
+          </a-descriptions>
+        </div>
       </div>
     </a-drawer>
 
@@ -227,6 +303,7 @@ export default {
         status: undefined,
         type: undefined,
         from: undefined,
+        data: null,
       },
       queryRules: {},
       // 表格
@@ -239,6 +316,35 @@ export default {
       actionVisible: false,
       // 查看医生详情
       viewVisible: false,
+      patientInfo: {
+        name: '田田',
+        sex: '男',
+        age: 43,
+        mobile: '18812345678',
+        description:
+          '最近一个月总是头晕、头痛、疲劳、心悸等，有时还会出现注意力不集中、记忆力减退、肢体麻木的现象',
+        situation: '未去医院就过诊',
+        appointment: '2020-03-04  周一  18：00-22：00',
+        submitTime: '2020-03-04  11：08：18',
+      },
+      orderInfo: {
+        no: '20200408121324',
+        type: '视频问诊',
+        status: '已完成',
+        shouldPay: '￥40',
+        coupon: '￥10',
+        pay: '￥30',
+        createTime: '2020-03-04  11：08：18',
+        payMode: '微信',
+        payTime: '2020-03-04  11：08：18',
+      },
+      admissionInfo: {
+        admissionTime: '2020-03-04  周一  18：20',
+        duration: '00：16',
+        score: 5,
+        evaluation:
+          '张医生经验丰富，医术精湛，用药精准。因为头晕看了数十位大夫都没有起色，在app上找到张主任，吃药后病情好转了',
+      },
     }
   },
   methods: {
@@ -321,6 +427,9 @@ export default {
     font-size: 16px;
     background: rgb(250, 250, 250);
     padding: 10px;
+  }
+  .content {
+    padding: 24px;
   }
 }
 </style>
