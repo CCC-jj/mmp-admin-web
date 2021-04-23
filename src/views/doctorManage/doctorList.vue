@@ -1,6 +1,16 @@
 <template>
   <div class="doctorList">
     <!-- 搜索栏 -->
+    <div style="float:right;">
+      <a-space>
+        <a-tooltip title="刷新">
+          <a-button shape="circle" icon="reload" @click="refresh" />
+        </a-tooltip>
+        <a-tooltip title="搜索">
+          <a-button shape="circle" icon="search" @click="showSearch" />
+        </a-tooltip>
+      </a-space>
+    </div>
     <transition name="mask">
       <div class="search" v-show="search">
         <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
@@ -75,16 +85,6 @@
             <a-button type="primary" icon="plus" @click="addDoctor">新增医生</a-button>
             <a-button type="danger" icon="delete">删除</a-button>
             <a-button icon="import">批量导入</a-button>
-          </a-space>
-        </a-col>
-        <a-col>
-          <a-space>
-            <a-tooltip title="刷新">
-              <a-button shape="circle" icon="reload" @click="refresh" />
-            </a-tooltip>
-            <a-tooltip title="搜索">
-              <a-button shape="circle" icon="search" @click="showSearch" />
-            </a-tooltip>
           </a-space>
         </a-col>
       </a-row>

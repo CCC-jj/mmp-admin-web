@@ -93,6 +93,24 @@ const routes = [
         meta: { title: '退款申请', key: '19', path: 'RefundApply', subMenu: 'sub5' }
       },
       {
+        path: '/commodityManage/drugList',
+        name: 'DrugList',
+        component: () => import('../views/commodityManage/DrugList.vue'),
+        meta: { title: '药品列表', key: '20', path: 'DrugList', subMenu: 'sub6' }
+      },
+      {
+        path: '/commodityManage/drugSort',
+        name: 'DrugSort',
+        component: () => import('../views/commodityManage/DrugSort.vue'),
+        meta: { title: '药品分类', key: '21', path: 'DrugSort', subMenu: 'sub6' }
+      },
+      {
+        path: '/commodityManage/drugCheck',
+        name: 'DrugCheck',
+        component: () => import('../views/commodityManage/DrugCheck.vue'),
+        meta: { title: '药品审核', key: '22', path: 'DrugCheck', subMenu: 'sub6' }
+      },
+      {
         path: '/authority/role',
         name: 'AuthRole',
         component: () => import('../views/authority/Role.vue'),

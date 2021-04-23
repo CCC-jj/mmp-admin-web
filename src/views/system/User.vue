@@ -17,6 +17,19 @@
 
     <div class="userRight">
       <!-- 搜索栏 -->
+      <div style="float:right;">
+      <a-space>
+        <a-tooltip title="刷新">
+          <a-button shape="circle" icon="reload" @click="refresh" />
+        </a-tooltip>
+        <a-tooltip title="显隐">
+          <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
+        </a-tooltip>
+        <a-tooltip title="搜索">
+          <a-button shape="circle" icon="search" @click="showSearch" />
+        </a-tooltip>
+      </a-space>
+    </div>
       <transition name="mask">
         <div class="search" v-show="search">
           <a-form-model ref="ruleForm" :model="queryInfo" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol" @keyup.enter.native="onSubmit">
@@ -228,19 +241,6 @@
               <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
             </div>
           </a-drawer>
-          <a-col>
-            <a-space>
-              <a-tooltip title="刷新">
-                <a-button shape="circle" icon="reload" @click="refresh" />
-              </a-tooltip>
-              <a-tooltip title="显隐">
-                <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
-              </a-tooltip>
-              <a-tooltip title="搜索">
-                <a-button shape="circle" icon="search" @click="showSearch" />
-              </a-tooltip>
-            </a-space>
-          </a-col>
         </a-row>
       </div>
 

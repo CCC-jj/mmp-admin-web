@@ -1,6 +1,16 @@
 <template>
   <div class="ServiceCheck">
     <!-- 搜索栏 -->
+    <div style="float:right;">
+      <a-space>
+        <a-tooltip title="刷新">
+          <a-button shape="circle" icon="reload" @click="refresh" />
+        </a-tooltip>
+        <a-tooltip title="搜索">
+          <a-button shape="circle" icon="search" @click="showSearch" />
+        </a-tooltip>
+      </a-space>
+    </div>
     <transition name="mask">
       <div class="search" v-show="search">
         <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
@@ -77,16 +87,7 @@
             <!-- <a-button icon="import">批量导入</a-button> -->
           </a-space>
         </a-col>
-        <a-col>
-          <a-space>
-            <a-tooltip title="刷新">
-              <a-button shape="circle" icon="reload" @click="refresh" />
-            </a-tooltip>
-            <a-tooltip title="搜索">
-              <a-button shape="circle" icon="search" @click="showSearch" />
-            </a-tooltip>
-          </a-space>
-        </a-col>
+        
       </a-row>
     </div>
 
@@ -104,6 +105,11 @@
 
     <!-- 医生操作抽屉 -->
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
+      <a-row style="margin-bottom: 10px;">
+        <a-col type="flex" justify="flex-end">
+          <a-button style="float:right;" @click="toCheck(doctorInfo)">审核</a-button>
+        </a-col>
+      </a-row>
       <div class="actionBox">
         <div class="title">基本信息</div>
         <a-row type="flex" justify="space-between">
@@ -257,7 +263,7 @@
             <a @click="toView(record)">
               <a-icon type="eye" /> 查看
             </a>
-            <a @click="toEdit(record)">
+            <a @click="toCheck(record)">
               <a-icon type="edit" /> 审核
             </a>
             <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
@@ -269,6 +275,23 @@
         </template>
       </a-table>
     </div>
+
+    <a-modal :zIndex="1001" v-model="checkVisible" title="医生审核" @ok="checkHandleOk">
+      <p>姓名： {{checkInfo.name}}</p>
+      <p>审核：
+        <a-radio-group v-model="checkInfo.result">
+          <a-radio value="审核通过">
+            审核通过
+          </a-radio>
+          <a-radio value="审核不通过">
+            审核不通过
+          </a-radio>
+        </a-radio-group>
+      </p>
+      <p>备注：
+        <a-textarea v-model="checkInfo.remark" :rows="4" />
+      </p>
+    </a-modal>
 
   </div>
 </template>
@@ -393,6 +416,13 @@ export default {
       jobFileList: [],
       // 查看医生详情
       viewVisible: false,
+      // 审核
+      checkVisible: false,
+      checkInfo: {
+        name: '',
+        result: '审核通过',
+        remark: '',
+      },
     }
   },
   methods: {
@@ -459,6 +489,16 @@ export default {
       this.actionTitle = '医生详情-待审核'
       this.actionVisible = true
       this.viewVisible = true
+    },
+    // 审核
+    toCheck(record) {
+      console.log(record)
+      this.checkInfo = record
+      this.checkVisible = true
+    },
+    checkHandleOk() {
+      this.checkVisible = false
+      console.log(this.checkInfo)
     },
   },
 }

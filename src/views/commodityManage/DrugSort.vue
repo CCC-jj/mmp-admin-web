@@ -1,6 +1,5 @@
 <template>
-  <div class="RefundApply">
-    <!-- 搜索栏 -->
+  <div class="DrugSort">
     <div style="float:right;">
       <a-space>
         <a-tooltip title="刷新">
@@ -11,21 +10,17 @@
         </a-tooltip>
       </a-space>
     </div>
+    <!-- 搜索栏 -->
     <transition name="mask">
       <div class="search" v-show="search">
         <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
           <a-row>
             <a-col :span="6">
-              <a-form-model-item label="名称" prop="resName">
-                <a-input placeholder="输入患者名称或手机号" v-model="queryInfo.resName" />
+              <a-form-model-item label="菜单名称" prop="resName">
+                <a-input placeholder="菜单名称" v-model="queryInfo.resName" />
               </a-form-model-item>
             </a-col>
 
-            <a-col :span="6">
-              <a-form-model-item label="日期" prop="data">
-                <a-range-picker v-model="queryInfo.data" />
-              </a-form-model-item>
-            </a-col>
             <a-col :span="6">
               <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
                 <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
@@ -36,72 +31,64 @@
                 </a-button>
               </a-form-model-item>
             </a-col>
+
           </a-row>
         </a-form-model>
       </div>
     </transition>
 
+    <!-- 操作按钮 -->
     <div class="operationButton" style="margin-bottom:20px;">
       <a-row type="flex" justify="space-between">
         <a-col>
-
+          <a-space>
+            <a-button type="primary" icon="plus" @click="add">新增分类</a-button>
+            <a-button type="danger" icon="delete">批量删除</a-button>
+            <!-- <a-button icon="import">批量导入</a-button> -->
+          </a-space>
         </a-col>
+
       </a-row>
     </div>
-
-    <!-- 切换标签 -->
-    <div class="tabs">
-      <a-tabs default-active-key="1" @change="changeTabs">
-        <a-tab-pane key="1" tab="全部">
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="待处理">
-        </a-tab-pane>
-        <a-tab-pane key="3" tab="已处理">
-        </a-tab-pane>
-        <a-tab-pane key="4" tab="已拒绝">
-        </a-tab-pane>
-      </a-tabs>
-    </div>
-
-    <!-- 医生操作抽屉 -->
-    <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
-      <div class="actionBox">
-        <div class="title">患者信息</div>
-        <a-row type="flex" justify="space-between">
-          <div style="flex:2">
-            <!-- <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt=""> -->
-          </div>
-          <div style="flex:8">
-
-          </div>
-        </a-row>
-
-      </div>
-      <div class="actionBox">
-        <div class="title">订单信息</div>
-      </div>
-    </a-drawer>
 
     <!-- 菜单表格 -->
     <div class="table">
       <a-table size="middle" :expandIconColumnIndex="2" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
         <template slot="action" slot-scope="text,record">
           <a-space :size="15">
-            <a @click="toView(record)">
-              <a-icon type="eye" /> 查看订单
-            </a>
-            <!-- <a @click="toEdit(record)">
-              <a-icon type="edit" /> 查看粉丝
+            <!-- <a @click="toView(record)">
+              <a-icon type="eye" /> 查看
             </a> -->
-            <!-- <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
+            <a @click="toEdit(record)">
+              <a-icon type="edit" /> 编辑
+            </a>
+            <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
               <a href="javascript:;">
                 <a-icon type="delete" /> 删除
               </a>
-            </a-popconfirm> -->
+            </a-popconfirm>
           </a-space>
         </template>
       </a-table>
     </div>
+
+    <a-modal :zIndex="1001" v-model="actionVisible" :title="actionTitle" @ok="checkHandleOk">
+      <p>分类名称： {{actionInfo.name}}</p>
+      <p>备注：
+        <a-textarea v-model="actionInfo.remark" :rows="4" />
+      </p>
+      <p>是否显示：
+        <a-radio-group v-model="actionInfo.result">
+          <a-radio value="是">
+            是
+          </a-radio>
+          <a-radio value="否">
+            否
+          </a-radio>
+        </a-radio-group>
+      </p>
+    </a-modal>
+
   </div>
 </template>
 
@@ -114,44 +101,24 @@ const columns = [
   //   width: '60px',
   // },
   {
-    title: '服务编号',
-    dataIndex: 'no',
-  },
-  {
-    title: '申请时间',
-    dataIndex: 'time',
-  },
-  {
-    title: '用户',
+    title: '分类名称',
     dataIndex: 'name',
-  },
-  // {
-  //   title: '科室',
-  //   dataIndex: 'room',
-  // },
-  // {
-  //   title: '医生',
-  //   dataIndex: 'doctor',
-  // },
-  // {
-  //   title: '方式',
-  //   dataIndex: 'type',
-  // },
-  {
-    title: '问诊费',
-    dataIndex: 'cost',
-  },
-  {
-    title: '来源',
-    dataIndex: 'from',
   },
   {
     title: '状态',
     dataIndex: 'status',
   },
   {
-    title: '处理时间',
-    dataIndex: 'doTime',
+    title: '备注',
+    dataIndex: 'remark',
+  },
+  {
+    title: '上传人',
+    dataIndex: 'doPeople',
+  },
+  {
+    title: '添加时间',
+    dataIndex: 'joinTime',
   },
   {
     title: '操作',
@@ -164,20 +131,15 @@ const dataSource = []
 for (let i = 0; i < 8; i++) {
   dataSource.push({
     key: i,
-		no: '20200202',
-    name: '18812341234',
-    time: '2020-02-07 21:00:00',
-    // room: '内科',
-    // doctor: '张三',
-    // type: '视频问诊',
-    from: '挂号预约',
-    cost: '200',
-    status: '待处理',
-		doTime: '2020-02-07 21:00:00'
+    name: '呼吸系统用药',
+    status: '显示',
+    remark: '备注内容',
+    doPeople: 'admin',
+    joinTime: '2020-02-07 21:00:00',
   })
 }
 export default {
-  name: 'RefundApply',
+  name: 'DrugSort',
   inject: ['reloadCard'],
   data() {
     return {
@@ -185,10 +147,8 @@ export default {
       search: true,
       queryInfo: {
         resName: '',
-        status: undefined,
-        type: undefined,
-        from: undefined,
-        data: null,
+        room: undefined,
+        job: undefined,
       },
       queryRules: {},
       // 表格
@@ -196,11 +156,14 @@ export default {
       columns,
       dataSource,
       selectedRowKeys: [],
-      // 操作医生
+      // 操作
       actionTitle: '新增医生',
       actionVisible: false,
-      // 查看医生详情
-      viewVisible: false,
+      actionInfo: {
+        name: '',
+        remark: '',
+        result: undefined,
+      },
     }
   },
   methods: {
@@ -218,16 +181,16 @@ export default {
     resetForm() {
       this.$refs.queryRuleForm.resetFields()
     },
-    // 刷新
+    // 新增医生
+    add() {
+      this.actionTitle = '新增分类'
+      this.actionVisible = true
+    },
     refresh() {
       this.reloadCard()
     },
-    // 搜索栏
     showSearch() {
       this.search = !this.search
-    },
-    changeTabs(key) {
-      console.log(key)
     },
     // 表格
     // 勾选表单数据
@@ -235,18 +198,14 @@ export default {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
-    // 操作抽屉
-    afterActionVisibleChange(val) {
-      console.log('visible', val)
-    },
-    actionOnClose() {
-      this.actionVisible = false
-    },
-    // 查看医生详情
-    toView(record) {
-      console.log(record)
-      this.actionTitle = '订单详情'
+    // 编辑
+    toEdit(record) {
+      this.actionTitle = '分类编辑'
+      this.actionInfo = record
       this.actionVisible = true
+    },
+    checkHandleOk() {
+      this.actionVisible = false
     },
   },
 }
@@ -267,7 +226,7 @@ export default {
 .mask-leave-active {
   animation: mask-in 0.2s reverse linear;
 }
-.RefundApply {
+.DrugSort {
   background: #fff;
   padding: 24px;
   .search {
