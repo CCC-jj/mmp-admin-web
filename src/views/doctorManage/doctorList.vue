@@ -244,6 +244,25 @@
         </a-row>
 
       </div>
+
+      <div :style="{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+          zIndex: 1,
+        }">
+        <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="actionOnClose">
+          取消
+        </a-button>
+        <a-button icon="plus-circle" type="primary" @click="actionOnSave">
+          保存
+        </a-button>
+      </div>
     </a-drawer>
 
     <!-- 菜单表格 -->
@@ -431,6 +450,16 @@ export default {
     },
     actionOnClose() {
       this.actionVisible = false
+    },
+    actionOnSave() {
+      // this.$refs.actionRuleForm.validate((valid) => {
+      //   if (valid) {
+      //     alert('submit!')
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
     // 上传图片
     previewHandleCancel() {

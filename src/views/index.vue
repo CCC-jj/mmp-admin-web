@@ -61,6 +61,14 @@
               药品审核
             </a-menu-item>
           </a-sub-menu>
+          <a-sub-menu key="sub7">
+            <span slot="title">
+              <a-icon type="container" /><span>内容管理</span>
+            </span>
+            <a-menu-item key="23" value="HospitalManage">
+              医院管理
+            </a-menu-item>
+          </a-sub-menu>
           <a-sub-menu key="sub2">
             <span slot="title">
               <a-icon type="lock" /><span>权限管理</span>
@@ -96,6 +104,35 @@
             </a-menu-item>
             <a-menu-item key="9" value="Client">
               <a-icon type="appstore" />客户端管理
+            </a-menu-item>
+          </a-sub-menu>
+          <a-sub-menu key="sub8">
+            <span slot="title">
+              <a-icon type="message" /><span>微信管理</span>
+            </span>
+            <a-menu-item key="24" value="WxMenu">
+              公众号菜单
+            </a-menu-item>
+            <a-menu-item key="25" value="WxMaterial">
+              素材管理
+            </a-menu-item>
+            <a-menu-item key="26" value="WxReply">
+              自动回复规则
+            </a-menu-item>
+            <a-menu-item key="27" value="WxTemplate">
+              模板消息
+            </a-menu-item>
+            <a-menu-item key="28" value="WxQRcode">
+              带参二维码
+            </a-menu-item>
+            <a-menu-item key="29" value="WxFans">
+              粉丝管理
+            </a-menu-item>
+            <a-menu-item key="30" value="WxMessage">
+              公众号消息
+            </a-menu-item>
+            <a-menu-item key="31" value="WxAccount">
+              公众号账号
             </a-menu-item>
           </a-sub-menu>
           <a-menu-item key="1" value="Account">
@@ -163,7 +200,7 @@ export default {
       isRouterAlive: true,
       collapsed: false,
       selectedKey: [],
-      rootSubmenuKeys: ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6'],
+      rootSubmenuKeys: ['sub1', 'sub2', 'sub3', 'sub4', 'sub5', 'sub6', 'sub7', 'sub8'],
       opensubKey: ['sub1'],
     }
   },

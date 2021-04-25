@@ -55,7 +55,7 @@
       <a-row type="flex" justify="space-between">
         <a-col>
           <a-space>
-            <a-button type="primary" icon="plus" @click="addDoctor">新增医生</a-button>
+            <a-button type="primary" icon="plus" @click="addDoctor">新增药品</a-button>
             <a-button type="danger" icon="delete">删除</a-button>
             <a-button icon="import">批量导入</a-button>
           </a-space>

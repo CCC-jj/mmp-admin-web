@@ -111,6 +111,12 @@ const routes = [
         meta: { title: '药品审核', key: '22', path: 'DrugCheck', subMenu: 'sub6' }
       },
       {
+        path: '/contentManage/hospital',
+        name: 'HospitalManage',
+        component: () => import('../views/contentManage/HospitalManage.vue'),
+        meta: { title: '医院管理', key: '23', path: 'HospitalManage', subMenu: 'sub7' }
+      },
+      {
         path: '/authority/role',
         name: 'AuthRole',
         component: () => import('../views/authority/Role.vue'),
