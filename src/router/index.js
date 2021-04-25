@@ -170,6 +170,12 @@ const routes = [
         component: () => import('../views/system/Client.vue'),
         meta: { title: '客户端管理', key: '9', path: 'Client', subMenu: 'sub3' },
       },
+      {
+        path: '/wxManage/wxMenu',
+        name: 'WxMenu',
+        component: () => import('../views/wxManage/WxMenu.vue'),
+        meta: { title: '公众号菜单', key: '24', path: 'WxMenu', subMenu: 'sub8' },
+      },
     ],
   },
 ]
