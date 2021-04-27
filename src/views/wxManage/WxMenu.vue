@@ -25,7 +25,9 @@
                 <i class="menu-arrow arrow_in"></i>
               </ul>
             </li>
-            <li class="menu-item" v-if="menu.buttons.length<3" @click="addMenu(1)"> <a-icon type="plus" /></li>
+            <li class="menu-item" v-if="menu.buttons.length<3" @click="addMenu(1)">
+              <a-icon type="plus" />
+            </li>
           </ul>
         </div>
       </div>
@@ -35,8 +37,10 @@
       </div>
     </div>
     <div class="weixin-btn-group" @click="updateWxMenu">
-      <a-button type="success" icon="upload">发布</a-button>
-      <a-button type="warning" icon="delete" @click="delMenu">清空</a-button>
+      <a-space>
+        <a-button type="primary" icon="upload">发布</a-button>
+        <a-button type="danger" icon="delete" @click="delMenu">清空</a-button>
+      </a-space>
     </div>
   </div>
 </template>
@@ -50,7 +54,7 @@ export default {
   },
   data() {
     return {
-      menu: { 'buttons': [] }, //当前菜单
+      menu: { buttons: [] }, //当前菜单
       selectedMenuIndex: '', //当前选中菜单索引
       selectedSubMenuIndex: '', //当前选中子菜单索引
       selectedMenuLevel: 0, //选中菜单级别
@@ -58,478 +62,478 @@ export default {
       onDragOverMenu: '', //当前鼠标拖动到的位置
     }
   },
-	mounted() {
-		this.getWxMenu();
-	},
+  mounted() {
+    this.getWxMenu()
+  },
   methods: {
-		getWxMenu() {
-            // this.$http({
-            //     url: this.$http.adornUrl('/manage/wxMenu/getMenu')
-            // }).then(({ data }) => {
-            //     if (data.code == 200) {
-            //         this.menu = data.data.menu;
-            //     } else {
-            //         this.$message({
-            //             type: 'error',
-            //             message: data.msg
-            //         });
-            //     }
-
-            // });
-        },
-        //选中主菜单
-        selectMenu(i) {
-            this.selectedMenuLevel = 1
-            this.selectedSubMenuIndex = ''
-            this.selectedMenuIndex = i
-            this.selectedButton = this.menu.buttons[i]
-        },
-        //选中子菜单
-        selectSubMenu(i,i2) {
-            this.selectedMenuLevel = 2
-            this.selectedMenuIndex = i
-            this.selectedSubMenuIndex = i2
-            this.selectedButton = this.menu.buttons[i].subButtons[i2]
-        },
-        //添加菜单
-        addMenu(level,i) {
-            if (level == 1 && this.menu.buttons.length < 3) {
-                this.menu.buttons.push({
-                    "type": "view",
-                    "name": "菜单名称",
-                    "subButtons": [],
-                    "url": ""
-                })
-                this.selectMenu(this.menu.buttons.length - 1)
-            }
-            if (level == 2 && this.menu.buttons[i].subButtons.length < 5) {
-                this.menu.buttons[i].subButtons.push({
-                    "type": "view",
-                    "name": "子菜单名称",
-                    "url": ""
-                })
-                this.selectSubMenu(i,this.menu.buttons[i].subButtons.length - 1)
-            }
-        },
-        //删除菜单
-        delMenu() {
-            if (this.selectedMenuLevel == 1 && confirm('删除后菜单下设置的内容将被删除')) {
-                this.menu.buttons.splice(this.selectedMenuIndex, 1);
-                this.unSelectMenu()
-            } else if (this.selectedMenuLevel == 2) {
-                this.menu.buttons[this.selectedMenuIndex].subButtons.splice(this.selectedSubMenuIndex, 1);
-                this.unSelectMenu()
-            }
-        },
-        unSelectMenu(){//不选中任何菜单
-            this.selectedMenuLevel = 0
-            this.selectedMenuIndex = ''
-            this.selectedSubMenuIndex = ''
-            this.selectedButton = ''
-        },
-        updateWxMenu() {
-            // this.$http({
-            //     url: this.$http.adornUrl('/manage/wxMenu/updateMenu'),
-            //     data: this.menu,
-            //     method: 'post'
-            // }).then(({ data }) => {
-            //     if (data.code == 200) {
-            //         this.$message.success('操作成功')
-            //     } else {
-            //         this.$message.error(data.msg);
-            //     }
-
-            // });
-        },
-        onDrop(i,i2){//拖拽移动位置
-            this.onDragOverMenu='';
-            if(i==this.selectedMenuIndex && i2==this.selectedSubMenuIndex) //拖拽到了原位置
-                return 
-            if(i!=this.selectedMenuIndex && this.menu.buttons[i].subButtons.length>=5){
-                this.$message.error('目标组已满');
-                return
-            }
-            this.menu.buttons[i].subButtons.splice(i2,0,this.selectedButton)
-            let delSubIndex = this.selectedSubMenuIndex
-            if(i==this.selectedMenuIndex && i2<this.selectedSubMenuIndex) 
-                delSubIndex++
-            this.menu.buttons[this.selectedMenuIndex].subButtons.splice(delSubIndex, 1);
-            this.unSelectMenu()
-        }
-	},
+    getWxMenu() {
+      // this.$http({
+      //     url: this.$http.adornUrl('/manage/wxMenu/getMenu')
+      // }).then(({ data }) => {
+      //     if (data.code == 200) {
+      //         this.menu = data.data.menu;
+      //     } else {
+      //         this.$message({
+      //             type: 'error',
+      //             message: data.msg
+      //         });
+      //     }
+      // });
+    },
+    //选中主菜单
+    selectMenu(i) {
+      this.selectedMenuLevel = 1
+      this.selectedSubMenuIndex = ''
+      this.selectedMenuIndex = i
+      this.selectedButton = this.menu.buttons[i]
+    },
+    //选中子菜单
+    selectSubMenu(i, i2) {
+      this.selectedMenuLevel = 2
+      this.selectedMenuIndex = i
+      this.selectedSubMenuIndex = i2
+      this.selectedButton = this.menu.buttons[i].subButtons[i2]
+    },
+    //添加菜单
+    addMenu(level, i) {
+      if (level == 1 && this.menu.buttons.length < 3) {
+        this.menu.buttons.push({
+          type: 'view',
+          name: '菜单名称',
+          subButtons: [],
+          url: '',
+        })
+        this.selectMenu(this.menu.buttons.length - 1)
+      }
+      if (level == 2 && this.menu.buttons[i].subButtons.length < 5) {
+        this.menu.buttons[i].subButtons.push({
+          type: 'view',
+          name: '子菜单名称',
+          url: '',
+        })
+        this.selectSubMenu(i, this.menu.buttons[i].subButtons.length - 1)
+      }
+    },
+    //删除菜单
+    delMenu() {
+      if (this.selectedMenuLevel == 1 && confirm('删除后菜单下设置的内容将被删除')) {
+        this.menu.buttons.splice(this.selectedMenuIndex, 1)
+        this.unSelectMenu()
+      } else if (this.selectedMenuLevel == 2) {
+        this.menu.buttons[this.selectedMenuIndex].subButtons.splice(this.selectedSubMenuIndex, 1)
+        this.unSelectMenu()
+      }
+    },
+    unSelectMenu() {
+      //不选中任何菜单
+      this.selectedMenuLevel = 0
+      this.selectedMenuIndex = ''
+      this.selectedSubMenuIndex = ''
+      this.selectedButton = ''
+    },
+    updateWxMenu() {
+      // this.$http({
+      //     url: this.$http.adornUrl('/manage/wxMenu/updateMenu'),
+      //     data: this.menu,
+      //     method: 'post'
+      // }).then(({ data }) => {
+      //     if (data.code == 200) {
+      //         this.$message.success('操作成功')
+      //     } else {
+      //         this.$message.error(data.msg);
+      //     }
+      // });
+    },
+    onDrop(i, i2) {
+      //拖拽移动位置
+      this.onDragOverMenu = ''
+      if (i == this.selectedMenuIndex && i2 == this.selectedSubMenuIndex)
+        //拖拽到了原位置
+        return
+      if (i != this.selectedMenuIndex && this.menu.buttons[i].subButtons.length >= 5) {
+        this.$message.error('目标组已满')
+        return
+      }
+      this.menu.buttons[i].subButtons.splice(i2, 0, this.selectedButton)
+      let delSubIndex = this.selectedSubMenuIndex
+      if (i == this.selectedMenuIndex && i2 < this.selectedSubMenuIndex) delSubIndex++
+      this.menu.buttons[this.selectedMenuIndex].subButtons.splice(delSubIndex, 1)
+      this.unSelectMenu()
+    },
+  },
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @charset "utf-8";
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #app-menu ul {
-    padding: 0;
+  padding: 0;
 }
 
 #app-menu li {
-    list-style: none;
+  list-style: none;
 }
 
 #app-menu {
-    overflow: hidden;
-    width: 100%;
+  overflow: hidden;
+  width: 100%;
 }
 
 .weixin-preview {
-    position: relative;
-    width: 320px;
-    height: 540px;
-    float: left;
-    margin-right: 10px;
-    border: 1px solid #e7e7eb;
+  position: relative;
+  width: 320px;
+  height: 540px;
+  float: left;
+  margin-right: 10px;
+  border: 1px solid #e7e7eb;
 }
 
 .weixin-preview a {
-    text-decoration: none;
-    color: #616161;
+  text-decoration: none;
+  color: #616161;
 }
 
 .weixin-preview .weixin-hd .weixin-title {
-    color: #fff;
-    font-size: 15px;
-    width: 100%;
-    text-align: center;
-    position: absolute;
-    top: 33px;
-    left: 0px;
+  color: #fff;
+  font-size: 15px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 33px;
+  left: 0px;
 }
 
-.weixin-preview .weixin-header{
-    text-align: center;
-    padding: 10px 0;
-    background-color: #616161;
-    color: #ffffff;   
+.weixin-preview .weixin-header {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #616161;
+  color: #ffffff;
 }
 
 .weixin-preview .weixin-menu {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-top: 1px solid #e7e7e7;
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    margin-bottom: 0px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #e7e7e7;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  margin-bottom: 0px;
 }
 
 /*一级*/
 .weixin-preview .weixin-menu .menu-item {
-    position: relative;
-    float: left;
-    line-height: 50px;
-    height: 50px;
-    text-align: center;
-    width: 33.33%;
-    border-left: 1px solid #e7e7e7;
-    cursor: pointer;
-    color: #616161;
+  position: relative;
+  float: left;
+  line-height: 50px;
+  height: 50px;
+  text-align: center;
+  width: 33.33%;
+  border-left: 1px solid #e7e7e7;
+  cursor: pointer;
+  color: #616161;
 }
 
 /*二级*/
 .weixin-preview .weixin-sub-menu {
-    position: absolute;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-    border-top: 1px solid #d0d0d0;
-    margin-bottom: 0px;
-    background: #fafafa;
-    display: block;
-    padding: 0;
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #d0d0d0;
+  margin-bottom: 0px;
+  background: #fafafa;
+  display: block;
+  padding: 0;
 }
 
 .weixin-preview .weixin-sub-menu .menu-sub-item {
-    line-height: 50px;
-    height: 50px;
-    text-align: center;
-    width: 100%;
-    border: 1px solid #d0d0d0;
-    border-top-width: 0px;
-    cursor: pointer;
-    position: relative;
-    color: #616161;
+  line-height: 50px;
+  height: 50px;
+  text-align: center;
+  width: 100%;
+  border: 1px solid #d0d0d0;
+  border-top-width: 0px;
+  cursor: pointer;
+  position: relative;
+  color: #616161;
 }
 
-.weixin-preview .weixin-sub-menu .menu-sub-item.on-drag-over{
-    border-top: 2px solid #44b549;
+.weixin-preview .weixin-sub-menu .menu-sub-item.on-drag-over {
+  border-top: 2px solid #44b549;
 }
 
 .weixin-preview .menu-arrow {
-    position: absolute;
-    left: 50%;
-    margin-left: -6px;
+  position: absolute;
+  left: 50%;
+  margin-left: -6px;
 }
 
 .weixin-preview .arrow_in {
-    bottom: -4px;
-    display: inline-block;
-    width: 0px;
-    height: 0px;
-    border-width: 6px 6px 0px;
-    border-style: solid dashed dashed;
-    border-color: #fafafa transparent transparent;
+  bottom: -4px;
+  display: inline-block;
+  width: 0px;
+  height: 0px;
+  border-width: 6px 6px 0px;
+  border-style: solid dashed dashed;
+  border-color: #fafafa transparent transparent;
 }
 
 .weixin-preview .arrow_out {
-    bottom: -5px;
-    display: inline-block;
-    width: 0px;
-    height: 0px;
-    border-width: 6px 6px 0px;
-    border-style: solid dashed dashed;
-    border-color: #d0d0d0 transparent transparent;
+  bottom: -5px;
+  display: inline-block;
+  width: 0px;
+  height: 0px;
+  border-width: 6px 6px 0px;
+  border-style: solid dashed dashed;
+  border-color: #d0d0d0 transparent transparent;
 }
 
-.weixin-preview .menu-item .menu-item-title, .weixin-preview .menu-sub-item .menu-item-title {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
+.weixin-preview .menu-item .menu-item-title,
+.weixin-preview .menu-sub-item .menu-item-title {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
-
-.weixin-preview .menu-item.current, .weixin-preview .menu-sub-item.current {
-    border: 1px solid #44b549;
-    background: #fff;
-    color: #44b549;
+.weixin-preview .menu-item.current,
+.weixin-preview .menu-sub-item.current {
+  border: 1px solid #44b549;
+  background: #fff;
+  color: #44b549;
 }
 
 .weixin-preview .weixin-sub-menu.show {
-    display: block;
+  display: block;
 }
 
 .weixin-preview .icon_menu_dot {
-    /* background: url(../images/index_z354723.png) 0px -36px no-repeat; */
-    width: 7px;
-    height: 7px;
-    vertical-align: middle;
-    display: inline-block;
-    margin-right: 2px;
-    margin-top: -2px;
+  /* background: url(../images/index_z354723.png) 0px -36px no-repeat; */
+  width: 7px;
+  height: 7px;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 2px;
+  margin-top: -2px;
 }
 
 .weixin-preview .icon14_menu_add {
-    /* background: url(../images/index_z354723.png) 0px 0px no-repeat; */
-    width: 14px;
-    height: 14px;
-    vertical-align: middle;
-    display: inline-block;
-    margin-top: -2px;
+  /* background: url(../images/index_z354723.png) 0px 0px no-repeat; */
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  display: inline-block;
+  margin-top: -2px;
 }
 
 .weixin-preview li:hover .icon14_menu_add {
-    /* background: url(../images/index_z354723.png) 0px -18px no-repeat; */
+  /* background: url(../images/index_z354723.png) 0px -18px no-repeat; */
 }
 
 .weixin-preview .menu-item:hover {
-    color: #000;
+  color: #000;
 }
 
 .weixin-preview .menu-sub-item:hover {
-    background: #eee;
+  background: #eee;
 }
 
 .weixin-preview li.current:hover {
-    background: #fff;
-    color: #44b549;
+  background: #fff;
+  color: #44b549;
 }
 
 /*菜单内容*/
 .weixin-menu-detail {
-    width: 600px;
-    padding: 0px 20px 5px;
-    background-color: #f4f5f9;
-    border: 1px solid #e7e7eb;
-    float: left;
-    min-height: 540px;
+  width: 600px;
+  padding: 0px 20px 5px;
+  background-color: #f4f5f9;
+  border: 1px solid #e7e7eb;
+  float: left;
+  min-height: 540px;
 }
 
 .weixin-menu-detail .menu-name {
-    float: left;
-    height: 40px;
-    line-height: 40px;
-    font-size: 18px;
+  float: left;
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
 }
 
 .weixin-menu-detail .menu-del {
-    float: right;
-    height: 40px;
-    line-height: 40px;
-    color: #459ae9;
-    cursor: pointer;
+  float: right;
+  height: 40px;
+  line-height: 40px;
+  color: #459ae9;
+  cursor: pointer;
 }
 
 .weixin-menu-detail .menu-input-group {
-    width: 540px;
-    margin: 10px 0 30px 0;
-    overflow: hidden;
+  width: 540px;
+  margin: 10px 0 30px 0;
+  overflow: hidden;
 }
 
 .weixin-menu-detail .menu-label {
-    float: left;
-    height: 30px;
-    line-height: 30px;
-    width: 80px;
-    text-align: right;
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  width: 80px;
+  text-align: right;
 }
 
 .weixin-menu-detail .menu-input {
-    float: left;
-    width: 380px
+  float: left;
+  width: 380px;
 }
 
 .weixin-menu-detail .menu-input-text {
-    border: 0px;
-    outline: 0px;
-    background: #fff;
-    width: 300px;
-    padding: 5px 0px 5px 0px;
-    margin-left: 10px;
-    text-indent: 10px;
-    height: 35px;
+  border: 0px;
+  outline: 0px;
+  background: #fff;
+  width: 300px;
+  padding: 5px 0px 5px 0px;
+  margin-left: 10px;
+  text-indent: 10px;
+  height: 35px;
 }
 
 .weixin-menu-detail .menu-tips {
-    color: #8d8d8d;
-    padding-top: 4px;
-    margin: 0;
+  color: #8d8d8d;
+  padding-top: 4px;
+  margin: 0;
 }
 
 .weixin-menu-detail .menu-tips.cursor {
-    color: #459ae9;
-    cursor: pointer;
+  color: #459ae9;
+  cursor: pointer;
 }
 
 .weixin-menu-detail .menu-input .menu-tips {
-    margin: 0 0 0 10px;
+  margin: 0 0 0 10px;
 }
 
 .weixin-menu-detail .menu-content {
-    padding: 16px 20px;
-    border: 1px solid #e7e7eb;
-    background-color: #fff;
+  padding: 16px 20px;
+  border: 1px solid #e7e7eb;
+  background-color: #fff;
 }
 
 .weixin-menu-detail .menu-content .menu-input-group {
-    margin: 0px 0 10px 0;
+  margin: 0px 0 10px 0;
 }
 
 .weixin-menu-detail .menu-content .menu-label {
-    text-align: left;
-    width: 100px;
+  text-align: left;
+  width: 100px;
 }
 
 .weixin-menu-detail .menu-content .menu-input-text {
-    border: 1px solid #e7e7eb;
+  border: 1px solid #e7e7eb;
 }
 
 .weixin-menu-detail .menu-content .menu-tips {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .weixin-menu-detail .menu-msg-content {
-    padding: 0;
-    border: 1px solid #e7e7eb;
-    background-color: #fff;
+  padding: 0;
+  border: 1px solid #e7e7eb;
+  background-color: #fff;
 }
 
 .weixin-menu-detail .menu-msg-content .menu-msg-head {
-    overflow: hidden;
-    border-bottom: 1px solid #e7e7eb;
-    line-height: 38px;
-    height: 38px;
-    padding: 0 20px;
+  overflow: hidden;
+  border-bottom: 1px solid #e7e7eb;
+  line-height: 38px;
+  height: 38px;
+  padding: 0 20px;
 }
 
 .weixin-menu-detail .menu-msg-content .menu-msg-panel {
-    padding: 30px 50px;
+  padding: 30px 50px;
 }
 
 .weixin-menu-detail .menu-msg-content .menu-msg-select {
-    padding: 40px 20px;
-    border: 2px dotted #d9dadc;
-    text-align: center;
+  padding: 40px 20px;
+  border: 2px dotted #d9dadc;
+  text-align: center;
 }
 
 .weixin-menu-detail .menu-msg-content .menu-msg-select:hover {
-    border-color: #b3b3b3;
+  border-color: #b3b3b3;
 }
 
 .weixin-menu-detail .menu-msg-content strong {
-    display: block;
-    padding-top: 3px;
-    font-weight: 400;
-    font-style: normal;
+  display: block;
+  padding-top: 3px;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .weixin-menu-detail .menu-msg-content .menu-msg-title {
-    float: left;
-    width: 310px;
-    height: 30px;
-    line-height: 30px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  float: left;
+  width: 310px;
+  height: 30px;
+  line-height: 30px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .icon36_common {
-    width: 36px;
-    height: 36px;
-    vertical-align: middle;
-    display: inline-block;
+  width: 36px;
+  height: 36px;
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .icon_msg_sender {
-    margin-right: 3px;
-    margin-top: -2px;
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    display: inline-block;
-    /* background: url(../images/msg_tab_z25df2d.png) 0 -270px no-repeat; */
+  margin-right: 3px;
+  margin-top: -2px;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  display: inline-block;
+  /* background: url(../images/msg_tab_z25df2d.png) 0 -270px no-repeat; */
 }
 
 .weixin-btn-group {
-    text-align: center;
-    width: 100%;
-    margin: 30px 0px;
-    overflow: hidden;
+  text-align: center;
+  width: 100%;
+  margin: 30px 0px;
+  overflow: hidden;
 }
 
 .weixin-btn-group .btn {
-    width: 100px;
-    border-radius: 0px;
+  width: 100px;
+  border-radius: 0px;
 }
 
 #material-list {
-    padding: 20px;
-    overflow-y: scroll;
-    height: 558px;
+  padding: 20px;
+  overflow-y: scroll;
+  height: 558px;
 }
 
 #news-list {
-    padding: 20px;
-    overflow-y: scroll;
-    height: 558px;
+  padding: 20px;
+  overflow-y: scroll;
+  height: 558px;
 }
 
 #material-list table {
-    width: 100%;
+  width: 100%;
 }
 
 .WxMenu {
   background: #fff;
   padding: 24px;
 }
-
 </style>

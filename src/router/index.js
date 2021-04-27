@@ -176,6 +176,12 @@ const routes = [
         component: () => import('../views/wxManage/WxMenu.vue'),
         meta: { title: '公众号菜单', key: '24', path: 'WxMenu', subMenu: 'sub8' },
       },
+      {
+        path: '/wxManage/wxMaterial',
+        name: 'WxMaterial',
+        component: () => import('../views/wxManage/WxMaterial.vue'),
+        meta: { title: '素材管理', key: '25', path: 'WxMaterial', subMenu: 'sub8' },
+      }
     ],
   },
 ]

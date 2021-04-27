@@ -128,15 +128,19 @@
               <a-input v-model="actionForm.name" placeholder="请输入医院名称" />
             </a-form-model-item>
             <a-form-model-item label="列表图" prop="listPic">
-              <a-upload name="avatar" list-type="picture-card" class="avatar-uploader" :show-upload-list="false" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload" @change="uploadHandleChange">
-                <img style="max-width:200px;" v-if="actionForm.listPic" :src="actionForm.listPic" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="uploading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">
-                    Upload
+              <a-row type="flex">
+                <a-upload name="avatar" list-type="picture-card" class="avatar-uploader" :show-upload-list="false" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload" @change="uploadHandleChange">
+                  <img style="max-width:200px;" v-if="actionForm.listPic" :src="actionForm.listPic" alt="avatar" />
+                  <div v-else>
+                    <a-icon :type="uploading ? 'loading' : 'plus'" />
+                    <div class="ant-upload-text">
+                      Upload
+                    </div>
                   </div>
-                </div>
-              </a-upload>
+                </a-upload>
+                <a-button @click="actionForm.listPic=''">清除</a-button>
+              </a-row>
+
             </a-form-model-item>
             <a-form-model-item label="是否推荐" prop="recommend">
               <a-radio-group v-model="actionForm.recommend">
