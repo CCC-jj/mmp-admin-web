@@ -1,496 +1,319 @@
 <template>
-  <div class="contentBox">
-    <!-- 搜索栏 -->
-    <div style="float:right;">
-      <a-space>
-        <a-tooltip title="刷新">
-          <a-button shape="circle" icon="reload" @click="refresh" />
-        </a-tooltip>
-        <a-tooltip title="搜索">
-          <a-button shape="circle" icon="search" @click="showSearch" />
-        </a-tooltip>
-      </a-space>
-    </div>
-    <transition name="mask">
-      <div class="search" v-show="search">
-        <a-form-model ref="queryRuleForm" :model="queryInfo" :rules="queryRules" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" @keyup.enter.native="onSubmit">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="菜单名称" prop="resName">
-                <a-input placeholder="菜单名称" v-model="queryInfo.resName" />
-              </a-form-model-item>
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      医生列表
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="规则编号">
+                <a-input v-model="queryParam.id" placeholder=""/>
+              </a-form-item>
             </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="科室" prop="department">
-                <a-select v-model="queryInfo.department" placeholder="请选择科室">
-                  <a-select-option value="内分泌科">
-                    内分泌科
-                  </a-select-option>
-                  <a-select-option value="内科">
-                    内科
-                  </a-select-option>
-                  <a-select-option value="消化科">
-                    消化科
-                  </a-select-option>
-                  <a-select-option value="儿科">
-                    儿科
-                  </a-select-option>
-                  <a-select-option value="中医科">
-                    中医科
-                  </a-select-option>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="使用状态">
+                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
+                  <a-select-option value="0">全部</a-select-option>
+                  <a-select-option value="1">关闭</a-select-option>
+                  <a-select-option value="2">运行中</a-select-option>
                 </a-select>
-              </a-form-model-item>
+              </a-form-item>
             </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="职称" prop="job">
-                <a-select v-model="queryInfo.job" placeholder="请选择职称">
-                  <a-select-option value="主任医师">
-                    主任医师
-                  </a-select-option>
-                  <a-select-option value="副主任医师">
-                    副主任医师
-                  </a-select-option>
-                  <a-select-option value="主治医师">
-                    主治医师
-                  </a-select-option>
-                  <a-select-option value="住院医师">
-                    住院医师
-                  </a-select-option>
-                  <a-select-option value="药剂师">
-                    药剂师
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item :wrapper-col="{ span: 24, offset: 4 }">
-                <a-button style="margin-right:20px;" type="primary" icon="search" @click="onSubmit">
-                  搜索
-                </a-button>
-                <a-button icon="delete" @click="resetForm">
-                  清空
-                </a-button>
-              </a-form-model-item>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="调用次数">
+                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <a-form-item label="更新日期">
+                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <a-form-item label="使用状态">
+                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
+                    <a-select-option value="0">全部</a-select-option>
+                    <a-select-option value="1">关闭</a-select-option>
+                    <a-select-option value="2">运行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <a-form-item label="使用状态">
+                  <a-select placeholder="请选择" default-value="0">
+                    <a-select-option value="0">全部</a-select-option>
+                    <a-select-option value="1">关闭</a-select-option>
+                    <a-select-option value="2">运行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="!advanced && 8 || 24" :sm="24">
+              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? '收起' : '展开' }}
+                  <a-icon :type="advanced ? 'up' : 'down'"/>
+                </a>
+              </span>
             </a-col>
           </a-row>
-        </a-form-model>
-      </div>
-    </transition>
-
-    <!-- 操作按钮 -->
-    <div class="operationButton" style="margin-bottom:20px;">
-      <a-row type="flex" justify="space-between">
-        <a-col>
-          <a-space>
-            <a-button type="primary" icon="plus" @click="addDoctor">新增医生</a-button>
-            <a-button type="danger" icon="delete">删除</a-button>
-            <a-button icon="import">批量导入</a-button>
-          </a-space>
-        </a-col>
-      </a-row>
-    </div>
-
-    <!-- 切换标签 -->
-    <div class="tabs">
-      <a-tabs default-active-key="1" @change="changeTabs">
-        <a-tab-pane key="1" tab="全部">
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="审核通过">
-        </a-tab-pane>
-        <a-tab-pane key="3" tab="审核未通过">
-        </a-tab-pane>
-      </a-tabs>
-    </div>
-
-    <!-- 医生操作抽屉 -->
-    <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
-      <div class="actionBox">
-        <div class="actionBox-title">基本信息</div>
-        <a-row type="flex" justify="space-between">
-          <div style="flex:2">
-            <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt="">
-          </div>
-          <div style="flex:8">
-            <a-descriptions :column="2" size="small" bordered>
-              <a-descriptions-item label="ID">
-                <a-input v-model="doctorInfo.id" :disabled="viewVisible" placeholder=""></a-input>
-              </a-descriptions-item>
-              <a-descriptions-item label="姓名">
-                <a-input v-model="doctorInfo.name" :disabled="viewVisible" placeholder=""></a-input>
-              </a-descriptions-item>
-              <a-descriptions-item label="手机号">
-                <a-input v-model="doctorInfo.mobile" :disabled="viewVisible" placeholder=""></a-input>
-              </a-descriptions-item>
-              <a-descriptions-item label="平台科室">
-                <a-select v-model="doctorInfo.ptDepartmanet" :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
-                  <a-select-option value="内科">
-                    内科
-                  </a-select-option>
-                  <a-select-option value="外科">
-                    外科
-                  </a-select-option>
-                  <a-select-option value="骨科">
-                    骨科
-                  </a-select-option>
-                </a-select>
-              </a-descriptions-item>
-              <a-descriptions-item label="性别">
-                <a-select v-model="doctorInfo.sex" :disabled="viewVisible" style="width:100%;" placeholder="请选择性别">
-                  <a-select-option value="男">
-                    男
-                  </a-select-option>
-                  <a-select-option value="女">
-                    女
-                  </a-select-option>
-                </a-select>
-              </a-descriptions-item>
-              <a-descriptions-item label="医院">
-                <a-select v-model="doctorInfo.hospital" :disabled="viewVisible" style="width:100%;" placeholder="请选择医院">
-                  <a-select-option value="成都四六一医院">
-                    成都四六一医院
-                  </a-select-option>
-                  <a-select-option value="湘雅医学院">
-                    湘雅医学院
-                  </a-select-option>
-                </a-select>
-              </a-descriptions-item>
-              <a-descriptions-item label="职称">
-                <a-select v-model="doctorInfo.job" :disabled="viewVisible" style="width:100%;" placeholder="请选择职称">
-                  <a-select-option value="医师">
-                    医师
-                  </a-select-option>
-                  <a-select-option value="副主任医师">
-                    副主任医师
-                  </a-select-option>
-                  <a-select-option value="主任医师">
-                    主任医师
-                  </a-select-option>
-                </a-select>
-              </a-descriptions-item>
-              <a-descriptions-item label="医院科室">
-                <a-select v-model="doctorInfo.department" :disabled="viewVisible" style="width:100%;" placeholder="请选择科室">
-                  <a-select-option value="内科">
-                    内科
-                  </a-select-option>
-                  <a-select-option value="外科">
-                    外科
-                  </a-select-option>
-                  <a-select-option value="骨科">
-                    骨科
-                  </a-select-option>
-                </a-select>
-              </a-descriptions-item>
-              <a-descriptions-item label="注册时间">
-                <a-input v-model="doctorInfo.time" :disabled="viewVisible" placeholder=""></a-input>
-              </a-descriptions-item>
-            </a-descriptions>
-          </div>
-        </a-row>
-
-      </div>
-      <div class="actionBox">
-        <div class="actionBox-title">擅长</div>
-        <a-textarea v-model="doctorInfo.goodAt" :disabled="viewVisible" :auto-size="{ minRows: 4, maxRows: 6 }"></a-textarea>
-      </div>
-      <div class="actionBox">
-        <div class="actionBox-title">简介</div>
-        <a-textarea v-model="doctorInfo.introduction" :disabled="viewVisible" :auto-size="{ minRows: 6, maxRows: 10 }"></a-textarea>
-      </div>
-      <div class="actionBox">
-        <a-modal :visible="previewVisible" :footer="null" @cancel="previewHandleCancel">
-          <img alt="example" style="width: 100%" :src="previewImage" />
-        </a-modal>
-        <div class="actionBox-title" style="">照片证书</div>
-        <a-row type="flex" style="margin:15px;">
-          <div style="width:100px;">医生照片</div>
-          <div style="flex:9">
-            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="doctorFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'doctorFileList')">
-              <div v-if="doctorFileList.length < 1">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-          </div>
-        </a-row>
-
-        <a-row type="flex" style="margin:15px;">
-          <div style="width:100px;">执业证书</div>
-          <div style="flex:9">
-            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="practiceFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'practiceFileList')">
-              <div v-if="practiceFileList.length < 9">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-          </div>
-        </a-row>
-
-        <a-row type="flex" style="margin:15px;">
-          <div style="width:100px;">职称证书</div>
-          <div style="flex:9">
-            <a-upload :disabled="viewVisible" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" list-type="picture-card" :file-list="jobFileList" @preview="uploadHandlePreview" @change="({ fileList })=>uploadHandleChange({ fileList },'jobFileList')">
-              <div v-if="jobFileList.length < 9">
-                <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  Upload
-                </div>
-              </div>
-            </a-upload>
-          </div>
-        </a-row>
-
+        </a-form>
       </div>
 
-      <div :style="{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-          zIndex: 1,
-        }">
-        <a-button icon="close-circle" :style="{ marginRight: '8px' }" @click="actionOnClose">
-          取消
-        </a-button>
-        <a-button icon="plus-circle" type="primary" @click="actionOnSave">
-          保存
-        </a-button>
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
+        <a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">
+          <a-menu slot="overlay">
+            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+            <!-- lock | unlock -->
+            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+          </a-menu>
+          <a-button style="margin-left: 8px">
+            批量操作 <a-icon type="down" />
+          </a-button>
+        </a-dropdown>
       </div>
-    </a-drawer>
 
-    <!-- 菜单表格 -->
-    <div class="table">
-      <a-table size="middle" :expandIconColumnIndex="2" :loading="tableLoading" bordered :data-source="dataSource" :columns="columns" :row-selection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" :rowKey="(record, index) => {return record.key}" :pagination="{ showSizeChanger: true, showQuickJumper: true, pageSize: 10, total: 50, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }">
-        <template slot="action" slot-scope="text,record">
-          <a-space :size="15">
-            <a @click="toView(record)">
-              <a-icon type="eye" /> 查看
-            </a>
-            <a @click="toEdit(record)">
-              <a-icon type="edit" /> 查看粉丝
-            </a>
-            <a-popconfirm title="确定删除吗?" @confirm="() => onDelete(record.key)">
-              <a href="javascript:;">
-                <a-icon type="delete" /> 删除
-              </a>
-            </a-popconfirm>
-          </a-space>
-        </template>
-      </a-table>
-    </div>
+      <s-table
+        ref="table"
+        size="default"
+        rowKey="key"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowSelection="rowSelection"
+        showPagination="auto"
+      >
+        <span slot="serial" slot-scope="text, record, index">
+          {{ index + 1 }}
+        </span>
+        <span slot="status" slot-scope="text">
+          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+        </span>
+        <span slot="description" slot-scope="text">
+          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
+        </span>
 
-  </div>
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="handleEdit(record)">配置</a>
+            <a-divider type="vertical" />
+            <a @click="handleSub(record)">订阅报警</a>
+          </template>
+        </span>
+      </s-table>
+
+      <!-- <create-form
+        ref="createModal"
+        :visible="visible"
+        :loading="confirmLoading"
+        :model="mdl"
+        @cancel="handleCancel"
+        @ok="handleOk"
+      /> -->
+      <!-- <step-by-step-modal ref="modal" @ok="handleOk"/> -->
+    </a-card>
+  </page-header-wrapper>
 </template>
 
 <script>
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = (error) => reject(error)
-  })
-}
+import moment from 'moment'
+import { STable, Ellipsis } from '@/components'
+import { getRoleList, getServiceList } from '@/api/manage'
+
+// import StepByStepModal from './modules/StepByStepModal'
+// import CreateForm from './modules/CreateForm'
+
 const columns = [
-  // {
-  //   title: '#',
-  //   align: 'center',
-  //   customRender: (text, record, index) => `${index + 1}`,
-  //   width: '60px',
-  // },
   {
-    title: '姓名',
-    dataIndex: 'name',
+    title: '#',
+    scopedSlots: { customRender: 'serial' }
   },
   {
-    title: '电话',
-    dataIndex: 'mobile',
+    title: '规则编号',
+    dataIndex: 'no'
   },
   {
-    title: '医院',
-    dataIndex: 'hospital',
+    title: '描述',
+    dataIndex: 'description',
+    scopedSlots: { customRender: 'description' }
   },
   {
-    title: '科室',
-    dataIndex: 'department',
+    title: '服务调用次数',
+    dataIndex: 'callNo',
+    sorter: true,
+    needTotal: true,
+    customRender: (text) => text + ' 次'
   },
   {
-    title: '职称',
-    dataIndex: 'job',
-  },
-  {
-    title: '加入时间',
-    dataIndex: 'joinTime',
-  },
-  {
-    title: '审核状态',
+    title: '状态',
     dataIndex: 'status',
+    scopedSlots: { customRender: 'status' }
   },
   {
-    title: '服务审核',
-    dataIndex: 'service',
-  },
-  {
-    title: '粉丝',
-    dataIndex: 'fans',
+    title: '更新时间',
+    dataIndex: 'updatedAt',
+    sorter: true
   },
   {
     title: '操作',
-    scopedSlots: { customRender: 'action' },
-    align: 'center',
-    width: '230px',
-  },
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
+  }
 ]
-const dataSource = []
-for (let i = 0; i < 8; i++) {
-  dataSource.push({
-    key: i,
-    name: '秦山',
-    mobile: '18811110000',
-    hospital: '北大医院',
-    department: '内科',
-    job: '主任医师',
-    joinTime: '2020-02-07 21:00:00',
-    status: '已通过',
-    service: '已审核',
-    fans: '12',
-  })
-}
-export default {
-  name: 'DoctorList',
-  inject: ['reloadCard'],
-  data() {
-    return {
-      // 搜索栏
-      search: true,
-      queryInfo: {
-        resName: '',
-        department: undefined,
-        job: undefined,
-      },
-      queryRules: {},
-      // 表格
-      tableLoading: false,
-      columns,
-      dataSource,
-      selectedRowKeys: [],
-      // 操作医生
-      actionTitle: '新增医生',
-      actionVisible: false,
-      doctorInfo: {
-        id: '',
-        name: '',
-        mobile: '',
-        ptDepartmanet: '',
-        sex: '',
-        hospital: '',
-        job: '',
-        department: '',
-        time: '',
-        goodAt: '',
-        introduction: '',
-      },
 
-      // 上传图片
-      previewVisible: false,
-      previewImage: '',
-      doctorFileList: [],
-      practiceFileList: [],
-      jobFileList: [],
-      // 查看医生详情
-      viewVisible: false,
+const statusMap = {
+  0: {
+    status: 'default',
+    text: '关闭'
+  },
+  1: {
+    status: 'processing',
+    text: '运行中'
+  },
+  2: {
+    status: 'success',
+    text: '已上线'
+  },
+  3: {
+    status: 'error',
+    text: '异常'
+  }
+}
+
+export default {
+  name: 'TableList',
+  components: {
+    STable,
+    Ellipsis,
+    // CreateForm,
+    // StepByStepModal
+  },
+  data () {
+    this.columns = columns
+    return {
+      // create model
+      visible: false,
+      confirmLoading: false,
+      mdl: null,
+      // 高级搜索 展开/关闭
+      advanced: false,
+      // 查询参数
+      queryParam: {},
+      // 加载数据方法 必须为 Promise 对象
+      loadData: parameter => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        console.log('loadData request parameters:', requestParameters)
+        return getServiceList(requestParameters)
+          .then(res => {
+            return res.result
+          })
+      },
+      selectedRowKeys: [],
+      selectedRows: []
+    }
+  },
+  filters: {
+    statusFilter (type) {
+      return statusMap[type].text
+    },
+    statusTypeFilter (type) {
+      return statusMap[type].status
+    }
+  },
+  created () {
+    getRoleList({ t: new Date() })
+  },
+  computed: {
+    rowSelection () {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange
+      }
     }
   },
   methods: {
-    // 搜索栏
-    onSubmit() {
-      this.$refs.queryRuleForm.validate((valid) => {
-        if (valid) {
-          alert('1')
+    handleAdd () {
+      this.mdl = null
+      this.visible = true
+    },
+    handleEdit (record) {
+      this.visible = true
+      this.mdl = { ...record }
+    },
+    handleOk () {
+      const form = this.$refs.createModal.form
+      this.confirmLoading = true
+      form.validateFields((errors, values) => {
+        if (!errors) {
+          console.log('values', values)
+          if (values.id > 0) {
+            // 修改 e.g.
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve()
+              }, 1000)
+            }).then(res => {
+              this.visible = false
+              this.confirmLoading = false
+              // 重置表单数据
+              form.resetFields()
+              // 刷新表格
+              this.$refs.table.refresh()
+
+              this.$message.info('修改成功')
+            })
+          } else {
+            // 新增
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve()
+              }, 1000)
+            }).then(res => {
+              this.visible = false
+              this.confirmLoading = false
+              // 重置表单数据
+              form.resetFields()
+              // 刷新表格
+              this.$refs.table.refresh()
+
+              this.$message.info('新增成功')
+            })
+          }
         } else {
-          console.log('error submit!!')
-          return false
+          this.confirmLoading = false
         }
       })
     },
-    resetForm() {
-      this.$refs.queryRuleForm.resetFields()
-    },
-    // 新增医生
-    addDoctor() {
-      this.actionTitle = '新增医生'
-      this.actionVisible = true
-      this.viewVisible = false
-    },
-    refresh() {
-      this.reloadCard()
-    },
-    showSearch() {
-      this.search = !this.search
-    },
-    changeTabs(key) {
-      console.log(key)
-    },
-    // 表格
-    // 勾选表单数据
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
-    },
-    // 操作抽屉
-    afterActionVisibleChange(val) {
-      console.log('visible', val)
-    },
-    actionOnClose() {
-      this.actionVisible = false
-    },
-    actionOnSave() {
-      // this.$refs.actionRuleForm.validate((valid) => {
-      //   if (valid) {
-      //     alert('submit!')
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      // })
-    },
-    // 上传图片
-    previewHandleCancel() {
-      this.previewVisible = false
-    },
-    async uploadHandlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj)
-      }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
-    },
-    uploadHandleChange({ fileList }, listName) {
-      console.log(fileList, listName)
-      this[listName] = fileList
-    },
-    // 查看医生详情
-    toView(record) {
-      console.log(record)
-      this.actionTitle = '医生详情'
-      this.actionVisible = true
-      this.viewVisible = true
-    },
-  },
-}
-</script>
+    handleCancel () {
+      this.visible = false
 
-<style lang="less" scoped>
-.contentBox {
-  .search {
-    height: 65px;
+      const form = this.$refs.createModal.form
+      form.resetFields() // 清理表单数据（可不做）
+    },
+    handleSub (record) {
+      if (record.status !== 0) {
+        this.$message.info(`${record.no} 订阅成功`)
+      } else {
+        this.$message.error(`${record.no} 订阅失败，规则已关闭`)
+      }
+    },
+    onSelectChange (selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    toggleAdvanced () {
+      this.advanced = !this.advanced
+    },
+    resetSearchForm () {
+      this.queryParam = {
+        date: moment(new Date())
+      }
+    }
   }
 }
-</style>
+</script>
