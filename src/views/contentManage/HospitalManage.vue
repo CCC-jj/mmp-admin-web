@@ -1,5 +1,5 @@
 <template>
-  <div class="HospitalManage">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -56,7 +56,7 @@
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
       <div v-if="viewVisible">
         <div class="actionBox">
-          <div class="title">基本信息</div>
+          <div class="actionBox-title">基本信息</div>
           <a-row type="flex" justify="space-between">
             <div style="flex:2">
               <img style="margin:0 auto;width:100%;margin:20px 0;" src="../../assets/u19399.png" alt="">
@@ -93,7 +93,7 @@
         </div>
 
         <div class="actionBox">
-          <div class="title">科室</div>
+          <div class="actionBox-title">科室</div>
           <div style="padding:24px;">
             <p>内科</p>
             <p>内分泌科
@@ -109,7 +109,7 @@
         </div>
 
         <div class="actionBox">
-          <div class="title">简介</div>
+          <div class="actionBox-title">简介</div>
           <div style="padding:24px;">
             <p>北京协和医院是一所位于北京市东城区，集医疗、科研、教学为一体的大型综合医院。它隶属于中国协和医科大学(2006年改为北京协和医学院/清华大学医学部)，是其临床医学院，同时也是中国医学科学院的临床医学研究所，中华人民共和国卫生部指定的诊治疑难重症的技术指导中心之一。北京协和医院在中国乃至世界享有盛名。医院成立于1921年。现任院长赵玉沛。北京协和医院是中国最早承担外宾医疗任务的单位，医院专门设立外宾和高干门诊部，开设专门的高干、外宾、特需病区。2006年7月28日被中国奥委会定为“国家队运动员医疗服务指定医院”。</p>
 
@@ -496,36 +496,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.HospitalManage {
-  background: #fff;
-  padding: 24px;
+.contentBox {
   .search {
     height: 65px;
-    overflow: hidden;
-  }
-}
-.actionBox {
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  // padding: 5px;
-  .title {
-    font-size: 16px;
-    background: rgb(250, 250, 250);
-    padding: 10px;
   }
 }
 </style>

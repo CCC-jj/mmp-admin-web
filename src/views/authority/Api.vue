@@ -1,5 +1,5 @@
 <template>
-  <div class="api">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -464,26 +464,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.api {
-  background: #fff;
-  padding: 24px;
+.contentBox {
   .search {
     height: 65px;
-    overflow: hidden;
   }
 }
 </style>

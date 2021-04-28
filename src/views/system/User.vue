@@ -15,7 +15,7 @@
       </a-tree>
     </div> -->
 
-    <div class="userRight">
+    <div class="userRight contentBox">
       <!-- 搜索栏 -->
       <div style="float:right;">
       <a-space>
@@ -1298,20 +1298,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
 .user {
   display: flex;
   justify-content: space-between;
@@ -1324,12 +1310,9 @@ export default {
   }
   .userRight {
     width: 100%;
-    background: #fff;
-    padding: 24px;
     min-height: 280px;
     .search {
       height: 65px;
-      overflow: hidden;
     }
     .table {
       a {

@@ -1,5 +1,5 @@
 <template>
-  <div class="menu">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -268,7 +268,7 @@ for (let i = 0; i < 8; i++) {
 }
 export default {
   name: 'authMenu',
-	inject: ['reloadCard'],
+  inject: ['reloadCard'],
   data() {
     return {
       // 搜索栏
@@ -463,26 +463,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
+.contentBox {
+  .search {
     height: 65px;
   }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.menu {
-  background: #fff;
-  padding: 24px;
-	.search {
-      height: 65px;
-      overflow: hidden;
-    }
 }
 </style>

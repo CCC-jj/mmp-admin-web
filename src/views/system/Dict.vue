@@ -6,19 +6,6 @@
       </div>
       <div class="cardBody">
         <!-- 搜索栏 -->
-        <div style="float:right;">
-          <a-space>
-            <a-tooltip title="刷新">
-              <a-button shape="circle" icon="reload" @click="refresh" />
-            </a-tooltip>
-            <a-tooltip title="显隐">
-              <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
-            </a-tooltip>
-            <a-tooltip title="搜索">
-              <a-button shape="circle" icon="search" @click="showSearch('searchList')" />
-            </a-tooltip>
-          </a-space>
-        </div>
         <transition name="mask">
           <div class="search" v-show="searchList">
             <a-form-model ref="queryListRuleForm" :model="queryInfoList" :rules="queryRulesList" :label-col="{span: 6}" :wrapper-col="{span: 18}" @keyup.enter.native="onSubmit('queryListRuleForm')">
@@ -95,6 +82,19 @@
               <a-space>
                 <a-button type="primary" icon="plus" @click="addDictList">新增</a-button>
                 <!-- <a-button type="danger" icon="delete">删除</a-button> -->
+              </a-space>
+            </a-col>
+            <a-col>
+              <a-space>
+                <a-tooltip title="刷新">
+                  <a-button shape="circle" icon="reload" @click="refresh" />
+                </a-tooltip>
+                <a-tooltip title="显隐">
+                  <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
+                </a-tooltip>
+                <a-tooltip title="搜索">
+                  <a-button shape="circle" icon="search" @click="showSearch('searchList')" />
+                </a-tooltip>
               </a-space>
             </a-col>
             <a-drawer width="50%" title="列显隐" placement="right" :visible="drawerVisible" @close="drawerOnClose">

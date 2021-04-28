@@ -1,5 +1,5 @@
 <template>
-  <div class="DoctorCheck">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -112,7 +112,7 @@
       </a-row>
 
       <div class="actionBox">
-        <div class="title">基本信息</div>
+        <div class="actionBox-title">基本信息</div>
         <a-row type="flex" justify="space-between">
           <div style="flex:2">
             <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt="">
@@ -199,18 +199,18 @@
 
       </div>
       <div class="actionBox">
-        <div class="title">擅长</div>
+        <div class="actionBox-title">擅长</div>
         <a-textarea v-model="doctorInfo.goodAt" :disabled="viewVisible" :auto-size="{ minRows: 4, maxRows: 6 }"></a-textarea>
       </div>
       <div class="actionBox">
-        <div class="title">简介</div>
+        <div class="actionBox-title">简介</div>
         <a-textarea v-model="doctorInfo.introduction" :disabled="viewVisible" :auto-size="{ minRows: 6, maxRows: 10 }"></a-textarea>
       </div>
       <div class="actionBox">
         <a-modal :visible="previewVisible" :footer="null" @cancel="previewHandleCancel">
           <img alt="example" style="width: 100%" :src="previewImage" />
         </a-modal>
-        <div class="title" style="">照片证书</div>
+        <div class="actionBox-title" style="">照片证书</div>
         <a-row type="flex" style="margin:15px;">
           <div style="width:100px;">医生照片</div>
           <div style="flex:9">
@@ -505,36 +505,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.DoctorCheck {
-  background: #fff;
-  padding: 24px;
+.contentBox {
   .search {
     height: 65px;
-    overflow: hidden;
-  }
-}
-.actionBox {
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  // padding: 5px;
-  .title {
-    font-size: 16px;
-    background: rgb(250, 250, 250);
-    padding: 10px;
   }
 }
 </style>

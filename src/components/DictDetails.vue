@@ -438,7 +438,7 @@ export default {
     height: 0;
   }
   100% {
-    height: 130px;
+    height: 65px;
   }
 }
 .mask-enter-active {
@@ -457,7 +457,7 @@ export default {
 .cardBody {
   padding: 16px;
   .search {
-    height: 130px;
+    height: 65px;
     overflow: hidden;
   }
 }

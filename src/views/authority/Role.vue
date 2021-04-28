@@ -1,5 +1,5 @@
 <template>
-  <div class="role">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -106,7 +106,7 @@
             <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
           </div>
         </a-drawer>
-        
+
       </a-row>
     </div>
     <!-- 角色表格 -->
@@ -542,29 +542,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.role {
-  background: #fff;
-  // margin: 24px 16px;
-  // margin-bottom: 24px;
-  padding: 24px;
+.contentBox {
   min-height: 280px;
   .search {
     height: 65px;
-    overflow: hidden;
   }
   .table {
     a {

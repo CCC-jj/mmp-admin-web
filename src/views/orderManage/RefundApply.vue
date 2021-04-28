@@ -1,5 +1,5 @@
 <template>
-  <div class="RefundApply">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -66,7 +66,7 @@
     <!-- 医生操作抽屉 -->
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
       <div class="actionBox">
-        <div class="title">患者信息</div>
+        <div class="actionBox-title">患者信息</div>
         <a-row type="flex" justify="space-between">
           <div style="flex:2">
             <!-- <img style="margin:0 auto;width:100%;margin:35px 0;" src="../../assets/u2133.png" alt=""> -->
@@ -78,7 +78,7 @@
 
       </div>
       <div class="actionBox">
-        <div class="title">订单信息</div>
+        <div class="actionBox-title">订单信息</div>
       </div>
     </a-drawer>
 
@@ -253,36 +253,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.RefundApply {
-  background: #fff;
-  padding: 24px;
+.contentBox {
   .search {
     height: 65px;
-    overflow: hidden;
-  }
-}
-.actionBox {
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  // padding: 5px;
-  .title {
-    font-size: 16px;
-    background: rgb(250, 250, 250);
-    padding: 10px;
   }
 }
 </style>

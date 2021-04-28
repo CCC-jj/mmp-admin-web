@@ -1,5 +1,5 @@
 <template>
-  <div class="dictbiz">
+  <div class="contentBox">
     dictbiz
   </div>
 </template>

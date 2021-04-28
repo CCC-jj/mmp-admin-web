@@ -1,7 +1,7 @@
 <template>
   <div class="menu">
     <!-- 客户端选择 -->
-    <div class="menuLeft">
+    <div class="menuLeft contentBox">
       <a-input-search style="margin-bottom: 8px" placeholder="输入关键字进行过滤" @search="onSearch" />
       <a-table size="small" :loading="clientLoading" :columns="[{title: '客户端名称',dataIndex: 'clientName',scopedSlots: { customRender: 'clientName' }}]" :data-source="clientData" :rowKey="(record, index) => {return record.clientId}" :pagination="{ pageSize: 10, total: clientTotal, current: 1, showTotal: ((total) => {return `共 ${total} 条`}) }" @change="changeClientTable">
         <template slot="clientName" slot-scope="text,record">
@@ -10,7 +10,7 @@
       </a-table>
     </div>
 
-    <div class="menuRight">
+    <div class="menuRight contentBox">
       <!-- 搜索栏 -->
       <div style="float:right;">
       <a-space>
@@ -154,19 +154,7 @@
               <a-transfer :listStyle="{width:'45%',height:'500px'}" :titles="['隐藏','显示']" :data-source="mockData" show-search :filter-option="transferFilterOption" :target-keys="targetKeys" :render="item => item.title" @change="transferHandleChange" @search="transferHandleSearch" />
             </div>
           </a-drawer>
-          <a-col>
-            <a-space>
-              <a-tooltip title="刷新">
-                <a-button shape="circle" icon="reload" @click="refresh" />
-              </a-tooltip>
-              <a-tooltip title="显隐">
-                <a-button shape="circle" icon="menu-fold" @click="showDrawer" />
-              </a-tooltip>
-              <a-tooltip title="搜索">
-                <a-button shape="circle" icon="search" @click="showSearch" />
-              </a-tooltip>
-            </a-space>
-          </a-col>
+          
         </a-row>
       </div>
 
@@ -555,40 +543,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
 .menu {
-  // background: #fff;
-  // padding: 24px;
   min-height: 280px;
   display: flex;
   justify-content: space-between;
   .menuLeft {
     width: 18%;
-    background: #fff;
-    padding: 24px;
     height: 100%;
   }
   .menuRight {
     width: 81%;
-    background: #fff;
-    padding: 24px;
     min-height: 280px;
     .search {
       height: 65px;
-      overflow: hidden;
     }
   }
 }

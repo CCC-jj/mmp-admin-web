@@ -1,5 +1,5 @@
 <template>
-  <div class="Questionnaire">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -121,7 +121,7 @@
     <!-- 医生操作抽屉 -->
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
       <div class="actionBox">
-        <div class="title">患者信息</div>
+        <div class="actionBox-title">患者信息</div>
         <div class="content">
           <a-descriptions :column="4">
             <a-descriptions-item label="患者姓名">
@@ -153,7 +153,7 @@
       </div>
 
       <div class="actionBox">
-        <div class="title">订单信息</div>
+        <div class="actionBox-title">订单信息</div>
         <div class="content">
           <a-descriptions :column="3">
             <a-descriptions-item label="订单编号">
@@ -188,7 +188,7 @@
       </div>
 
       <div class="actionBox">
-        <div class="title">接诊信息</div>
+        <div class="actionBox-title">接诊信息</div>
         <div class="content">
           <a-descriptions :column="2">
             <a-descriptions-item label="接诊时间">
@@ -412,23 +412,12 @@ export default {
 .mask-leave-active {
   animation: mask-in 0.2s reverse linear;
 }
-.Questionnaire {
-  background: #fff;
-  padding: 24px;
+.contentBox {
   .search {
     height: 128px;
-    overflow: hidden;
   }
 }
 .actionBox {
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  // padding: 5px;
-  .title {
-    font-size: 16px;
-    background: rgb(250, 250, 250);
-    padding: 10px;
-  }
   .content {
     padding: 24px;
   }

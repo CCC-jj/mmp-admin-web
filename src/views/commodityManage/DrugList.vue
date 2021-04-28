@@ -1,5 +1,5 @@
 <template>
-  <div class="DrugList">
+  <div class="contentBox">
     <!-- 搜索栏 -->
     <div style="float:right;">
       <a-space>
@@ -82,7 +82,7 @@
     <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
       <div v-if="viewVisible">
         <div class="actionBox">
-          <div class="title">基本信息</div>
+          <div class="actionBox-title">基本信息</div>
           <a-row type="flex" justify="space-between">
             <div style="flex:2">
               <img style="margin:0 auto;width:100%;margin:10px 0;" src="../../assets/u9183.png" alt="">
@@ -125,7 +125,7 @@
 
         </div>
         <div class="actionBox">
-          <div class="title">简介</div>
+          <div class="actionBox-title">简介</div>
           <div style="padding:24px;">
             <p>【药品名称】</p>
             <p>通用名：苯磺酸氨氯地平</p>
@@ -492,36 +492,22 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@keyframes mask-in {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: 65px;
-  }
-}
-.mask-enter-active {
-  animation: mask-in 0.2s linear;
-}
-.mask-leave-active {
-  animation: mask-in 0.2s reverse linear;
-}
-.DrugList {
-  background: #fff;
-  padding: 24px;
+.contentBox {
+  // background: #fff;
+  // padding: 24px;
   .search {
     height: 65px;
-    overflow: hidden;
+    // overflow: hidden;
   }
 }
-.actionBox {
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  // padding: 5px;
-  .title {
-    font-size: 16px;
-    background: rgb(250, 250, 250);
-    padding: 10px;
-  }
-}
+// .actionBox {
+//   border: 1px solid #eee;
+//   margin-bottom: 10px;
+//   // padding: 5px;
+//   .title {
+//     font-size: 16px;
+//     background: rgb(250, 250, 250);
+//     padding: 10px;
+//   }
+// }
 </style>

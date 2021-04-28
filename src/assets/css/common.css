@@ -845,3 +845,34 @@
 .lines-white {
 	color: #ffffff;
 }
+
+@keyframes mask-in {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 65px;
+  }
+}
+.mask-enter-active {
+  animation: mask-in 0.2s linear;
+}
+.mask-leave-active {
+  animation: mask-in 0.2s reverse linear;
+}
+.contentBox {
+	background: #fff;
+  padding: 24px;
+}
+.search {
+	overflow: hidden;
+}
+.actionBox {
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+}
+.actionBox-title {
+	font-size: 16px;
+	background: rgb(250, 250, 250);
+	padding: 10px;
+}
