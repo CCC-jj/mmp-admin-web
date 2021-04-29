@@ -48,7 +48,7 @@
     <template v-slot:footerRender>
       <global-footer />
     </template>
-    <router-view />
+    <router-view v-if="isRouterAlive" />
   </pro-layout>
 </template>
 
@@ -66,6 +66,11 @@ import LogoSvg from '../assets/logo.svg?inline'
 
 export default {
   name: 'BasicLayout',
+  provide() {
+    return {
+      reloadCard: this.reloadCard,
+    }
+  },
   components: {
     SettingDrawer,
     RightContent,
@@ -75,6 +80,8 @@ export default {
   },
   data () {
     return {
+      // 刷新页面
+      isRouterAlive: true,
       // preview.pro.antdv.com only use.
       isProPreviewSite: process.env.VUE_APP_PREVIEW === 'true' && process.env.NODE_ENV !== 'development',
       // end
@@ -175,7 +182,14 @@ export default {
           }
           break
       }
-    }
+    },
+    // 刷新路由组件
+    reloadCard() {
+      this.isRouterAlive = false
+      this.$nextTick(() => {
+        this.isRouterAlive = true
+      })
+    },
   }
 }
 </script>

@@ -20,6 +20,13 @@ const constantRouterComponents = {
 
   // doctorManage
   'DoctorList': () => import('@/views/doctorManage/DoctorList'),
+  'DoctorCheck': () => import('@/views/doctorManage/DoctorCheck'),
+  'ServiceCheck': () => import('@/views/doctorManage/ServiceCheck'),
+
+  // orderManage
+  'Questionnaire': () => import('@/views/orderManage/Questionnaire'),
+  'RegisteredOrder': () => import('@/views/orderManage/RegisteredOrder'),
+  'RefundApply': () => import('@/views/orderManage/RefundApply'),
 
   // form
   'BasicForm': () => import('@/views/form/basicForm'),
@@ -115,7 +122,7 @@ export const generator = (routerMap, parent) => {
     const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
     const currentRouter = {
       // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
-      path: item.path || `${parent && parent.path || ''}/${item.key}`,
+      path: `${parent && parent.path || ''}/${item.key}`,
       // 路由名称，建议唯一
       name: item.name || item.key || '',
       // 该路由对应页面的 组件 :方案1

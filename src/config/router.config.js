@@ -49,14 +49,172 @@ export const asyncRouterMap = [
         name: 'doctorManage',
         redirect: '/doctorManage/doctorList',
         component: RouteView,
-        meta: { title: 'menu.doctorManage', icon: 'user', permission: ['doctorManage'] },
+        meta: { title: '医生管理', icon: 'user', permission: ['doctorManage'] },
         children: [
           {
             path: '/doctorManage/doctorList',
             name: 'DoctorList',
             component: () => import('@/views/doctorManage/DoctorList'),
-            meta: { title: 'menu.doctorManage.doctorList', keepAlive: true, permission: ['doctorManage'] }
-          }
+            meta: { title: '医生列表', keepAlive: true, permission: ['doctorManage'] }
+          },
+          {
+            path: '/doctorManage/doctorCheck',
+            name: 'DoctorCheck',
+            component: () => import('@/views/doctorManage/DoctorCheck'),
+            meta: { title: '医生审核', keepAlive: true, permission: ['doctorManage'] }
+          },
+          {
+            path: '/doctorManage/serviceCheck',
+            name: 'ServiceCheck',
+            component: () => import('@/views/doctorManage/ServiceCheck'),
+            meta: { title: '服务审核', keepAlive: true, permission: ['doctorManage'] }
+          },
+        ]
+      },
+      // orderManage
+      {
+        path: '/orderManage',
+        name: 'orderManage',
+        redirect: '/orderManage/questionnaire',
+        component: RouteView,
+        meta: { title: '订单管理', icon: 'lock', permission: ['orderManage'] },
+        children: [
+          {
+            path: '/orderManage/questionnaire',
+            name: 'Questionnaire',
+            component: () => import('@/views/orderManage/Questionnaire'),
+            meta: { title: '问诊单管理', keepAlive: true, permission: ['orderManage'] }
+          },
+          {
+            path: '/orderManage/registeredOrder',
+            name: 'RegisteredOrder',
+            component: () => import('@/views/orderManage/RegisteredOrder'),
+            meta: { title: '挂号单管理', keepAlive: true, permission: ['orderManage'] }
+          },
+          {
+            path: '/orderManage/refundApply',
+            name: 'RefundApply',
+            component: () => import('@/views/orderManage/RefundApply'),
+            meta: { title: '退款申请', keepAlive: true, permission: ['orderManage'] }
+          },
+        ]
+      },
+      // commodityManage
+      {
+        path: '/commodityManage',
+        name: 'commodityManage',
+        redirect: '/commodityManage/drugList',
+        component: RouteView,
+        meta: { title: '商品管理', icon: 'trademark', permission: ['commodityManage'] },
+        children: [
+          {
+            path: '/commodityManage/drugList',
+            name: 'DrugList',
+            component: () => import('@/views/commodityManage/DrugList'),
+            meta: { title: '药品列表', keepAlive: true, permission: ['commodityManage'] }
+          },
+          {
+            path: '/commodityManage/drugSort',
+            name: 'DrugSort',
+            component: () => import('@/views/commodityManage/DrugSort'),
+            meta: { title: '药品分类', keepAlive: true, permission: ['commodityManage'] }
+          },
+          {
+            path: '/commodityManage/drugCheck',
+            name: 'DrugCheck',
+            component: () => import('@/views/commodityManage/DrugCheck'),
+            meta: { title: '药品审核', keepAlive: true, permission: ['commodityManage'] }
+          },
+        ]
+      },
+      // contentManage
+      {
+        path: '/contentManage',
+        name: 'contentManage',
+        redirect: '/contentManage/hospital',
+        component: RouteView,
+        meta: { title: '内容管理', icon: 'container', permission: ['contentManage'] },
+        children: [
+          {
+            path: '/contentManage/hospital',
+            name: 'HospitalManage',
+            component: () => import('@/views/contentManage/HospitalManage'),
+            meta: { title: '医院管理', keepAlive: true, permission: ['contentManage'] }
+          },
+        ]
+      },
+      // authority
+      {
+        path: '/authority',
+        name: 'authority',
+        redirect: '/authority/role',
+        component: RouteView,
+        meta: { title: '权限管理', icon: 'lock', permission: ['authority'] },
+        children: [
+          {
+            path: '/authority/role',
+            name: 'Role',
+            component: () => import('@/views/authority/Role'),
+            meta: { title: '角色管理', keepAlive: true, permission: ['authority'] }
+          },
+          {
+            path: '/authority/api',
+            name: 'AuthApi',
+            component: () => import('@/views/authority/Api'),
+            meta: { title: '接口权限', keepAlive: true, permission: ['authority'] }
+          },
+          {
+            path: '/authority/menu',
+            name: 'AuthMenu',
+            component: () => import('@/views/authority/Menu'),
+            meta: { title: '菜单权限', keepAlive: true, permission: ['authority'] }
+          },
+        ]
+      },
+      // system
+      {
+        path: '/system',
+        name: 'system',
+        redirect: '/system/user',
+        component: RouteView,
+        meta: { title: '系统管理', icon: 'setting', permission: ['system'] },
+        children: [
+          {
+            path: '/system/user',
+            name: 'User',
+            component: () => import('@/views/system/User'),
+            meta: { title: '用户管理', keepAlive: true, permission: ['system'] }
+          },
+          {
+            path: '/system/dict',
+            name: 'Dict',
+            component: () => import('@/views/system/Dict'),
+            meta: { title: '系统字典', keepAlive: true, permission: ['system'] },
+          },
+          {
+            path: '/system/dictbiz',
+            name: 'Dictbiz',
+            component: () => import('@/views/system/Dictbiz.vue'),
+            meta: { title: '业务字典', keepAlive: true, permission: ['system'] }
+          },
+          {
+            path: '/system/menu',
+            name: 'Menu',
+            component: () => import('@/views/system/Menu'),
+            meta: { title: '菜单管理', keepAlive: true, permission: ['system'] },
+          },
+          {
+            path: '/system/param',
+            name: 'Param',
+            component: () => import('@/views/system/Param'),
+            meta: { title: '参数管理', keepAlive: true, permission: ['system'] }
+          },
+          {
+            path: '/system/client',
+            name: 'Client',
+            component: () => import('@/views/system/Client'),
+            meta: { title: '客户端管理', keepAlive: true, permission: ['system'] }
+          },
         ]
       },
       // forms
@@ -123,19 +281,19 @@ export const asyncRouterMap = [
               {
                 path: '/list/search/article',
                 name: 'SearchArticles',
-                component: () => import('../views/list/search/Article'),
+                component: () => import('@/views/list/search/Article'),
                 meta: { title: 'menu.list.search-list.articles', permission: ['table'] }
               },
               {
                 path: '/list/search/project',
                 name: 'SearchProjects',
-                component: () => import('../views/list/search/Projects'),
+                component: () => import('@/views/list/search/Projects'),
                 meta: { title: 'menu.list.search-list.projects', permission: ['table'] }
               },
               {
                 path: '/list/search/application',
                 name: 'SearchApplications',
-                component: () => import('../views/list/search/Applications'),
+                component: () => import('@/views/list/search/Applications'),
                 meta: { title: 'menu.list.search-list.applications', permission: ['table'] }
               }
             ]

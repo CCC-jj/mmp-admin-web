@@ -4,6 +4,7 @@ const api = {
   user: '/user',
   role: '/role',
   service: '/service',
+  doctor: '/doctor',
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
   orgTree: '/org/tree'
@@ -30,6 +31,14 @@ export function getRoleList (parameter) {
 export function getServiceList (parameter) {
   return request({
     url: api.service,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getDoctorList (parameter) {
+  return request({
+    url: api.doctor,
     method: 'get',
     params: parameter
   })

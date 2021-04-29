@@ -76,9 +76,7 @@
       </div>
 
       <div class="table-operator">
-        <a-button v-action:add type="primary" icon="plus" @click="add">新增医生</a-button>
         <a-button v-action:delete type="danger" icon="delete">删除</a-button>
-        <a-button icon="import">批量导入</a-button>
       </div>
 
       <!-- 切换标签 -->
@@ -97,17 +95,22 @@
         <span slot="action" slot-scope="text, record">
           <template>
             <a-space size="middle">
-              <a v-action:get @click="toView(record)">查看</a>
-              <a v-action:get @click="handleEdit(record)">查看粉丝</a>
-              <a v-action:delete @click="handleSub(record)">删除</a>
+              <a v-action:get @click="toView(record)">
+                <a-icon type="eye" />查看
+              </a>
+              <a v-action:update @click="handleEdit(record)">
+                <a-icon type="edit" />审核
+              </a>
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleSub(record)">
+                <a v-action:delete>
+                  <a-icon type="delete" />删除
+                </a>
+              </a-popconfirm>
             </a-space>
 
           </template>
         </span>
       </s-table>
-
-      <create-form ref="createModal" :visible="visible" :loading="confirmLoading" :model="mdl" @cancel="handleCancel" @ok="handleOk" />
-      <step-by-step-modal ref="modal" @ok="handleOk" />
 
       <!-- 操作抽屉 -->
       <a-drawer width="50%" :title="actionTitle" :visible="actionVisible" :after-visible-change="afterActionVisibleChange" @close="actionOnClose">
@@ -271,17 +274,32 @@
           </a-button>
         </div>
       </a-drawer>
+
+      <!-- 操作对话框 -->
+      <a-modal :zIndex="1001" v-model="checkVisible" title="医生审核" @ok="checkHandleOk">
+      <p>姓名： {{checkInfo.name}}</p>
+      <p>审核：
+        <a-radio-group v-model="checkInfo.result">
+          <a-radio value="审核通过">
+            审核通过
+          </a-radio>
+          <a-radio value="审核不通过">
+            审核不通过
+          </a-radio>
+        </a-radio-group>
+      </p>
+      <p>备注：
+        <a-textarea v-model="checkInfo.remark" :rows="4" />
+      </p>
+    </a-modal>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
+import { STable } from '@/components'
 import { getRoleList, getDoctorList } from '@/api/manage'
-
-import StepByStepModal from './modules/StepByStepModal'
-import CreateForm from './modules/CreateForm'
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -325,14 +343,14 @@ const columns = [
     title: '审核状态',
     dataIndex: 'status',
   },
-  {
-    title: '服务审核',
-    dataIndex: 'service',
-  },
-  {
-    title: '粉丝',
-    dataIndex: 'fans',
-  },
+  // {
+  //   title: '服务审核',
+  //   dataIndex: 'service',
+  // },
+  // {
+  //   title: '粉丝',
+  //   dataIndex: 'fans',
+  // },
   {
     title: '操作',
     dataIndex: 'action',
@@ -343,13 +361,10 @@ const columns = [
 ]
 
 export default {
-  name: 'DoctorList',
+  name: 'DoctorCheck',
   inject: ['reloadCard'],
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal,
   },
   data() {
     this.columns = columns
@@ -396,6 +411,13 @@ export default {
       jobFileList: [],
       // 查看医生详情
       viewVisible: false,
+      // 审核
+      checkVisible: false,
+      checkInfo: {
+        name: '',
+        result: '审核通过',
+        remark: '',
+      },
     }
   },
   created() {
@@ -410,63 +432,12 @@ export default {
     },
   },
   methods: {
-    handleAdd() {
-      this.mdl = null
-      this.visible = true
-    },
     handleEdit(record) {
-      this.visible = true
-      this.mdl = { ...record }
+      this.checkInfo = record
+      this.checkVisible = true
     },
-    handleOk() {
-      const form = this.$refs.createModal.form
-      this.confirmLoading = true
-      form.validateFields((errors, values) => {
-        if (!errors) {
-          console.log('values', values)
-          if (values.id > 0) {
-            // 修改 e.g.
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then((res) => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('修改成功')
-            })
-          } else {
-            // 新增
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then((res) => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('新增成功')
-            })
-          }
-        } else {
-          this.confirmLoading = false
-        }
-      })
-    },
-    handleCancel() {
-      this.visible = false
-
-      const form = this.$refs.createModal.form
-      form.resetFields() // 清理表单数据（可不做）
+    checkHandleOk() {
+      this.checkVisible = false
     },
     handleSub(record) {
       if (record.status !== 0) {
@@ -487,11 +458,6 @@ export default {
     },
     toggleAdvanced() {
       this.advanced = !this.advanced
-    },
-    resetSearchForm() {
-      this.queryParam = {
-        date: moment(new Date()),
-      }
     },
     // 新增医生
     add() {

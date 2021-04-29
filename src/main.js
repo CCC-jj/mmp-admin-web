@@ -21,6 +21,11 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './global.less' // global style
 
+// 全局引入antdv
+// import Antd from 'ant-design-vue';
+// import 'ant-design-vue/dist/antd.css';
+// Vue.use(Antd);
+
 Vue.config.productionTip = false
 
 // mount axios to `Vue.$http` and `this.$http`

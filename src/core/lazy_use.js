@@ -16,6 +16,7 @@ import {
   Row,
   Col,
   Modal,
+  FormModel,
   Table,
   Tabs,
   Icon,
@@ -45,7 +46,9 @@ import {
   Descriptions,
   Space,
   message,
-  notification
+  notification,
+  Cascader,
+  Transfer
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -71,6 +74,7 @@ Vue.use(Form)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)
+Vue.use(FormModel)
 Vue.use(Table)
 Vue.use(Tabs)
 Vue.use(Icon)
@@ -99,6 +103,8 @@ Vue.use(Result)
 Vue.use(Statistic)
 Vue.use(Descriptions)
 Vue.use(Space)
+Vue.use(Cascader)
+Vue.use(Transfer)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message
