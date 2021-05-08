@@ -191,12 +191,12 @@ export const asyncRouterMap = [
             component: () => import('@/views/system/Dict'),
             meta: { title: '系统字典', keepAlive: true, permission: ['system'] },
           },
-          {
-            path: '/system/dictbiz',
-            name: 'Dictbiz',
-            component: () => import('@/views/system/Dictbiz.vue'),
-            meta: { title: '业务字典', keepAlive: true, permission: ['system'] }
-          },
+          // {
+          //   path: '/system/dictbiz',
+          //   name: 'Dictbiz',
+          //   component: () => import('@/views/system/Dictbiz.vue'),
+          //   meta: { title: '业务字典', keepAlive: true, permission: ['system'] }
+          // },
           {
             path: '/system/menu',
             name: 'Menu',

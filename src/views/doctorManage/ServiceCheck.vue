@@ -98,7 +98,7 @@
               <a v-action:get @click="toView(record)">
                 <a-icon type="eye" />查看
               </a>
-              <a v-action:update @click="handleEdit(record)">
+              <a v-action:edit @click="handleEdit(record)">
                 <a-icon type="edit" />审核
               </a>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleSub(record)">

@@ -118,6 +118,7 @@ export const generatorDynamicRouter = (token) => {
  * @returns {*}
  */
 export const generator = (routerMap, parent) => {
+  console.log(routerMap, parent);
   return routerMap.map(item => {
     const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
     const currentRouter = {
