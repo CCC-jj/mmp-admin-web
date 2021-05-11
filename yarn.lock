@@ -1180,6 +1180,11 @@
   resolved "https://registry.npm.taobao.org/@soda/get-current-script/download/@soda/get-current-script-1.0.0.tgz#623aa40623550e3b94767cffeb096a6fb597ed09"
   integrity sha1-YjqkBiNVDjuUdnz/6wlqb7WX7Qk=
 
+"@tinymce/tinymce-vue@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.nlark.com/@tinymce/tinymce-vue/download/@tinymce/tinymce-vue-4.0.0.tgz?cache=0&sync_timestamp=1620345063195&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40tinymce%2Ftinymce-vue%2Fdownload%2F%40tinymce%2Ftinymce-vue-4.0.0.tgz#694e214f071370dfad1ac199056373048578e6ee"
+  integrity sha1-aU4hTwcTcN+tGsGZBWNzBIV45u4=
+
 "@types/anymatch@*":
   version "1.3.1"
   resolved "https://registry.npm.taobao.org/@types/anymatch/download/@types/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"

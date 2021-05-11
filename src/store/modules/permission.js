@@ -57,7 +57,6 @@ const permission = {
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      console.log(state,routers);
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
     }
@@ -66,7 +65,9 @@ const permission = {
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
         const { roles } = data
+        console.log(data);
         const accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        console.log(accessedRouters);
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

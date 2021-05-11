@@ -217,6 +217,28 @@ export const asyncRouterMap = [
           },
         ]
       },
+      // wxManage
+      {
+        path: '/wxManage',
+        name: 'wxManage',
+        redirect: '/wxManage/wxMenu',
+        component: RouteView,
+        meta: { title: '微信管理', icon: 'message', permission: ['wxManage'] },
+        children: [
+          {
+            path: '/wxManage/wxMenu',
+            name: 'WxMenu',
+            component: () => import('@/views/wxManage/WxMenu'),
+            meta: { title: '公众号管理', keepAlive: true, permission: ['wxManage'] }
+          },
+          {
+            path: '/wxManage/wxMaterial',
+            name: 'WxMaterial',
+            component: () => import('@/views/wxManage/WxMaterial'),
+            meta: { title: '素材管理', keepAlive: true, permission: ['wxManage'] }
+          },
+        ]
+      },
       // forms
       {
         path: '/form',
@@ -395,17 +417,17 @@ export const asyncRouterMap = [
             name: 'settings',
             component: () => import('@/views/account/settings/Index'),
             meta: { title: 'menu.account.settings', hideHeader: true, permission: ['user'] },
-            redirect: '/account/settings/basic',
+            redirect: '/account/settings/BasicSettings',
             hideChildrenInMenu: true,
             children: [
               {
-                path: '/account/settings/basic',
+                path: '/account/settings/BasicSettings',
                 name: 'BasicSettings',
                 component: () => import('@/views/account/settings/BasicSetting'),
                 meta: { title: 'account.settings.menuMap.basic', hidden: true, permission: ['user'] }
               },
               {
-                path: '/account/settings/security',
+                path: '/account/settings/SecuritySettings',
                 name: 'SecuritySettings',
                 component: () => import('@/views/account/settings/Security'),
                 meta: {
@@ -416,19 +438,19 @@ export const asyncRouterMap = [
                 }
               },
               {
-                path: '/account/settings/custom',
+                path: '/account/settings/CustomSettings',
                 name: 'CustomSettings',
                 component: () => import('@/views/account/settings/Custom'),
                 meta: { title: 'account.settings.menuMap.custom', hidden: true, keepAlive: true, permission: ['user'] }
               },
               {
-                path: '/account/settings/binding',
+                path: '/account/settings/BindingSettings',
                 name: 'BindingSettings',
                 component: () => import('@/views/account/settings/Binding'),
                 meta: { title: 'account.settings.menuMap.binding', hidden: true, keepAlive: true, permission: ['user'] }
               },
               {
-                path: '/account/settings/notification',
+                path: '/account/settings/NotificationSettings',
                 name: 'NotificationSettings',
                 component: () => import('@/views/account/settings/Notification'),
                 meta: {
