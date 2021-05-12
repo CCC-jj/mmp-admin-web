@@ -1,8 +1,8 @@
 <template>
-    <el-dialog title="选择素材"  :visible.sync="visible" :modal="true" append-to-body>
+    <a-modal title="选择素材"  :visible.sync="visible" @cancel="$emit('cancelModal')">
         <material-news v-if="selectType=='news'" @selected="onSelect" selectMode></material-news>
         <material-file v-else :fileType="selectType" @selected="onSelect" selectMode></material-file>
-    </el-dialog>
+    </a-modal>
 </template>
 <script>
 export default {

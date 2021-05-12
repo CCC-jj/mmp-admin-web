@@ -96,22 +96,26 @@ export default {
     },
     //添加菜单
     addMenu(level, i) {
-      if (level == 1 && this.menu.buttons.length < 3) {
-        this.menu.buttons.push({
-          type: 'view',
-          name: '菜单名称',
-          subButtons: [],
-          url: '',
-        })
-        this.selectMenu(this.menu.buttons.length - 1)
-      }
-      if (level == 2 && this.menu.buttons[i].subButtons.length < 5) {
-        this.menu.buttons[i].subButtons.push({
-          type: 'view',
-          name: '子菜单名称',
-          url: '',
-        })
-        this.selectSubMenu(i, this.menu.buttons[i].subButtons.length - 1)
+      if (this.$auth('wxManage.add')) {
+        if (level == 1 && this.menu.buttons.length < 3) {
+          this.menu.buttons.push({
+            type: 'view',
+            name: '菜单名称',
+            subButtons: [],
+            url: '',
+          })
+          this.selectMenu(this.menu.buttons.length - 1)
+        }
+        if (level == 2 && this.menu.buttons[i].subButtons.length < 5) {
+          this.menu.buttons[i].subButtons.push({
+            type: 'view',
+            name: '子菜单名称',
+            url: '',
+          })
+          this.selectSubMenu(i, this.menu.buttons[i].subButtons.length - 1)
+        }
+      } else {
+        this.$message.error('您没有此操作的权限！')
       }
     },
     //删除菜单

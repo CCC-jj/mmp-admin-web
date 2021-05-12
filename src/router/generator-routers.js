@@ -51,6 +51,12 @@ const constantRouterComponents = {
   // wxManage
   WxMenu: () => import('@/views/wxManage/WxMenu'),
   WxMaterial: () => import('@/views/wxManage/WxMaterial'),
+  MsgReplyRule: () => import('@/views/wxManage/msg-reply-rule'),
+  MsgTemplate: () => import('@/views/wxManage/msg-template'),
+  WxQrcode: () => import('@/views/wxManage/wx-qrcode'),
+  WxMsg: () => import('@/views/wxManage/wx-msg'),
+  WxUser: () => import('@/views/wxManage/wx-user'),
+
 
   // form
   BasicForm: () => import('@/views/form/basicForm'),
@@ -151,7 +157,7 @@ export const generator = (routerMap, parent) => {
     const { title, show, hideChildren, hiddenHeaderContent, target, icon, permission, keepAlive } = item.meta || {}
     const currentRouter = {
       // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
-      path: `${(parent && parent.path) || ''}/${item.key}`,
+      path: item.path ? item.path : `${(parent && parent.path) || ''}/${item.key}`,
       // 路由名称，建议唯一
       name: item.name || item.key || '',
       // 该路由对应页面的 组件 :方案1

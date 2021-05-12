@@ -1,6 +1,20 @@
 <template>
   <div class="WxMaterial">
-    <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+    <a-tabs v-model="activeTab" @change="handleTabClick">
+    <a-tab-pane key="image" :tab="'图片素材（'+assetsCount.imageCount+')'">
+      <material-file fileType="image" ref="imagePanel" @change="materialCount"></material-file>
+    </a-tab-pane>
+    <a-tab-pane key="voice" :tab="'语音素材（'+assetsCount.voiceCount+')'">
+      <material-file fileType="voice" ref="voicePanel" @change="materialCount"></material-file>
+    </a-tab-pane>
+    <a-tab-pane key="video" :tab="'视频素材（'+assetsCount.videoCount+')'">
+      <material-file fileType="video" ref="videoPanel" @change="materialCount"></material-file>
+    </a-tab-pane>
+    <a-tab-pane :tab="'图文素材（'+assetsCount.newsCount+')'" key="news">
+        <material-news ref="newsPanel" @change="materialCount"></material-news>
+      </a-tab-pane>
+  </a-tabs>
+    <!-- <el-tabs v-model="activeTab" @tab-click="handleTabClick">
       <el-tab-pane :label="'图片素材（'+assetsCount.imageCount+')'" name="image" lazy>
         <material-file fileType="image" ref="imagePanel" @change="materialCount"></material-file>
       </el-tab-pane>
@@ -13,7 +27,7 @@
       <el-tab-pane :label="'图文素材（'+assetsCount.newsCount+')'" name="news" lazy>
         <material-news ref="newsPanel" @change="materialCount"></material-news>
       </el-tab-pane>
-    </el-tabs>
+    </el-tabs> -->
   </div>
 
 </template>
@@ -39,9 +53,9 @@ export default {
     this.materialCount()
   },
   methods: {
-    handleTabClick(tab, event) {
+    handleTabClick(activeKey) {
       this.$nextTick(() => {
-        this.$refs[tab.name + 'Panel'].init()
+        this.$refs[activeKey + 'Panel'].init()
       })
     },
     materialCount() {

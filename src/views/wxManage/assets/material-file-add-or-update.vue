@@ -1,30 +1,30 @@
 <template>
-    <el-dialog :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-            <el-form-item label="媒体文件">
-                <el-button type="primary">
+    <a-modal width="700px" :title="!dataForm.id ? '新增' : '修改'" :maskClosable="false" :visible.sync="visible" @cancel="visible = false">
+        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" v-bind="{labelCol: { span: 3 },wrapperCol: { span: 21 },}">
+            <a-form-model-item label="媒体文件">
+                <a-button type="primary">
                     选择文件
                     <input type="file" style="opacity: 0;height: 100%;position: absolute;left: 0;top: 0;" @change="onFileChange" />
-                </el-button>
+                </a-button>
                 <div>{{dataForm.file.name}}</div>
-            </el-form-item>
-            <el-form-item label="媒体类型" prop="mediaType">
-                <el-select v-model="dataForm.mediaType" placeholder="媒体类型" style="width:100%">
-                    <el-option label="图片（2M以内，支持PNG\JPEG\JPG\GIF）" value="image"></el-option>
-                    <el-option label="视频（10M以内，只支持MP4）" value="video"></el-option>
-                    <el-option label="语音（2M、60s以内，支持AMR\MP3）" value="voice"></el-option>
-                    <el-option label="缩略图（64K以内JPG）" value="thumb"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="素材名称" prop="fileName">
-                <el-input v-model="dataForm.fileName" placeholder="为便于管理建议按用途分类+素材内容命名"></el-input>
-            </el-form-item>
-        </el-form>
+            </a-form-model-item>
+            <a-form-model-item label="媒体类型" prop="mediaType">
+                <a-select v-model="dataForm.mediaType" placeholder="媒体类型" style="width:100%">
+                    <a-select-option value="image">图片（2M以内，支持PNG\JPEG\JPG\GIF）</a-select-option>
+                    <a-select-option value="video">视频（10M以内，只支持MP4）</a-select-option>
+                    <a-select-option value="voice">语音（2M、60s以内，支持AMR\MP3）</a-select-option>
+                    <a-select-option value="thumb">缩略图（64K以内JPG）</a-select-option>
+                </a-select>
+            </a-form-model-item>
+            <a-form-model-item label="素材名称" prop="fileName">
+                <a-input v-model="dataForm.fileName" placeholder="为便于管理建议按用途分类+素材内容命名"></a-input>
+            </a-form-model-item>
+        </a-form-model>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="visible = false">取消</el-button>
-            <el-button type="primary" @click="dataFormSubmit()" :disabled="uploading">{{uploading?'提交中...':'提交'}}</el-button>
+            <a-button @click="visible = false">取消</a-button>
+            <a-button type="primary" @click="dataFormSubmit()" :disabled="uploading">{{uploading?'提交中...':'提交'}}</a-button>
         </span>
-    </el-dialog>
+    </a-modal>
 </template>
 
 <script>
