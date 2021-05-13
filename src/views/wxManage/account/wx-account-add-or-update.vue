@@ -1,46 +1,46 @@
 <template>
-  <el-dialog
+  <a-modal
     title="新增/修改"
-    :close-on-click-modal="false"
+    :maskClosable="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-    <el-form-item label="公众号名称" prop="name">
-      <el-input v-model="dataForm.name" placeholder="公众号名称"></el-input>
-    </el-form-item>
+    <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+    <a-form-model-item label="公众号名称" prop="name">
+      <a-input v-model="dataForm.name" placeholder="公众号名称"></a-input>
+    </a-form-model-item>
     <div class="padding text-gray">测试号可选择服务号，不同类型账号、是否认证可使用功能权限不同，<a href="https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Explanation_of_interface_privileges.html">参考文档</a></div>
     <el-row>
         <el-col :span="12">
-            <el-form-item label="公众号类型" prop="type">
-                <el-select v-model="dataForm.type" placeholder="公众号类型">
-                    <el-option v-for="(name,key) in ACCOUNT_TYPES" :key="name" :label="name" :value="key"></el-option>
-                </el-select>
-            </el-form-item>
+            <a-form-model-item label="公众号类型" prop="type">
+                <a-select v-model="dataForm.type" placeholder="公众号类型">
+                    <a-select-option v-for="(name,key) in ACCOUNT_TYPES" :key="name" :label="name" :value="key"></a-select-option>
+                </a-select>
+            </a-form-model-item>
         </el-col>
         <el-col :span="12">
-            <el-form-item label="是否认证" prop="verified">
+            <a-form-model-item label="是否认证" prop="verified">
                 <el-switch v-model="dataForm.verified" placeholder="是否认证"></el-switch>
-            </el-form-item>
+            </a-form-model-item>
         </el-col>
     </el-row>
     
-    <el-form-item label="appid" prop="appid">
-      <el-input v-model="dataForm.appid" placeholder="appid"></el-input>
-    </el-form-item>
-    <el-form-item label="appsecret" prop="secret">
-      <el-input v-model="dataForm.secret" placeholder="appsecret"></el-input>
-    </el-form-item>
-    <el-form-item label="token" prop="token">
-      <el-input v-model="dataForm.token" placeholder="token"></el-input>
-    </el-form-item>
-    <el-form-item label="aesKey" prop="aesKey">
-      <el-input v-model="dataForm.aesKey" placeholder="aesKey，可为空"></el-input>
-    </el-form-item>
-    </el-form>
+    <a-form-model-item label="appid" prop="appid">
+      <a-input v-model="dataForm.appid" placeholder="appid"></a-input>
+    </a-form-model-item>
+    <a-form-model-item label="appsecret" prop="secret">
+      <a-input v-model="dataForm.secret" placeholder="appsecret"></a-input>
+    </a-form-model-item>
+    <a-form-model-item label="token" prop="token">
+      <a-input v-model="dataForm.token" placeholder="token"></a-input>
+    </a-form-model-item>
+    <a-form-model-item label="aesKey" prop="aesKey">
+      <a-input v-model="dataForm.aesKey" placeholder="aesKey，可为空"></a-input>
+    </a-form-model-item>
+    </a-form-model>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <a-button @click="visible = false">取消</a-button>
+      <a-button type="primary" @click="dataFormSubmit()">确定</a-button>
     </span>
-  </el-dialog>
+  </a-modal>
 </template>
 
 <script>

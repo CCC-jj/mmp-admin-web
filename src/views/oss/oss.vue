@@ -1,14 +1,14 @@
 <template>
     <div class="mod-oss">
-        <el-form :inline="true" :model="dataForm">
-            <el-form-item>
-                <el-button type="primary" @click="configHandle()">云存储配置</el-button>
-                <el-button type="primary">
+        <a-form-model :inline="true" :model="dataForm">
+            <a-form-model-item>
+                <a-button type="primary" @click="configHandle()">云存储配置</a-button>
+                <a-button type="primary">
                     <OssUploader @uploaded="getDataList"></OssUploader>
-                </el-button>
-                <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-            </el-form-item>
-        </el-form>
+                </a-button>
+                <a-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+            </a-form-model-item>
+        </a-form-model>
         <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
             <el-table-column type="selection" header-align="center" align="center" width="50">
             </el-table-column>
@@ -24,12 +24,12 @@
             </el-table-column>
             <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+                    <a-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</a-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <a-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
+        </a-pagination>
         <!-- 弹窗, 云存储配置 -->
         <config v-show="configVisible" ref="config"></config>
         <!-- 弹窗, 上传文件 -->

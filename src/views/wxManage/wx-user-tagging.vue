@@ -1,16 +1,16 @@
 <template>
-    <el-dialog :title="modeDesc[mode]+'用户标签'" :close-on-click-modal="false" :visible.sync="dialogVisible">
+    <a-modal :title="modeDesc[mode]+'用户标签'" :maskClosable="false" :visible.sync="dialogVisible">
         <div>
-            <el-select v-model="selectedTagid" filterable placeholder="请选择标签" style="width:100%">
-                <el-option v-for="tagid in tagidsInOption" :key="tagid" :label="getTagName(tagid)" :value="tagid"></el-option>
-            </el-select>
+            <a-select v-model="selectedTagid" filterable placeholder="请选择标签" style="width:100%">
+                <a-select-option v-for="tagid in tagidsInOption" :key="tagid" :label="getTagName(tagid)" :value="tagid"></a-select-option>
+            </a-select>
             <div style="margin-top:20px;">已选择用户数：{{wxUsers.length}}</div>
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible=false">关闭</el-button>
-            <el-button type="primary" @click="dataFormSubmit()" :disabled="submitting">{{submitting?'保存中...':'确定'}}</el-button>
+            <a-button @click="dialogVisible=false">关闭</a-button>
+            <a-button type="primary" @click="dataFormSubmit()" :disabled="submitting">{{submitting?'保存中...':'确定'}}</a-button>
         </span>
-    </el-dialog>
+    </a-modal>
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -32,7 +32,7 @@ export default {
         }
     },
     computed: mapState({
-        wxUserTags:state=>state.wxUserTags.tags,
+        wxUserTags:state=>state.wxManage.tags,
         /**
          * 返回下拉选择框中的选项列表
          * 假设 all= 全部标签，intersection = 用户标签交集（即所有用户都有的） ，union=用户标签并集（即至少一个用户的）

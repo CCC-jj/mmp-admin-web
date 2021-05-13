@@ -1,51 +1,51 @@
 <template>
     <div v-show="visible">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" size="mini" label-width="80px">
+        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" size="mini" label-width="80px">
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="文章标题" prop="title" required>
-                        <el-input v-model="dataForm.title" :maxlength="1024" placeholder="标题"></el-input>
-                    </el-form-item>
+                    <a-form-model-item label="文章标题" prop="title" required>
+                        <a-input v-model="dataForm.title" :maxLength="1024" placeholder="标题"></a-input>
+                    </a-form-model-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="文章类型" prop="type" required>
-                        <el-select v-model="dataForm.type" placeholder="选择文章类型">
-                            <el-option v-for="(name,key) in ARTICLE_TYPES" :key="name" :label="name" :value="key" allow-create></el-option>
-                        </el-select>
-                    </el-form-item>
+                    <a-form-model-item label="文章类型" prop="type" required>
+                        <a-select v-model="dataForm.type" placeholder="选择文章类型">
+                            <a-select-option v-for="(name,key) in ARTICLE_TYPES" :key="name" :label="name" :value="key" allow-create></a-select-option>
+                        </a-select>
+                    </a-form-model-item>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item label="一级目录" prop="category">
-                        <el-input :maxlength="50" v-model="dataForm.category" placeholder="一级目录"></el-input>
-                    </el-form-item>
+                    <a-form-model-item label="一级目录" prop="category">
+                        <a-input :maxLength="50" v-model="dataForm.category" placeholder="一级目录"></a-input>
+                    </a-form-model-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="二级分类" prop="subCategory">
-                        <el-input :maxlength="50" v-model="dataForm.subCategory" placeholder="二级目录"></el-input>
-                    </el-form-item>
+                    <a-form-model-item label="二级分类" prop="subCategory">
+                        <a-input :maxLength="50" v-model="dataForm.subCategory" placeholder="二级目录"></a-input>
+                    </a-form-model-item>
                 </el-col>
             </el-row>
-            <el-form-item label="指向外链" prop="targetLink">
-                <el-input v-model="dataForm.targetLink" placeholder="指向外链"></el-input>
-            </el-form-item>
-            <el-form-item label="摘要" prop="summary">
-                <el-input v-model="dataForm.summary" placeholder="摘要" type="textarea" rows="3" maxlength="512" show-word-limit></el-input>
-            </el-form-item>
-            <el-form-item label="标签" prop="tags">
+            <a-form-model-item label="指向外链" prop="targetLink">
+                <a-input v-model="dataForm.targetLink" placeholder="指向外链"></a-input>
+            </a-form-model-item>
+            <a-form-model-item label="摘要" prop="summary">
+                <a-input v-model="dataForm.summary" placeholder="摘要" type="textarea" rows="3" maxLength="512" show-word-limit></a-input>
+            </a-form-model-item>
+            <a-form-model-item label="标签" prop="tags">
                 <tags-editor v-model="dataForm.tags"></tags-editor>
-            </el-form-item>
-            <el-form-item label="封面图" prop="image">
-                <el-input v-model="dataForm.image" placeholder="图片链接">
+            </a-form-model-item>
+            <a-form-model-item label="封面图" prop="image">
+                <a-input v-model="dataForm.image" placeholder="图片链接">
                     <OssUploader slot="append" @uploaded="dataForm.image=$event"></OssUploader>
-                </el-input>
-            </el-form-item>
+                </a-input>
+            </a-form-model-item>
             <tinymce-editor ref="editor" v-model="dataForm.content"></tinymce-editor>
-        </el-form>
+        </a-form-model>
         <div class="margin-top text-right">
-            <el-button @click="$emit('hide')">取消</el-button>
-            <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+            <a-button @click="$emit('hide')">取消</a-button>
+            <a-button type="primary" @click="dataFormSubmit()">确定</a-button>
         </div>
     </div>
 </template>

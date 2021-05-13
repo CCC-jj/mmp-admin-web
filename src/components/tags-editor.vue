@@ -1,11 +1,11 @@
 <template>
     <div class="panel  flex flex-wrap">
-        <el-tag v-for="tag in dynamicTags" closable @close="handleClose(tag)" :disable-transitions="false" :key="tag">
+        <a-tag v-for="tag in dynamicTags" closable @close="handleClose(tag)" :disable-transitions="false" :key="tag">
             {{tag}}
-        </el-tag>
-        <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
-        </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 添加</el-button>
+        </a-tag>
+        <a-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
+        </a-input>
+        <a-button v-else class="button-new-tag" size="small" @click="showInput">+ 添加</a-button>
     </div>
 </template>
 <script>
@@ -68,7 +68,7 @@ export default {
 .panel {
     flex: 1;
 }
-.el-tag,.button-new-tag{
+.a-tag,.button-new-tag{
     margin: 5px;
 }
 .input-new-tag {

@@ -18,30 +18,18 @@
           </a-form-model-item>
         </a-form-model>
 
-        <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
-          <el-table-column type="selection" header-align="center" align="center" width="50">
-          </el-table-column>
-          <el-table-column prop="templateId" show-overflow-tooltip header-align="center" align="center" label="模板ID">
-          </el-table-column>
-          <el-table-column prop="title" header-align="center" align="center" label="标题">
-            <a :href="scope.row.url" slot-scope="scope">{{scope.row.title}}</a>
-          </el-table-column>
-          <el-table-column prop="name" header-align="center" align="center" label="模版名称">
-          </el-table-column>
-          <el-table-column prop="content" show-overflow-tooltip header-align="center" align="center" label="模版字段" width="200">
-          </el-table-column>
-          <el-table-column prop="status" header-align="center" align="center" label="是否有效">
-            <span slot-scope="scope">{{scope.row.status?"是":"否"}}</span>
-          </el-table-column>
-          <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">配置</el-button>
-              <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+          <template slot="titles" slot-scope="text,record">
+            <a :href="record.row.url">{{record.row.title}}</a>
+          </template>
+          <span slot="status" slot-scope="text">{{text?"是":"否"}}</span>
+          <template slot="action" slot-scope="text,record">
+            <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.id)">配置</a-button>
+            <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
+          </template>
+        </a-table>
+        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
+        </a-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
         <template-msg-task v-if="templateMsgTaskVisible" ref="templateMsgTask"></template-msg-task>
@@ -59,6 +47,14 @@ export default {
       dataForm: {
         title: '',
       },
+      columnsList: [
+        { title: '模板ID', dataIndex: 'templateId' },
+        { title: '标题', dataIndex: 'title', scopedSlots: { customRender: 'titles' } },
+        { title: '模版名称', dataIndex: 'name' },
+        { title: '模版字段', dataIndex: 'content' },
+        { title: '是否有效', dataIndex: 'status', scopedSlots: { customRender: 'status' } },
+        { title: '操作', dataIndex: '', scopedSlots: { customRender: 'action' } },
+      ],
       dataList: [],
       pageIndex: 1,
       pageSize: 10,
@@ -80,27 +76,27 @@ export default {
   methods: {
     // 获取数据列表
     getDataList() {
-      this.dataListLoading = true
-      this.$http({
-        url: this.$http.adornUrl('/manage/msgTemplate/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          page: this.pageIndex,
-          limit: this.pageSize,
-          title: this.dataForm.title,
-          sidx: 'id',
-          order: 'desc',
-        }),
-      }).then(({ data }) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalCount = data.page.totalCount
-        } else {
-          this.dataList = []
-          this.totalCount = 0
-        }
-        this.dataListLoading = false
-      })
+      // this.dataListLoading = true
+      // this.$http({
+      //   url: this.$http.adornUrl('/manage/msgTemplate/list'),
+      //   method: 'get',
+      //   params: this.$http.adornParams({
+      //     page: this.pageIndex,
+      //     limit: this.pageSize,
+      //     title: this.dataForm.title,
+      //     sidx: 'id',
+      //     order: 'desc',
+      //   }),
+      // }).then(({ data }) => {
+      //   if (data && data.code === 200) {
+      //     this.dataList = data.page.list
+      //     this.totalCount = data.page.totalCount
+      //   } else {
+      //     this.dataList = []
+      //     this.totalCount = 0
+      //   }
+      //   this.dataListLoading = false
+      // })
     },
     // 每页数
     sizeChangeHandle(val) {

@@ -1,70 +1,70 @@
 <template>
-    <el-dialog :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
-            <el-form-item label="规则名称" prop="ruleName">
-                <el-input v-model="dataForm.ruleName" placeholder="规则名称"></el-input>
-            </el-form-item>
-            <el-form-item label="匹配词" prop="matchValue">
+    <a-modal :title="!dataForm.id ? '新增' : '修改'" :maskClosable="false" :visible.sync="visible" @cancel="visible = false">
+        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
+            <a-form-model-item label="规则名称" prop="ruleName">
+                <a-input v-model="dataForm.ruleName" placeholder="规则名称"></a-input>
+            </a-form-model-item>
+            <a-form-model-item label="匹配词" prop="matchValue">
                 <tags-editor v-model="dataForm.matchValue"></tags-editor>
-            </el-form-item>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="作用范围" prop="appid">
-                        <el-select v-model="dataForm.appid" placeholder="作用范围">
-                            <el-option label="全部公众号" value=""></el-option>
-                            <el-option label="当前公众号" :value="selectedAppid"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="精确匹配" prop="exactMatch">
-                        <el-switch v-model="dataForm.exactMatch" :active-value="true" :inactive-value="false"></el-switch>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="回复类型" prop="replyType">
-                        <el-select v-model="dataForm.replyType" @change="onReplyTypeChange">
-                            <el-option v-for="(name,key) in KefuMsgType" :key="key" :value="key" :label="name"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="是否启用" prop="status">
-                        <el-switch v-model="dataForm.status" :active-value="true" :inactive-value="false"></el-switch>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="生效时间" prop="effectTimeStart">
-                        <el-time-picker v-model="dataForm.effectTimeStart" value-format="HH:mm:ss"></el-time-picker>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="失效时间" prop="effectTimeEnd">
-                        <el-time-picker v-model="dataForm.effectTimeEnd" value-format="HH:mm:ss"></el-time-picker>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-form-item label="回复内容" prop="replyContent">
-                <el-input v-model="dataForm.replyContent" type="textarea" :rows="5" placeholder="文本、图文ID、media_id、json配置"></el-input>
-                <el-button type="text" v-show="'text'==dataForm.replyType" @click="addLink">插入链接</el-button>
-                <el-button type="text" v-show="assetsType" @click="assetsSelectorVisible=true">
+            </a-form-model-item>
+            <a-row>
+                <a-col :span="12">
+                    <a-form-model-item label="作用范围" prop="appid">
+                        <a-select v-model="dataForm.appid" placeholder="作用范围">
+                            <a-select-option value="0">全部公众号</a-select-option>
+                            <a-select-option :value="selectedAppid">当前公众号</a-select-option>
+                        </a-select>
+                    </a-form-model-item>
+                </a-col>
+                <a-col :span="12">
+                    <a-form-model-item label="精确匹配" prop="exactMatch">
+                        <a-switch v-model="dataForm.exactMatch" :active-value="true" :inactive-value="false"></a-switch>
+                    </a-form-model-item>
+                </a-col>
+            </a-row>
+            <a-row>
+                <a-col :span="12">
+                    <a-form-model-item label="回复类型" prop="replyType">
+                        <a-select v-model="dataForm.replyType" @change="onReplyTypeChange">
+                            <a-select-option v-for="(name,key) in KefuMsgType" :key="key" :value="key">{{name}}</a-select-option>
+                        </a-select>
+                    </a-form-model-item>
+                </a-col>
+                <a-col :span="12">
+                    <a-form-model-item label="是否启用" prop="status">
+                        <a-switch v-model="dataForm.status" :active-value="true" :inactive-value="false"></a-switch>
+                    </a-form-model-item>
+                </a-col>
+            </a-row>
+            <a-row>
+                <a-col :span="12">
+                    <a-form-model-item label="生效时间" prop="effectTimeStart">
+                        <a-time-picker v-model="dataForm.effectTimeStart" value-format="HH:mm:ss"></a-time-picker>
+                    </a-form-model-item>
+                </a-col>
+                <a-col :span="12">
+                    <a-form-model-item label="失效时间" prop="effectTimeEnd">
+                        <a-time-picker v-model="dataForm.effectTimeEnd" value-format="HH:mm:ss"></a-time-picker>
+                    </a-form-model-item>
+                </a-col>
+            </a-row>
+            <a-form-model-item label="回复内容" prop="replyContent">
+                <a-input v-model="dataForm.replyContent" type="textarea" :rows="5" placeholder="文本、图文ID、media_id、json配置"></a-input>
+                <a-button type="text" v-show="'text'==dataForm.replyType" @click="addLink">插入链接</a-button>
+                <a-button type="text" v-show="assetsType" @click="assetsSelectorVisible=true">
                     从素材库中选择<span v-if="'miniprogrampage'==dataForm.replyType || 'music'==dataForm.replyType">缩略图</span>
-                </el-button>
-            </el-form-item>
-            <el-form-item label="备注说明" prop="desc">
-                <el-input v-model="dataForm.desc" placeholder="备注说明"></el-input>
-            </el-form-item>
-        </el-form>
+                </a-button>
+            </a-form-model-item>
+            <a-form-model-item label="备注说明" prop="desc">
+                <a-input v-model="dataForm.desc" placeholder="备注说明"></a-input>
+            </a-form-model-item>
+        </a-form-model>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="visible = false">取消</el-button>
-            <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+            <a-button @click="visible = false">取消</a-button>
+            <a-button type="primary" @click="dataFormSubmit()">确定</a-button>
         </span>
         <assets-selector v-if="assetsSelectorVisible && assetsType" :visible="assetsSelectorVisible" :selectType="assetsType" @selected="onAssetsSelect"></assets-selector>
-    </el-dialog>
+    </a-modal>
 </template>
 
 <script>
@@ -117,8 +117,8 @@ export default {
         };
     },
     computed: mapState({
-        KefuMsgType: state=>state.message.KefuMsgType,
-        selectedAppid:state=>state.wxAccount.selectedAppid,
+        KefuMsgType: state=>state.wxManage.KefuMsgType,
+        selectedAppid:state=>state.wxManage.selectedAppid,
         assetsType(){
             const config={//消息类型与选择素材类型对应关系
                 'image':'image',

@@ -1,27 +1,27 @@
 <template>
-    <el-dialog title="筛选模板消息目标用户" :close-on-click-modal="false" :visible.sync="visible">
-        <el-form :inline="true" :model="dataForm" ref="dataForm" clearable @keyup.enter.native="getWxUsers()">
-            <el-form-item>
-                <el-select v-model="dataForm.tagid" filterable placeholder="用户标签" @change="getWxUsers()">
-                    <el-option v-for="item in wxUserTags" :key="item.id" :label="item.name" :value="item.id+''"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-input v-model="dataForm.nickname" placeholder="昵称" @change="getWxUsers()" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-input v-model="dataForm.province" placeholder="省份" @change="getWxUsers()" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-input v-model="dataForm.city" placeholder="城市" @change="getWxUsers()" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-input v-model="dataForm.remark" placeholder="备注" @change="getWxUsers()" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-input v-model="dataForm.qrScene" placeholder="扫码场景值" @change="getWxUsers()" clearable></el-input>
-            </el-form-item>
-        </el-form>
+    <a-modal title="筛选模板消息目标用户" :maskClosable="false" :visible.sync="visible">
+        <a-form-model :inline="true" :model="dataForm" ref="dataForm" clearable @keyup.enter.native="getWxUsers()">
+            <a-form-model-item>
+                <a-select v-model="dataForm.tagid" filterable placeholder="用户标签" @change="getWxUsers()">
+                    <a-select-option v-for="item in wxUserTags" :key="item.id" :label="item.name" :value="item.id+''"></a-select-option>
+                </a-select>
+            </a-form-model-item>
+            <a-form-model-item>
+                <a-input v-model="dataForm.nickname" placeholder="昵称" @change="getWxUsers()" clearable></a-input>
+            </a-form-model-item>
+            <a-form-model-item>
+                <a-input v-model="dataForm.province" placeholder="省份" @change="getWxUsers()" clearable></a-input>
+            </a-form-model-item>
+            <a-form-model-item>
+                <a-input v-model="dataForm.city" placeholder="城市" @change="getWxUsers()" clearable></a-input>
+            </a-form-model-item>
+            <a-form-model-item>
+                <a-input v-model="dataForm.remark" placeholder="备注" @change="getWxUsers()" clearable></a-input>
+            </a-form-model-item>
+            <a-form-model-item>
+                <a-input v-model="dataForm.qrScene" placeholder="扫码场景值" @change="getWxUsers()" clearable></a-input>
+            </a-form-model-item>
+        </a-form-model>
         <div class="text-bold">本消息将发送给：</div>
         <div class="user-list"  v-loading="wxUsersLoading">
             <div class="user-card" v-for="item in wxUserList" :key="item.openid">
@@ -35,13 +35,13 @@
         </div>
         <div class="margin-top text-bold">消息预览：</div>
         <div class="margin-top-xs">
-            <el-input type="textarea" disabled autosize v-model="msgReview" placeholder="模版"></el-input>
+            <a-input type="textarea" disabled autosize v-model="msgReview" placeholder="模版"></a-input>
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="send" type="success" :disabled="totalCount<=0 || sending">{{sending?'发送中...':'发送'}}</el-button>
-            <el-button @click="visible=false">关闭</el-button>
+            <a-button @click="send" type="success" :disabled="totalCount<=0 || sending">{{sending?'发送中...':'发送'}}</a-button>
+            <a-button @click="visible=false">关闭</a-button>
         </span>
-    </el-dialog>
+    </a-modal>
 </template>
 <script>
 import { mapState } from 'vuex'

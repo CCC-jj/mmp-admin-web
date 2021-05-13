@@ -12,50 +12,36 @@
             <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
           </a-form-model-item>
         </a-form-model>
-        <el-table :data="dataList" border type="expand" v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
-          <el-table-column type="expand">
-            <template slot-scope="props">
-              <a-form-model label-position="left" inline class="demo-table-expand">
-                <a-form-model-item label="作用范围">
-                  <span>{{ props.row.appid?'当前公众号':'全部公众号' }}</span>
-                </a-form-model-item>
-                <a-form-model-item label="精确匹配">
-                  <span>{{ props.row.exactMatch?'是':'否' }}</span>
-                </a-form-model-item>
-                <a-form-model-item label="是否有效">
-                  <span>{{ props.row.status?'是':'否' }}</span>
-                </a-form-model-item>
-                <a-form-model-item label="备注说明">
-                  <span>{{ props.row.desc }}</span>
-                </a-form-model-item>
-                <a-form-model-item label="生效时间">
-                  <span>{{ props.row.effectTimeStart }}</span>
-                </a-form-model-item>
-                <a-form-model-item label="失效时间">
-                  <span>{{ props.row.effectTimeEnd }}</span>
-                </a-form-model-item>
-              </a-form-model>
-            </template>
-          </el-table-column>
-          <el-table-column type="selection" header-align="center" align="center" width="50">
-          </el-table-column>
-          <el-table-column prop="ruleName" header-align="center" align="center" show-overflow-tooltip label="规则名称">
-          </el-table-column>
-          <el-table-column prop="matchValue" header-align="center" align="center" show-overflow-tooltip label="匹配关键词">
-          </el-table-column>
-          <el-table-column prop="replyType" header-align="center" align="center" :formatter="replyTypeFormat" label="消息类型">
-          </el-table-column>
-          <el-table-column prop="replyContent" header-align="center" align="center" show-overflow-tooltip label="回复内容">
-          </el-table-column>
-          <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.ruleId)">修改</el-button>
-              <el-button type="text" size="small" @click="deleteHandle(scope.row.ruleId)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+          <template slot="expandedRowRender" slot-scope="record" style="margin: 0">
+            <a-form-model label-position="left" inline class="demo-table-expand">
+              <a-form-model-item label="作用范围">
+                <span>{{ record.row.appid?'当前公众号':'全部公众号' }}</span>
+              </a-form-model-item>
+              <a-form-model-item label="精确匹配">
+                <span>{{ record.row.exactMatch?'是':'否' }}</span>
+              </a-form-model-item>
+              <a-form-model-item label="是否有效">
+                <span>{{ record.row.status?'是':'否' }}</span>
+              </a-form-model-item>
+              <a-form-model-item label="备注说明">
+                <span>{{ record.row.desc }}</span>
+              </a-form-model-item>
+              <a-form-model-item label="生效时间">
+                <span>{{ record.row.effectTimeStart }}</span>
+              </a-form-model-item>
+              <a-form-model-item label="失效时间">
+                <span>{{ record.row.effectTimeEnd }}</span>
+              </a-form-model-item>
+            </a-form-model>
+          </template>
+          <template slot="action" slot-scope="text,record">
+            <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.ruleId)">修改</a-button>
+            <a-button type="text" size="small" @click="deleteHandle(record.row.ruleId)">删除</a-button>
+          </template>
+        </a-table>
+        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
+        </a-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
       </div>
@@ -76,9 +62,11 @@ export default {
         matchValue: '',
       },
       columnsList: [
-          {
-              title: ''
-          }
+        { title: '规则名称', dataIndex: 'ruleName' },
+        { title: '匹配关键词', dataIndex: 'matchValue' },
+        { title: '消息类型', dataIndex: 'replyType' },
+        { title: '回复内容', dataIndex: 'replyContent' },
+        { title: '操作', dataIndex: '', scopedSlots: { customRender: 'action' } },
       ],
       dataList: [],
       pageIndex: 1,

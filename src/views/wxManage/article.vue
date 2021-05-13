@@ -1,21 +1,21 @@
 <template>
     <div>
         <div v-show="!addOrUpdateVisible">
-            <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-                <el-form-item>
-                    <el-select v-model="dataForm.type" placeholder="选择文章类型">
-                        <el-option v-for="(name,key) in ARTICLE_TYPES" :key="key" :label="name" :value="key" allow-create></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-input v-model="dataForm.title" placeholder="标题" clearable></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="pageIndex=1;getDataList()">查询</el-button>
-                    <el-button v-if="isAuth('wx:article:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-                    <el-button v-if="isAuth('wx:article:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-                </el-form-item>
-            </el-form>
+            <a-form-model :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+                <a-form-model-item>
+                    <a-select v-model="dataForm.type" placeholder="选择文章类型">
+                        <a-select-option v-for="(name,key) in ARTICLE_TYPES" :key="key" :label="name" :value="key" allow-create></a-select-option>
+                    </a-select>
+                </a-form-model-item>
+                <a-form-model-item>
+                    <a-input v-model="dataForm.title" placeholder="标题" clearable></a-input>
+                </a-form-model-item>
+                <a-form-model-item>
+                    <a-button @click="pageIndex=1;getDataList()">查询</a-button>
+                    <a-button v-if="isAuth('wx:article:save')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
+                    <a-button v-if="isAuth('wx:article:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+                </a-form-model-item>
+            </a-form-model>
             <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
                 <el-table-column type="selection" header-align="center" align="center" width="50">
                 </el-table-column>
@@ -34,13 +34,13 @@
                 </el-table-column>
                 <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-                        <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+                        <a-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</a-button>
+                        <a-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</a-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
-            </el-pagination>
+            <a-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalCount" layout="total, sizes, prev, pager, next, jumper">
+            </a-pagination>
         </div>
          <!-- 新增 / 修改  -->
         <add-or-update :visible="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" @hide="addOrUpdateVisible=false"></add-or-update>

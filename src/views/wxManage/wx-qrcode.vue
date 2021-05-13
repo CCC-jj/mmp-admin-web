@@ -12,32 +12,21 @@
             <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
           </a-form-model-item>
         </a-form-model>
-        <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
-          <el-table-column type="selection" header-align="center" align="center" width="50">
-          </el-table-column>
-          <el-table-column prop="id" header-align="center" align="center" label="ID">
-          </el-table-column>
-          <el-table-column prop="isTemp" header-align="center" align="center" label="类型">
-            <span slot-scope="scope">{{scope.row.isTemp?'临时':'永久'}}</span>
-          </el-table-column>
-          <el-table-column prop="sceneStr" header-align="center" align="center" label="场景值">
-          </el-table-column>
-          <el-table-column prop="ticket" header-align="center" align="center" show-overflow-tooltip label="二维码图片">
-            <a :href="'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='+scope.row.ticket" slot-scope="scope">{{scope.row.ticket}}</a>
-          </el-table-column>
-          <el-table-column prop="url" header-align="center" align="center" show-overflow-tooltip label="解析后的地址">
-            <a :href="scope.row.url" slot-scope="scope">{{scope.row.url}}</a>
-          </el-table-column>
-          <el-table-column prop="expireTime" header-align="center" align="center" width="100" label="失效时间">
-          </el-table-column>
-          <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+          <span slot="isTemp" slot-scope="text">{{text?'临时':'永久'}}</span>
+          <span slot="ticket" slot-scope="text">
+            <a :href="'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='+text">{{text}}</a>
+          </span>
+          <span slot="url" slot-scope="text">
+            <a :href="text">{{text}}</a>
+          </span>
+          <template slot="action" slot-scope="text,record">
+            <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
+          </template>
+        </a-table>
+
+        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalPage">
+        </a-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
       </div>
@@ -53,6 +42,15 @@ export default {
       dataForm: {
         sceneStr: '',
       },
+      columnsList: [
+        { title: 'ID', dataIndex: 'id' },
+        { title: '类型', dataIndex: 'isTemp', scopedSlots: { customRender: 'isTemp' } },
+        { title: '场景值', dataIndex: 'sceneStr' },
+        { title: '二维码图片', dataIndex: 'ticket', scopedSlots: { customRender: 'ticket' } },
+        { title: '解析后的地址', dataIndex: 'url', scopedSlots: { customRender: 'url' } },
+        { title: '失效时间', dataIndex: 'expireTime' },
+        { title: '操作', dataIndex: '', scopedSlots: { customRender: 'action' } },
+      ],
       dataList: [],
       pageIndex: 1,
       pageSize: 10,
@@ -71,27 +69,27 @@ export default {
   methods: {
     // 获取数据列表
     getDataList() {
-      this.dataListLoading = true
-      this.$http({
-        url: this.$http.adornUrl('/manage/wxQrCode/list'),
-        method: 'get',
-        params: this.$http.adornParams({
-          page: this.pageIndex,
-          limit: this.pageSize,
-          sceneStr: this.dataForm.sceneStr,
-          sidx: 'id',
-          order: 'desc',
-        }),
-      }).then(({ data }) => {
-        if (data && data.code === 200) {
-          this.dataList = data.page.list
-          this.totalPage = data.page.totalCount
-        } else {
-          this.dataList = []
-          this.totalPage = 0
-        }
-        this.dataListLoading = false
-      })
+      // this.dataListLoading = true
+      // this.$http({
+      //   url: this.$http.adornUrl('/manage/wxQrCode/list'),
+      //   method: 'get',
+      //   params: this.$http.adornParams({
+      //     page: this.pageIndex,
+      //     limit: this.pageSize,
+      //     sceneStr: this.dataForm.sceneStr,
+      //     sidx: 'id',
+      //     order: 'desc',
+      //   }),
+      // }).then(({ data }) => {
+      //   if (data && data.code === 200) {
+      //     this.dataList = data.page.list
+      //     this.totalPage = data.page.totalCount
+      //   } else {
+      //     this.dataList = []
+      //     this.totalPage = 0
+      //   }
+      //   this.dataListLoading = false
+      // })
     },
     // 每页数
     sizeChangeHandle(val) {

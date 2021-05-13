@@ -1,56 +1,56 @@
 <template>
-    <el-dialog title="模板配置" :close-on-click-modal="false" :visible.sync="visible">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px" size="mini">
-            <el-form-item label="标题" prop="title">
-                <el-input v-model="dataForm.title" placeholder="标题"></el-input>
-            </el-form-item>
-            <el-form-item label="链接" prop="url">
-                <el-input v-model="dataForm.url" placeholder="跳转链接"></el-input>
-            </el-form-item>
+    <a-modal title="模板配置" :maskClosable="false" :visible.sync="visible" @cancel="visible = false">
+        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px" size="small">
+            <a-form-model-item label="标题" prop="title">
+                <a-input v-model="dataForm.title" placeholder="标题"></a-input>
+            </a-form-model-item>
+            <a-form-model-item label="链接" prop="url">
+                <a-input v-model="dataForm.url" placeholder="跳转链接"></a-input>
+            </a-form-model-item>
             <div>
-                <el-form-item label="小程序appid" prop="miniprogram.appid">
-                    <el-input v-model="dataForm.miniprogram.appid" placeholder="小程序appid"></el-input>
-                </el-form-item>
-                <el-form-item label="小程序路径" prop="miniprogram.pagePath">
-                    <el-input v-model="dataForm.miniprogram.pagePath" placeholder="小程序pagePath"></el-input>
-                </el-form-item>
+                <a-form-model-item label="小程序appid" prop="miniprogram.appid">
+                    <a-input v-model="dataForm.miniprogram.appid" placeholder="小程序appid"></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="小程序路径" prop="miniprogram.pagePath">
+                    <a-input v-model="dataForm.miniprogram.pagePath" placeholder="小程序pagePath"></a-input>
+                </a-form-model-item>
             </div>
-            <el-row>
-                <el-col :span="16">
-                    <el-form-item label="模版名称" prop="name">
-                        <el-input v-model="dataForm.name" placeholder="模版名称"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                    <el-form-item label="有效" prop="status">
-                        <el-switch v-model="dataForm.status" placeholder="是否有效" :active-value="true" :inactive-value="false"></el-switch>
-                    </el-form-item>
-                </el-col>
-            </el-row>
+            <a-row>
+                <a-col :span="16">
+                    <a-form-model-item label="模版名称" prop="name">
+                        <a-input v-model="dataForm.name" placeholder="模版名称"></a-input>
+                    </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                    <a-form-model-item label="有效" prop="status">
+                        <a-switch v-model="dataForm.status" placeholder="是否有效" :active-value="true" :inactive-value="false"></a-switch>
+                    </a-form-model-item>
+                </a-col>
+            </a-row>
             <div class="form-group-area">
-                <el-form-item  class="form-group-title">消息填充数据，请对照模板内容填写</el-form-item>
-                <el-form-item>
-                    <el-input type="textarea" disabled autosize v-model="dataForm.content" placeholder="模版"></el-input>
-                </el-form-item>
-                <el-row v-for="(item,index) in dataForm.data" :key="item.name">
-                    <el-col :span="16">
-                        <el-form-item :label="item.name" :prop="'data.'+index+'.value'" :rules="[{required: true,message: '填充内容不得为空', trigger: 'blur' }]">
-                            <el-input type="textarea" autosize rows="1" v-model="item.value" placeholder="填充内容"  ></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="颜色" >
-                            <el-input type="color" v-model="item.color" placeholder="颜色"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
+                <a-form-model-item  class="form-group-title">消息填充数据，请对照模板内容填写</a-form-model-item>
+                <a-form-model-item>
+                    <a-input type="textarea" disabled autosize v-model="dataForm.content" placeholder="模版"></a-input>
+                </a-form-model-item>
+                <a-row v-for="(item,index) in dataForm.data" :key="item.name">
+                    <a-col :span="16">
+                        <a-form-model-item :label="item.name" :prop="'data.'+index+'.value'" :rules="[{required: true,message: '填充内容不得为空', trigger: 'blur' }]">
+                            <a-input type="textarea" autosize rows="1" v-model="item.value" placeholder="填充内容"  ></a-input>
+                        </a-form-model-item>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-form-model-item label="颜色" >
+                            <a-input type="color" v-model="item.color" placeholder="颜色"></a-input>
+                        </a-form-model-item>
+                    </a-col>
+                </a-row>
             </div>
-        </el-form>
+        </a-form-model>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="visible = false">取消</el-button>
-            <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+            <a-button @click="visible = false">取消</a-button>
+            <a-button type="primary" @click="dataFormSubmit()">确定</a-button>
         </span>
-    </el-dialog>
+    </a-modal>
 </template>
 
 <script>
