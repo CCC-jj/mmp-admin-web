@@ -1,6 +1,6 @@
 <template>
     <a-modal title="筛选模板消息目标用户" :maskClosable="false" :visible.sync="visible">
-        <a-form-model :inline="true" :model="dataForm" ref="dataForm" clearable @keyup.enter.native="getWxUsers()">
+        <a-form-model layout="inline" :model="dataForm" ref="dataForm" clearable @keyup.enter.native="getWxUsers()">
             <a-form-model-item>
                 <a-select v-model="dataForm.tagid" filterable placeholder="用户标签" @change="getWxUsers()">
                     <a-select-option v-for="item in wxUserTags" :key="item.id" :label="item.name" :value="item.id+''"></a-select-option>

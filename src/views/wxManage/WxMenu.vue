@@ -1,48 +1,50 @@
 <template>
-  <div class="WxMenu">
-    <div id="app-menu">
-      <!-- 预览窗 -->
-      <div class="weixin-preview">
-        <div class="weixin-bd">
-          <div class="weixin-header">公众号菜单</div>
-          <ul class="weixin-menu" id="weixin-menu">
-            <li v-for="(btn,i) in menu.buttons" :key="i" class="menu-item" :class="{'current':selectedMenuIndex===i&&selectedMenuLevel==1}" @click="selectMenu(i)">
-              <div class="menu-item-title">
-                <span>{{ btn.name }}</span>
-              </div>
-              <ul class="weixin-sub-menu">
-                <li v-for="(sub,i2) in btn.subButtons" :key="i2" class="menu-sub-item" :class="{'current':selectedMenuIndex===i&&selectedSubMenuIndex===i2&&selectedMenuLevel==2,'on-drag-over':onDragOverMenu==(i+'_'+i2)}" @click.stop="selectSubMenu(i,i2)" draggable="true" @dragstart="selectSubMenu(i,i2)" @dragover.prevent="onDragOverMenu=(i+'_'+i2)" @drop="onDrop(i,i2)">
-                  <div class="menu-item-title">
-                    <span>{{sub.name}}</span>
-                  </div>
-                </li>
-                <li v-if="btn.subButtons.length<5" class="menu-sub-item" :class="{'on-drag-over':onDragOverMenu==(i+'_'+btn.subButtons.length)}" @click.stop="addMenu(2,i)" @dragover.prevent="onDragOverMenu=(i+'_'+btn.subButtons.length)" @drop="onDrop(i,btn.subButtons.length)">
-                  <div class="menu-item-title">
-                    <a-icon type="plus" />
-                  </div>
-                </li>
-                <i class="menu-arrow arrow_out"></i>
-                <i class="menu-arrow arrow_in"></i>
-              </ul>
-            </li>
-            <li class="menu-item" v-if="menu.buttons.length<3" @click="addMenu(1)">
-              <a-icon type="plus" />
-            </li>
-          </ul>
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      <div id="app-menu">
+        <!-- 预览窗 -->
+        <div class="weixin-preview">
+          <div class="weixin-bd">
+            <div class="weixin-header">公众号菜单</div>
+            <ul class="weixin-menu" id="weixin-menu">
+              <li v-for="(btn,i) in menu.buttons" :key="i" class="menu-item" :class="{'current':selectedMenuIndex===i&&selectedMenuLevel==1}" @click="selectMenu(i)">
+                <div class="menu-item-title">
+                  <span>{{ btn.name }}</span>
+                </div>
+                <ul class="weixin-sub-menu">
+                  <li v-for="(sub,i2) in btn.subButtons" :key="i2" class="menu-sub-item" :class="{'current':selectedMenuIndex===i&&selectedSubMenuIndex===i2&&selectedMenuLevel==2,'on-drag-over':onDragOverMenu==(i+'_'+i2)}" @click.stop="selectSubMenu(i,i2)" draggable="true" @dragstart="selectSubMenu(i,i2)" @dragover.prevent="onDragOverMenu=(i+'_'+i2)" @drop="onDrop(i,i2)">
+                    <div class="menu-item-title">
+                      <span>{{sub.name}}</span>
+                    </div>
+                  </li>
+                  <li v-if="btn.subButtons.length<5" class="menu-sub-item" :class="{'on-drag-over':onDragOverMenu==(i+'_'+btn.subButtons.length)}" @click.stop="addMenu(2,i)" @dragover.prevent="onDragOverMenu=(i+'_'+btn.subButtons.length)" @drop="onDrop(i,btn.subButtons.length)">
+                    <div class="menu-item-title">
+                      <a-icon type="plus" />
+                    </div>
+                  </li>
+                  <i class="menu-arrow arrow_out"></i>
+                  <i class="menu-arrow arrow_in"></i>
+                </ul>
+              </li>
+              <li class="menu-item" v-if="menu.buttons.length<3" @click="addMenu(1)">
+                <a-icon type="plus" />
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- 菜单编辑器 -->
+        <div class="weixin-menu-detail" v-if="selectedMenuLevel>0">
+          <wx-menu-button-editor :button="selectedButton" :selectedMenuLevel="selectedMenuLevel" @delMenu="delMenu"></wx-menu-button-editor>
         </div>
       </div>
-      <!-- 菜单编辑器 -->
-      <div class="weixin-menu-detail" v-if="selectedMenuLevel>0">
-        <wx-menu-button-editor :button="selectedButton" :selectedMenuLevel="selectedMenuLevel" @delMenu="delMenu"></wx-menu-button-editor>
+      <div class="weixin-btn-group" @click="updateWxMenu">
+        <a-space>
+          <a-button type="primary" icon="upload">发布</a-button>
+          <a-button type="danger" icon="delete" @click="delMenu">清空</a-button>
+        </a-space>
       </div>
-    </div>
-    <div class="weixin-btn-group" @click="updateWxMenu">
-      <a-space>
-        <a-button type="primary" icon="upload">发布</a-button>
-        <a-button type="danger" icon="delete" @click="delMenu">清空</a-button>
-      </a-space>
-    </div>
-  </div>
+    </a-card>
+  </page-header-wrapper>
 </template>
 
 <script>

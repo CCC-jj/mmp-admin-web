@@ -5,7 +5,7 @@
         <a-button size="small" type="primary" @click="addOrUpdateHandle()">新增</a-button>
       </a-form-model-item>
     </a-form-model>
-    <!-- <a-form-model :inline="true" :model="dataForm">
+    <!-- <a-form-model layout="inline" :model="dataForm">
       <a-form-model-item v-show="!selectMode">
         <a-button size="mini" type="primary" @click="addOrUpdateHandle()">新增</a-button>
       </a-form-model-item>

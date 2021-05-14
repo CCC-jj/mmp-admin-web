@@ -1,6 +1,6 @@
 <template>
     <div class="mod-oss">
-        <a-form-model :inline="true" :model="dataForm">
+        <a-form-model layout="inline" :model="dataForm">
             <a-form-model-item>
                 <a-button type="primary" @click="configHandle()">云存储配置</a-button>
                 <a-button type="primary">

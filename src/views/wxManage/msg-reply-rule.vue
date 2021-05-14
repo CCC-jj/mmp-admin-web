@@ -12,7 +12,7 @@
             <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
           </a-form-model-item>
         </a-form-model>
-        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
           <template slot="expandedRowRender" slot-scope="record" style="margin: 0">
             <a-form-model label-position="left" inline class="demo-table-expand">
               <a-form-model-item label="作用范围">

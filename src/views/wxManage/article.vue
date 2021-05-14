@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-show="!addOrUpdateVisible">
-            <a-form-model :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+            <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
                 <a-form-model-item>
                     <a-select v-model="dataForm.type" placeholder="选择文章类型">
                         <a-select-option v-for="(name,key) in ARTICLE_TYPES" :key="key" :label="name" :value="key" allow-create></a-select-option>
@@ -12,8 +12,8 @@
                 </a-form-model-item>
                 <a-form-model-item>
                     <a-button @click="pageIndex=1;getDataList()">查询</a-button>
-                    <a-button v-if="isAuth('wx:article:save')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
-                    <a-button v-if="isAuth('wx:article:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+                    <a-button v-if="$auth('wx:article:save')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
+                    <a-button v-if="$auth('wx:article:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
                 </a-form-model-item>
             </a-form-model>
             <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">

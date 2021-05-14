@@ -29,7 +29,7 @@
           </a-form-model-item>
         </a-form-model>
 
-        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
           <template slot="headimgurl" slot-scope="text">
             <img class="headimg" v-if="text" :src="text" />
           </template>

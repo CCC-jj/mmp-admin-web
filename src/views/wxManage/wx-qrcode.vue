@@ -12,7 +12,7 @@
             <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
           </a-form-model-item>
         </a-form-model>
-        <a-table bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
           <span slot="isTemp" slot-scope="text">{{text?'临时':'永久'}}</span>
           <span slot="ticket" slot-scope="text">
             <a :href="'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='+text">{{text}}</a>

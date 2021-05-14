@@ -1,39 +1,27 @@
 <template>
-  <div class="WxMaterial">
-    <a-tabs v-model="activeTab" @change="handleTabClick">
-    <a-tab-pane key="image" :tab="'图片素材（'+assetsCount.imageCount+')'">
-      <material-file fileType="image" ref="imagePanel" @change="materialCount"></material-file>
-    </a-tab-pane>
-    <a-tab-pane key="voice" :tab="'语音素材（'+assetsCount.voiceCount+')'">
-      <material-file fileType="voice" ref="voicePanel" @change="materialCount"></material-file>
-    </a-tab-pane>
-    <a-tab-pane key="video" :tab="'视频素材（'+assetsCount.videoCount+')'">
-      <material-file fileType="video" ref="videoPanel" @change="materialCount"></material-file>
-    </a-tab-pane>
-    <a-tab-pane :tab="'图文素材（'+assetsCount.newsCount+')'" key="news">
-        <material-news ref="newsPanel" @change="materialCount"></material-news>
-      </a-tab-pane>
-  </a-tabs>
-    <!-- <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-      <el-tab-pane :label="'图片素材（'+assetsCount.imageCount+')'" name="image" lazy>
-        <material-file fileType="image" ref="imagePanel" @change="materialCount"></material-file>
-      </el-tab-pane>
-      <el-tab-pane :label="'语音素材（'+assetsCount.voiceCount+')'" name="voice" lazy>
-        <material-file fileType="voice" ref="voicePanel" @change="materialCount"></material-file>
-      </el-tab-pane>
-      <el-tab-pane :label="'视频素材（'+assetsCount.videoCount+')'" name="video" lazy>
-        <material-file fileType="video" ref="videoPanel" @change="materialCount"></material-file>
-      </el-tab-pane>
-      <el-tab-pane :label="'图文素材（'+assetsCount.newsCount+')'" name="news" lazy>
-        <material-news ref="newsPanel" @change="materialCount"></material-news>
-      </el-tab-pane>
-    </el-tabs> -->
-  </div>
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      <a-tabs v-model="activeTab" @change="handleTabClick">
+        <a-tab-pane key="image" :tab="'图片素材（'+assetsCount.imageCount+')'">
+          <material-file fileType="image" ref="imagePanel" @change="materialCount"></material-file>
+        </a-tab-pane>
+        <a-tab-pane key="voice" :tab="'语音素材（'+assetsCount.voiceCount+')'">
+          <material-file fileType="voice" ref="voicePanel" @change="materialCount"></material-file>
+        </a-tab-pane>
+        <a-tab-pane key="video" :tab="'视频素材（'+assetsCount.videoCount+')'">
+          <material-file fileType="video" ref="videoPanel" @change="materialCount"></material-file>
+        </a-tab-pane>
+        <a-tab-pane :tab="'图文素材（'+assetsCount.newsCount+')'" key="news">
+          <material-news ref="newsPanel" @change="materialCount"></material-news>
+        </a-tab-pane>
+      </a-tabs>
+    </a-card>
+  </page-header-wrapper>
 
 </template>
 <script>
 export default {
-	name: 'WxMaterial',
+  name: 'WxMaterial',
   data() {
     return {
       activeTab: 'image',
@@ -74,8 +62,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.WxMaterial{
-	background: #fff;
-	padding: 24px;
+.WxMaterial {
+  background: #fff;
+  padding: 24px;
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
     <div class="mod-config">
-        <a-form-model :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+        <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
             <a-form-model-item>
                 <a-input v-model="dataForm.key" placeholder="参数名" clearable></a-input>
             </a-form-model-item>
             <a-form-model-item>
                 <a-button @click="getDataList()">查询</a-button>
-                <a-button v-if="isAuth('wx:wxaccount:save')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
-                <a-button v-if="isAuth('wx:wxaccount:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+                <a-button v-if="$auth('wxManage.add')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
+                <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
             </a-form-model-item>
         </a-form-model>
         <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle" style="width: 100%;">
