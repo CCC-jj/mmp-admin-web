@@ -1117,9 +1117,21 @@ const userNav = options => {
       component: 'WxQrcode'
     },
     {
-      name: 'WxMsg',
+      name: 'WxUser',
       parentId: 80,
       id: 86,
+      meta: {
+        title: '粉丝管理',
+        keepAlive: true,
+        permission: ['wxManage']
+      },
+      path: '/wxManage/wx-user',
+      component: 'WxUser'
+    },
+    {
+      name: 'WxMsg',
+      parentId: 80,
+      id: 87,
       meta: {
         title: '公众号消息',
         keepAlive: true,
@@ -1129,16 +1141,16 @@ const userNav = options => {
       component: 'WxMsg'
     },
     {
-      name: 'WxUser',
+      name: 'WxAccount',
       parentId: 80,
-      id: 87,
+      id: 88,
       meta: {
         title: '公众号帐号',
         keepAlive: true,
         permission: ['wxManage']
       },
-      path: '/wxManage/wx-user',
-      component: 'WxUser'
+      path: '/wxManage/wx-account',
+      component: 'WxAccount'
     },
 
     // // form

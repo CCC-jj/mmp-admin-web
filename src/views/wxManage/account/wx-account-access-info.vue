@@ -1,5 +1,5 @@
 <template>
-    <a-modal title="开发接入信息" :maskClosable="false" :visible.sync="visible">
+    <a-modal title="开发接入信息" :maskClosable="false" :visible.sync="visible" @cancel="visible = false">
         <div>
             <div class="list-item"><span class="label">公众号:</span>{{account.name}}</div>
             <div class="list-item"><span class="label">token:</span>{{account.token}}</div>

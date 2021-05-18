@@ -54,8 +54,9 @@ const constantRouterComponents = {
   MsgReplyRule: () => import('@/views/wxManage/msg-reply-rule'),
   MsgTemplate: () => import('@/views/wxManage/msg-template'),
   WxQrcode: () => import('@/views/wxManage/wx-qrcode'),
-  WxMsg: () => import('@/views/wxManage/wx-msg'),
   WxUser: () => import('@/views/wxManage/wx-user'),
+  WxMsg: () => import('@/views/wxManage/wx-msg'),
+  WxAccount: () => import('@/views/wxManage/wx-account'),
 
 
   // form

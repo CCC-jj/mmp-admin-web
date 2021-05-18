@@ -1,6 +1,6 @@
 <template>
     <a-modal width="700px" :title="!dataForm.id ? '新增' : '修改'" :maskClosable="false" :visible.sync="visible" @cancel="visible = false">
-        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" v-bind="{labelCol: { span: 3 },wrapperCol: { span: 21 },}">
+        <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" v-bind="{labelCol: { span: 3 },wrapperCol: { span: 21 }}">
             <a-form-model-item label="媒体文件">
                 <a-button type="primary">
                     选择文件

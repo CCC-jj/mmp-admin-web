@@ -45,7 +45,7 @@ export default {
       if (!state.selectedAppid) {
         let appidCookie = Vue.cookie.get('appid')
         let selectedAppid = appidCookie ? appidCookie : list[0].appid
-        this.commit('wxAccount/selectAccount', selectedAppid)
+        this.commit('wxManage/selectAccount', selectedAppid)
       }
     },
     selectAccount(state, appid) {
