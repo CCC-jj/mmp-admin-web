@@ -228,13 +228,13 @@ export const asyncRouterMap = [
           {
             path: '/wxManage/wxMenu',
             name: 'WxMenu',
-            component: () => import('@/views/wxManage/WxMenu'),
+            component: () => import('@/views/application/wxManage/WxMenu'),
             meta: { title: '公众号管理', keepAlive: true, permission: ['wxManage'] }
           },
           {
             path: '/wxManage/wxMaterial',
             name: 'WxMaterial',
-            component: () => import('@/views/wxManage/WxMaterial'),
+            component: () => import('@/views/application/wxManage/WxMaterial'),
             meta: { title: '素材管理', keepAlive: true, permission: ['wxManage'] }
           },
         ]

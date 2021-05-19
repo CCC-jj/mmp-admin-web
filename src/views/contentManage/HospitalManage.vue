@@ -217,6 +217,7 @@
                 <a-icon type="delete" /> 删除
               </a>
             </a-popconfirm>
+            <a :href="'http://localhost:8009/doctorManage/doctorList?'+record.key" target="_blank">管理医院</a>
           </a-space>
         </template>
       </a-table>
@@ -239,7 +240,7 @@ const columns = [
   //   width: '60px',
   // },
   {
-    title: '药品名称',
+    title: '医院名称',
     dataIndex: 'name',
   },
   {
@@ -267,7 +268,7 @@ const columns = [
     title: '操作',
     scopedSlots: { customRender: 'action' },
     align: 'center',
-    width: '230px',
+    width: '300px',
   },
 ]
 const dataSource = []
@@ -397,9 +398,10 @@ export default {
     },
     // 新增医生
     add() {
-      this.actionTitle = '新增医生'
-      this.actionVisible = true
-      this.viewVisible = false
+      // this.actionTitle = '新增医生'
+      // this.actionVisible = true
+      // this.viewVisible = false
+      // window.location.href = 'http://localhost:8009/doctorManage/doctorList'
     },
     refresh() {
       this.reloadCard()

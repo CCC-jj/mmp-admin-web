@@ -185,7 +185,7 @@ export default {
 }
 </script>
 <style scoped>
-@import '../../../assets/css/common.css';
+@import '../../../../assets/css/common.css';
 .card-list{
     width: 300px;
     padding-right: 10px;

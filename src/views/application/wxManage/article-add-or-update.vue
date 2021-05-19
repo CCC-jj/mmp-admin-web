@@ -57,7 +57,7 @@ export default {
     components: {
         TinymceEditor: () => import("@/components/tinymce-editor"),
         tagsEditor: () => import("@/components/tags-editor"),
-        OssUploader: () => import('../oss/oss-uploader')
+        OssUploader: () => import('./oss/oss-uploader')
     },
     props:{
         visible:{

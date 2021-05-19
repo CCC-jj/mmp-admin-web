@@ -49,14 +49,14 @@ const constantRouterComponents = {
   Client: () => import('@/views/system/Client'),
 
   // wxManage
-  WxMenu: () => import('@/views/wxManage/WxMenu'),
-  WxMaterial: () => import('@/views/wxManage/WxMaterial'),
-  MsgReplyRule: () => import('@/views/wxManage/msg-reply-rule'),
-  MsgTemplate: () => import('@/views/wxManage/msg-template'),
-  WxQrcode: () => import('@/views/wxManage/wx-qrcode'),
-  WxUser: () => import('@/views/wxManage/wx-user'),
-  WxMsg: () => import('@/views/wxManage/wx-msg'),
-  WxAccount: () => import('@/views/wxManage/wx-account'),
+  WxMenu: () => import('@/views/application/wxManage/WxMenu'),
+  WxMaterial: () => import('@/views/application/wxManage/WxMaterial'),
+  MsgReplyRule: () => import('@/views/application/wxManage/msg-reply-rule'),
+  MsgTemplate: () => import('@/views/application/wxManage/msg-template'),
+  WxQrcode: () => import('@/views/application/wxManage/wx-qrcode'),
+  WxUser: () => import('@/views/application/wxManage/wx-user'),
+  WxMsg: () => import('@/views/application/wxManage/wx-msg'),
+  WxAccount: () => import('@/views/application/wxManage/wx-account'),
 
 
   // form
