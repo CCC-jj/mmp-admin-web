@@ -36,7 +36,9 @@ export default {
     },
     accountList: [],
     selectedAppid: '',
-    tags: []
+    tags: [],
+    appTitle: '',
+    appid: ''
   },
   mutations: {
     updateAccountList(state, list) {
@@ -59,6 +61,12 @@ export default {
     },
     updateTags(state, tags) {
       state.tags = tags
+    },
+    updateAppid(state, appid) {
+      state.appid = appid
+    },
+    updateApptitle(state, title) {
+      state.appTitle = title
     }
   }
 }

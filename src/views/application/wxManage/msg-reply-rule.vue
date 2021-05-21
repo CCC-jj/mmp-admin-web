@@ -1,52 +1,50 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
-      <div class="mod-config">
-        <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
-          <a-form-model-item>
-            <a-input v-model="dataForm.matchValue" placeholder="匹配关键词" clearable></a-input>
+  <div class="mod-config">
+    <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
+      <a-form-model-item>
+        <a-input v-model="dataForm.matchValue" placeholder="匹配关键词" clearable></a-input>
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-space>
+          <a-button @click="getDataList()">查询</a-button>
+          <a-button v-if="$auth('wxManage.add')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
+          <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+        </a-space>
+      </a-form-model-item>
+    </a-form-model>
+    <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+      <template slot="expandedRowRender" slot-scope="record" style="margin: 0">
+        <a-form-model label-position="left" inline class="demo-table-expand">
+          <a-form-model-item label="作用范围">
+            <span>{{ record.row.appid?'当前公众号':'全部公众号' }}</span>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button @click="getDataList()">查询</a-button>
-            <a-button v-if="$auth('wxManage.add')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
-            <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+          <a-form-model-item label="精确匹配">
+            <span>{{ record.row.exactMatch?'是':'否' }}</span>
+          </a-form-model-item>
+          <a-form-model-item label="是否有效">
+            <span>{{ record.row.status?'是':'否' }}</span>
+          </a-form-model-item>
+          <a-form-model-item label="备注说明">
+            <span>{{ record.row.desc }}</span>
+          </a-form-model-item>
+          <a-form-model-item label="生效时间">
+            <span>{{ record.row.effectTimeStart }}</span>
+          </a-form-model-item>
+          <a-form-model-item label="失效时间">
+            <span>{{ record.row.effectTimeEnd }}</span>
           </a-form-model-item>
         </a-form-model>
-        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
-          <template slot="expandedRowRender" slot-scope="record" style="margin: 0">
-            <a-form-model label-position="left" inline class="demo-table-expand">
-              <a-form-model-item label="作用范围">
-                <span>{{ record.row.appid?'当前公众号':'全部公众号' }}</span>
-              </a-form-model-item>
-              <a-form-model-item label="精确匹配">
-                <span>{{ record.row.exactMatch?'是':'否' }}</span>
-              </a-form-model-item>
-              <a-form-model-item label="是否有效">
-                <span>{{ record.row.status?'是':'否' }}</span>
-              </a-form-model-item>
-              <a-form-model-item label="备注说明">
-                <span>{{ record.row.desc }}</span>
-              </a-form-model-item>
-              <a-form-model-item label="生效时间">
-                <span>{{ record.row.effectTimeStart }}</span>
-              </a-form-model-item>
-              <a-form-model-item label="失效时间">
-                <span>{{ record.row.effectTimeEnd }}</span>
-              </a-form-model-item>
-            </a-form-model>
-          </template>
-          <template slot="action" slot-scope="text,record">
-            <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.ruleId)">修改</a-button>
-            <a-button type="text" size="small" @click="deleteHandle(record.row.ruleId)">删除</a-button>
-          </template>
-        </a-table>
-        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
-        </a-pagination>
-        <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-      </div>
-    </a-card>
-  </page-header-wrapper>
+      </template>
+      <template slot="action" slot-scope="text,record">
+        <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.ruleId)">修改</a-button>
+        <a-button type="text" size="small" @click="deleteHandle(record.row.ruleId)">删除</a-button>
+      </template>
+    </a-table>
+    <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
+    </a-pagination>
+    <!-- 弹窗, 新增 / 修改 -->
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+  </div>
 </template>
 
 <script>

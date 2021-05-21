@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="!dataForm.id ? '新增' : '修改'" :maskClosable="false" :visible.sync="visible">
+  <a-modal :title="!dataForm.id ? '新增' : '修改'" :maskClosable="false" :visible.sync="visible" @cancel="visible=false">
     <a-form-model :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
       <a-form-model-item label="二维码类型" prop="isTemp">
         <a-radio-group v-model="dataForm.isTemp ">

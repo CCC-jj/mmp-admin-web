@@ -1,41 +1,41 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
-      <div class="mod-config">
-        <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
-          <a-form-model-item>
-            <a-input v-model="dataForm.title" placeholder="标题" clearable></a-input>
-          </a-form-model-item>
-          <a-form-model-item>
-            <a-button @click="getDataList()">查询</a-button>
-            <a-button v-if="$auth('wxManage.add')" type="success" @click="copyHandle()" :disabled="dataListSelections.length <= 0">批量复制</a-button>
-            <a-button v-if="$auth('wxManage.add')" type="success" @click="templateMsgTaskHandle()" :disabled="dataListSelections.length!=1">推送消息</a-button>
-            <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
-          </a-form-model-item>
-          <a-form-model-item class="fr">
-            <a-button v-if="$auth('wxManage.add')" icon="el-icon-sort" type="success" @click="syncWxTemplate()" :disabled="synchonizingWxTemplate">{{synchonizingWxTemplate?'同步中...':'同步公众号模板'}}</a-button>
-            <a-button type="primary" icon="link"><a style="color:#fff" target="_blank" href="https://kf.qq.com/faq/170209E3InyI170209nIF7RJ.html">模板管理指引</a></a-button>
-          </a-form-model-item>
-        </a-form-model>
+  <div class="mod-config">
+    <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
+      <a-form-model-item>
+        <a-input v-model="dataForm.title" placeholder="标题" clearable></a-input>
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-space>
+          <a-button @click="getDataList()">查询</a-button>
+          <a-button v-if="$auth('wxManage.add')" type="success" @click="copyHandle()" :disabled="dataListSelections.length <= 0">批量复制</a-button>
+          <a-button v-if="$auth('wxManage.add')" type="success" @click="templateMsgTaskHandle()" :disabled="dataListSelections.length!=1">推送消息</a-button>
+          <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+        </a-space>
+      </a-form-model-item>
+      <a-form-model-item class="fr">
+        <a-space>
+          <a-button v-if="$auth('wxManage.add')" icon="el-icon-sort" type="success" @click="syncWxTemplate()" :disabled="synchonizingWxTemplate">{{synchonizingWxTemplate?'同步中...':'同步公众号模板'}}</a-button>
+          <a-button type="primary" icon="link"><a style="color:#fff" target="_blank" href="https://kf.qq.com/faq/170209E3InyI170209nIF7RJ.html">模板管理指引</a></a-button>
+        </a-space>
+      </a-form-model-item>
+    </a-form-model>
 
-        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
-          <template slot="titles" slot-scope="text,record">
-            <a :href="record.row.url">{{record.row.title}}</a>
-          </template>
-          <span slot="status" slot-scope="text">{{text?"是":"否"}}</span>
-          <template slot="action" slot-scope="text,record">
-            <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.id)">配置</a-button>
-            <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
-          </template>
-        </a-table>
-        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
-        </a-pagination>
-        <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-        <template-msg-task v-if="templateMsgTaskVisible" ref="templateMsgTask"></template-msg-task>
-      </div>
-    </a-card>
-  </page-header-wrapper>
+    <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+      <template slot="titles" slot-scope="text,record">
+        <a :href="record.row.url">{{record.row.title}}</a>
+      </template>
+      <span slot="status" slot-scope="text">{{text?"是":"否"}}</span>
+      <template slot="action" slot-scope="text,record">
+        <a-button type="text" size="small" @click="addOrUpdateHandle(record.row.id)">配置</a-button>
+        <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
+      </template>
+    </a-table>
+    <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
+    </a-pagination>
+    <!-- 弹窗, 新增 / 修改 -->
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <template-msg-task v-if="templateMsgTaskVisible" ref="templateMsgTask"></template-msg-task>
+  </div>
 </template>
 
 <script>

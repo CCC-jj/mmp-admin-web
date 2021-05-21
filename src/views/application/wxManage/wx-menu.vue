@@ -1,6 +1,5 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
+  <div>
       <div id="app-menu">
         <!-- 预览窗 -->
         <div class="weixin-preview">
@@ -43,8 +42,7 @@
           <a-button type="danger" icon="delete" @click="delMenu">清空</a-button>
         </a-space>
       </div>
-    </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

@@ -1,54 +1,50 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
-      <div class="mod-config">
-        <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
-          <a-form-model-item>
-            <a-select v-model="dataForm.startTime" placeholder="时间">
-              <a-select-option v-for="(name,key) in timeSelections" :key="key" :value="name">{{key}}</a-select-option>
-            </a-select>
-          </a-form-model-item>
-          <a-form-model-item>
-            <a-select v-model="dataForm.msgTypes" placeholder="消息类型">
-              <a-select-option value="">不限类型</a-select-option>
-              <a-select-option value="text,image,voice,shortvideo,video,news,music,location,link">消息</a-select-option>
-              <a-select-option value="event,transfer_customer_service">事件</a-select-option>
-            </a-select>
-          </a-form-model-item>
-          <a-form-model-item>
-            <a-button @click="getDataList()">查询</a-button>
-          </a-form-model-item>
-        </a-form-model>
-        <div class="text-gray">
-          24小时内消息可回复。此后台展示消息有一分钟左右延迟，如需畅聊请使用
-          <a href="https://mpkf.weixin.qq.com/" target="_blank">公众平台客服</a>
-        </div>
-        <a-spin size="large" :spinning="dataListLoading" :indicator="indicator">
-          <div>
-            <div class="msg-item" v-for="(msg,index) in  dataList" :key="index">
-              <div class="avatar">
-                <el-avatar shape="square" :size="60" :src="getUserInfo(msg.openid).headimgurl"></el-avatar>
-              </div>
-              <div class="item-content">
-                <div class="flex justify-between margin-bottom">
-                  <div class="text-cut">{{getUserInfo(msg.openid).nickname || '--'}}</div>
-                  <div>{{$moment(msg.createTime).calendar()}}</div>
-                  <div class="reply-btn">
-                    <div v-if="canReply(msg.createTime)" @click="replyHandle(msg.openid)" class="el-icon-s-promotion">回复</div>
-                  </div>
-                </div>
-                <wx-msg-preview :msg="msg" singleLine></wx-msg-preview>
+  <div class="mod-config">
+    <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
+      <a-form-model-item>
+        <a-select v-model="dataForm.startTime" placeholder="时间">
+          <a-select-option v-for="(name,key) in timeSelections" :key="key" :value="name">{{key}}</a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-select v-model="dataForm.msgTypes" placeholder="消息类型">
+          <a-select-option value="">不限类型</a-select-option>
+          <a-select-option value="text,image,voice,shortvideo,video,news,music,location,link">消息</a-select-option>
+          <a-select-option value="event,transfer_customer_service">事件</a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-button @click="getDataList()">查询</a-button>
+      </a-form-model-item>
+    </a-form-model>
+    <div class="text-gray">
+      24小时内消息可回复。此后台展示消息有一分钟左右延迟，如需畅聊请使用
+      <a href="https://mpkf.weixin.qq.com/" target="_blank">公众平台客服</a>
+    </div>
+    <a-spin size="large" :spinning="dataListLoading" :indicator="indicator">
+      <div>
+        <div class="msg-item" v-for="(msg,index) in  dataList" :key="index">
+          <div class="avatar">
+            <el-avatar shape="square" :size="60" :src="getUserInfo(msg.openid).headimgurl"></el-avatar>
+          </div>
+          <div class="item-content">
+            <div class="flex justify-between margin-bottom">
+              <div class="text-cut">{{getUserInfo(msg.openid).nickname || '--'}}</div>
+              <div>{{$moment(msg.createTime).calendar()}}</div>
+              <div class="reply-btn">
+                <div v-if="canReply(msg.createTime)" @click="replyHandle(msg.openid)" class="el-icon-s-promotion">回复</div>
               </div>
             </div>
+            <wx-msg-preview :msg="msg" singleLine></wx-msg-preview>
           </div>
-        </a-spin>
-        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
-        </a-pagination>
-        <!-- 弹窗, 消息回复 -->
-        <wx-msg-reply ref="wxMsgReply" @success="onReplyed"></wx-msg-reply>
+        </div>
       </div>
-    </a-card>
-  </page-header-wrapper>
+    </a-spin>
+    <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalCount">
+    </a-pagination>
+    <!-- 弹窗, 消息回复 -->
+    <wx-msg-reply ref="wxMsgReply" @success="onReplyed"></wx-msg-reply>
+  </div>
 </template>
 
 <script>
@@ -89,28 +85,28 @@ export default {
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true
-    //   this.$http({
-    //     url: this.$http.adornUrl('/manage/wxMsg/list'),
-    //     method: 'get',
-    //     params: this.$http.adornParams({
-    //       page: this.pageIndex,
-    //       limit: this.pageSize,
-    //       msgTypes: this.dataForm.msgTypes,
-    //       startTime: this.dataForm.startTime,
-    //       sidx: 'create_time',
-    //       order: 'desc',
-    //     }),
-    //   }).then(({ data }) => {
-    //     if (data && data.code === 200) {
-    //       this.dataList = data.page.list
-    //       this.totalCount = data.page.totalCount
-    //       this.refreshUserList(this.dataList)
-    //     } else {
-    //       this.dataList = []
-    //       this.totalCount = 0
-    //     }
-    //     this.dataListLoading = false
-    //   })
+      //   this.$http({
+      //     url: this.$http.adornUrl('/manage/wxMsg/list'),
+      //     method: 'get',
+      //     params: this.$http.adornParams({
+      //       page: this.pageIndex,
+      //       limit: this.pageSize,
+      //       msgTypes: this.dataForm.msgTypes,
+      //       startTime: this.dataForm.startTime,
+      //       sidx: 'create_time',
+      //       order: 'desc',
+      //     }),
+      //   }).then(({ data }) => {
+      //     if (data && data.code === 200) {
+      //       this.dataList = data.page.list
+      //       this.totalCount = data.page.totalCount
+      //       this.refreshUserList(this.dataList)
+      //     } else {
+      //       this.dataList = []
+      //       this.totalCount = 0
+      //     }
+      //     this.dataListLoading = false
+      //   })
     },
     refreshUserList(msgList) {
       let openidList = msgList

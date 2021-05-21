@@ -68,7 +68,7 @@ export const asyncRouterMap = [
             name: 'ServiceCheck',
             component: () => import('@/views/doctorManage/ServiceCheck'),
             meta: { title: '服务审核', keepAlive: true, permission: ['doctorManage'] }
-          },
+          }
         ]
       },
       // orderManage
@@ -96,7 +96,7 @@ export const asyncRouterMap = [
             name: 'RefundApply',
             component: () => import('@/views/orderManage/RefundApply'),
             meta: { title: '退款申请', keepAlive: true, permission: ['orderManage'] }
-          },
+          }
         ]
       },
       // commodityManage
@@ -124,7 +124,7 @@ export const asyncRouterMap = [
             name: 'DrugCheck',
             component: () => import('@/views/commodityManage/DrugCheck'),
             meta: { title: '药品审核', keepAlive: true, permission: ['commodityManage'] }
-          },
+          }
         ]
       },
       // contentManage
@@ -140,7 +140,7 @@ export const asyncRouterMap = [
             name: 'HospitalManage',
             component: () => import('@/views/contentManage/HospitalManage'),
             meta: { title: '医院管理', keepAlive: true, permission: ['contentManage'] }
-          },
+          }
         ]
       },
       // authority
@@ -168,7 +168,7 @@ export const asyncRouterMap = [
             name: 'AuthMenu',
             component: () => import('@/views/authority/Menu'),
             meta: { title: '菜单权限', keepAlive: true, permission: ['authority'] }
-          },
+          }
         ]
       },
       // system
@@ -189,7 +189,7 @@ export const asyncRouterMap = [
             path: '/system/dict',
             name: 'Dict',
             component: () => import('@/views/system/Dict'),
-            meta: { title: '系统字典', keepAlive: true, permission: ['system'] },
+            meta: { title: '系统字典', keepAlive: true, permission: ['system'] }
           },
           // {
           //   path: '/system/dictbiz',
@@ -201,7 +201,7 @@ export const asyncRouterMap = [
             path: '/system/menu',
             name: 'Menu',
             component: () => import('@/views/system/Menu'),
-            meta: { title: '菜单管理', keepAlive: true, permission: ['system'] },
+            meta: { title: '菜单管理', keepAlive: true, permission: ['system'] }
           },
           {
             path: '/system/param',
@@ -214,29 +214,29 @@ export const asyncRouterMap = [
             name: 'Client',
             component: () => import('@/views/system/Client'),
             meta: { title: '客户端管理', keepAlive: true, permission: ['system'] }
-          },
+          }
         ]
       },
       // wxManage
       {
         path: '/wxManage',
         name: 'wxManage',
-        redirect: '/wxManage/wxMenu',
+        redirect: '/wxManage/wx-menu',
         component: RouteView,
         meta: { title: '微信管理', icon: 'message', permission: ['wxManage'] },
         children: [
           {
-            path: '/wxManage/wxMenu',
+            path: '/wxManage/wx-menu',
             name: 'WxMenu',
-            component: () => import('@/views/application/wxManage/WxMenu'),
+            component: () => import('@/views/application/wxManage/wx-menu'),
             meta: { title: '公众号管理', keepAlive: true, permission: ['wxManage'] }
           },
           {
-            path: '/wxManage/wxMaterial',
-            name: 'WxMaterial',
-            component: () => import('@/views/application/wxManage/WxMaterial'),
+            path: '/wxManage/wx-assets',
+            name: 'WxAssets',
+            component: () => import('@/views/application/wxManage/wx-assets'),
             meta: { title: '素材管理', keepAlive: true, permission: ['wxManage'] }
-          },
+          }
         ]
       },
       // forms
@@ -573,5 +573,49 @@ export const constantRouterMap = [
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
-  }
+  },
+
+  // {
+  //   path: '/wxManage',
+  //   name: 'wxManage',
+  //   redirect: '/wxManage/wx-menu',
+  //   component: () => import('@/views/application/Index'),
+  //   children: [
+  //     {
+  //       path: '/wxManage/wx-menu',
+  //       name: 'WxMenu',
+  //       component: () => import('@/views/application/wxManage/wx-menu')
+  //     },
+  //     {
+  //       path: '/wxManage/wx-assets',
+  //       name: 'WxAssets',
+  //       component: () => import('@/views/application/wxManage/wx-assets')
+  //     },
+  //     {
+  //       path: '/wxManage/msg-reply-rule',
+  //       name: 'MsgReplyRule',
+  //       component: () => import('@/views/application/wxManage/msg-reply-rule')
+  //     },
+  //     {
+  //       path: '/wxManage/msg-template',
+  //       name: 'MsgTemplate',
+  //       component: () => import('@/views/application/wxManage/msg-template')
+  //     },
+  //     {
+  //       path: '/wxManage/wx-qrcode',
+  //       name: 'WxQrcode',
+  //       component: () => import('@/views/application/wxManage/wx-qrcode')
+  //     },
+  //     {
+  //       path: '/wxManage/wx-user',
+  //       name: 'WxUser',
+  //       component: () => import('@/views/application/wxManage/wx-user')
+  //     },
+  //     {
+  //       path: '/wxManage/wx-qrcode',
+  //       name: 'WxMsg',
+  //       component: () => import('@/views/application/wxManage/wx-msg')
+  //     },
+  //   ]
+  // }
 ]

@@ -1042,48 +1042,78 @@ const userNav = options => {
       component: 'Client'
     },
 
-    //system
+    //wxManage
     {
-      name: 'wxManage',
+      name: 'appManage',
       parentId: 0,
-      id: 80,
+      id: 10080,
       meta: {
-        icon: 'message',
-        title: '微信管理',
+        icon: 'appstore',
+        title: '应用管理',
+        show: true,
         permission: ['wxManage']
       },
-      path: '/wxManage',
-      redirect: '/wxManage/wxMenu',
+      // path: '/wxManage',
+      redirect: '/wxManage/wx-account',
       component: 'RouteView'
     },
     {
-      name: 'WxMenu',
-      parentId: 80,
-      id: 81,
+      name: 'WxAccount',
+      parentId: 10080,
+      id: 10082,
       meta: {
-        title: '公众号管理',
+        title: '微信管理',
         keepAlive: true,
         permission: ['wxManage']
       },
-      path: '/wxManage/wxMenu',
+      path: '/wxManage/wx-account',
+      component: 'WxAccount'
+    },
+    {
+      name: 'wxManage',
+      parentId: 10080,
+      id: 10081,
+      meta: {
+        icon: 'message',
+        title: '微信管理',
+        show: false,
+        permission: ['wxManage'],
+        hideHeader: true,
+        hideChildren: true,
+      },
+      path: '/wxManage',
+      redirect: '/wxManage/wx-account',
+      component: 'WxManage'
+    },
+    {
+      name: 'WxMenu',
+      parentId: 10081,
+      id: 100811,
+      meta: {
+        title: '公众号管理',
+        keepAlive: true,
+        hiddenHeaderContent: true,
+        permission: ['wxManage']
+      },
+      path: '/wxManage/wx-menu',
       component: 'WxMenu'
     },
     {
-      name: 'WxMaterial',
-      parentId: 80,
-      id: 82,
+      name: 'WxAssets',
+      parentId: 10081,
+      id: 100812,
       meta: {
         title: '素材管理',
         keepAlive: true,
         permission: ['wxManage']
       },
-      path: '/wxManage/wxMaterial',
-      component: 'WxMaterial'
+      path: '/wxManage/wx-assets',
+      component: 'WxAssets'
     },
     {
       name: 'MsgReplyRule',
-      parentId: 80,
-      id: 83,
+      parentId: 10081,
+      id: 100813,
       meta: {
         title: '自动回复规则',
         keepAlive: true,
@@ -1094,8 +1124,8 @@ const userNav = options => {
     },
     {
       name: 'MsgTemplate',
-      parentId: 80,
-      id: 84,
+      parentId: 10081,
+      id: 100814,
       meta: {
         title: '模板消息',
         keepAlive: true,
@@ -1106,8 +1136,8 @@ const userNav = options => {
     },
     {
       name: 'WxQrcode',
-      parentId: 80,
-      id: 85,
+      parentId: 10081,
+      id: 100815,
       meta: {
         title: '带参二维码',
         keepAlive: true,
@@ -1118,8 +1148,8 @@ const userNav = options => {
     },
     {
       name: 'WxUser',
-      parentId: 80,
-      id: 86,
+      parentId: 10081,
+      id: 100816,
       meta: {
         title: '粉丝管理',
         keepAlive: true,
@@ -1130,8 +1160,8 @@ const userNav = options => {
     },
     {
       name: 'WxMsg',
-      parentId: 80,
-      id: 87,
+      parentId: 10081,
+      id: 100817,
       meta: {
         title: '公众号消息',
         keepAlive: true,
@@ -1140,18 +1170,7 @@ const userNav = options => {
       path: '/wxManage/wx-msg',
       component: 'WxMsg'
     },
-    {
-      name: 'WxAccount',
-      parentId: 80,
-      id: 88,
-      meta: {
-        title: '公众号帐号',
-        keepAlive: true,
-        permission: ['wxManage']
-      },
-      path: '/wxManage/wx-account',
-      component: 'WxAccount'
-    },
+    
 
     // // form
     // {

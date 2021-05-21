@@ -1,37 +1,35 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
-      <div class="mod-config">
-        <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
-          <a-form-model-item>
-            <a-input v-model="dataForm.sceneStr" placeholder="场景值" clearable></a-input>
-          </a-form-model-item>
-          <a-form-model-item>
-            <a-button @click="getDataList()">查询</a-button>
-            <a-button v-if="$auth('wxManage.add')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
-            <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
-          </a-form-model-item>
-        </a-form-model>
-        <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
-          <span slot="isTemp" slot-scope="text">{{text?'临时':'永久'}}</span>
-          <span slot="ticket" slot-scope="text">
-            <a :href="'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='+text">{{text}}</a>
-          </span>
-          <span slot="url" slot-scope="text">
-            <a :href="text">{{text}}</a>
-          </span>
-          <template slot="action" slot-scope="text,record">
-            <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
-          </template>
-        </a-table>
+  <div class="mod-config">
+    <a-form-model layout="inline" :model="dataForm" @keyup.enter.native="getDataList()">
+      <a-form-model-item>
+        <a-input v-model="dataForm.sceneStr" placeholder="场景值" clearable></a-input>
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-space>
+          <a-button @click="getDataList()">查询</a-button>
+          <a-button v-if="$auth('wxManage.add')" type="primary" @click="addOrUpdateHandle()">新增</a-button>
+          <a-button v-if="$auth('wxManage.delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</a-button>
+        </a-space>
+      </a-form-model-item>
+    </a-form-model>
+    <a-table style="margin-top:40px;" bordered :loading="dataListLoading" :columns="columnsList" :data-source="dataList" :row-selection="{selectedRowKeys: dataListSelections, onChange: selectionChangeHandle}">
+      <span slot="isTemp" slot-scope="text">{{text?'临时':'永久'}}</span>
+      <span slot="ticket" slot-scope="text">
+        <a :href="'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='+text">{{text}}</a>
+      </span>
+      <span slot="url" slot-scope="text">
+        <a :href="text">{{text}}</a>
+      </span>
+      <template slot="action" slot-scope="text,record">
+        <a-button type="text" size="small" @click="deleteHandle(record.row.id)">删除</a-button>
+      </template>
+    </a-table>
 
-        <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalPage">
-        </a-pagination>
-        <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-      </div>
-    </a-card>
-  </page-header-wrapper>
+    <a-pagination @showSizeChange="sizeChangeHandle" @change="currentChangeHandle" :current="pageIndex" :pageSizeOptions="['10', '20', '50', '100']" :pageSize="pageSize" :total="totalPage">
+    </a-pagination>
+    <!-- 弹窗, 新增 / 修改 -->
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+  </div>
 </template>
 
 <script>

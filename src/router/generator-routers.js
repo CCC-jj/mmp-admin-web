@@ -49,8 +49,9 @@ const constantRouterComponents = {
   Client: () => import('@/views/system/Client'),
 
   // wxManage
-  WxMenu: () => import('@/views/application/wxManage/WxMenu'),
-  WxMaterial: () => import('@/views/application/wxManage/WxMaterial'),
+  WxManage: () => import('@/views/application/Index'),
+  WxMenu: () => import('@/views/application/wxManage/wx-menu'),
+  WxAssets: () => import('@/views/application/wxManage/wx-assets'),
   MsgReplyRule: () => import('@/views/application/wxManage/msg-reply-rule'),
   MsgTemplate: () => import('@/views/application/wxManage/msg-template'),
   WxQrcode: () => import('@/views/application/wxManage/wx-qrcode'),
@@ -170,7 +171,7 @@ export const generator = (routerMap, parent) => {
       meta: {
         title: title,
         icon: icon || undefined,
-        hiddenHeaderContent: hiddenHeaderContent,
+        // hiddenHeaderContent: hiddenHeaderContent,
         target: target,
         permission: permission || undefined,
         keepAlive: keepAlive
@@ -179,6 +180,10 @@ export const generator = (routerMap, parent) => {
     // 是否设置了隐藏菜单
     if (show === false) {
       currentRouter.hidden = true
+    }
+    // 是否设置了隐藏子菜单
+    if (hiddenHeaderContent) {
+      currentRouter.hiddenHeaderContent = true
     }
     // 是否设置了隐藏子菜单
     if (hideChildren) {
