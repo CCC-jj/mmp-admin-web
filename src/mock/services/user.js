@@ -1090,7 +1090,7 @@ const userNav = options => {
       parentId: 10081,
       id: 100811,
       meta: {
-        title: '公众号管理',
+        title: '菜单管理',
         keepAlive: true,
         hiddenHeaderContent: true,
         permission: ['wxManage']
