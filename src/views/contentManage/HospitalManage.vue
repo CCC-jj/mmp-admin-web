@@ -217,7 +217,7 @@
                 <a-icon type="delete" /> 删除
               </a>
             </a-popconfirm>
-            <a :href="'http://localhost:8009/doctorManage/doctorList?'+record.key" target="_blank">管理医院</a>
+            <a :href="'http://localhost:8009/hospitalManage/hospitalInfo?'+record.key" target="_blank">管理医院</a>
           </a-space>
         </template>
       </a-table>

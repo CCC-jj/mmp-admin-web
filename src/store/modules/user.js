@@ -2,6 +2,7 @@ import storage from 'store'
 import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
+import useInfo from '../../mock/services/user'
 
 const user = {
   state: {
@@ -37,9 +38,10 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
+          console.log(response);
+          // const result = response.result
+          storage.set(ACCESS_TOKEN, response.data, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', response.data)
           resolve()
         }).catch(error => {
           reject(error)
@@ -48,12 +50,11 @@ const user = {
     },
 
     // 获取用户信息
-    GetInfo ({ commit }) {
+    GetInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
-          console.log(response);
-          const result = response.result
-
+        // getInfo().then(response => {
+          // console.log(response);
+          const result = useInfo.info.result
           if (result.role && result.role.permissions.length > 0) {
             const role = result.role
             role.permissions = result.role.permissions
@@ -73,10 +74,10 @@ const user = {
           commit('SET_NAME', { name: result.name, welcome: welcome() })
           commit('SET_AVATAR', result.avatar)
 
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
+          resolve(useInfo.info)
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 
