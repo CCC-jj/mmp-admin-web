@@ -183,7 +183,7 @@ export const generator = (routerMap, parent) => {
     if (show === false) {
       currentRouter.hidden = true
     }
-    // 是否设置了隐藏子菜单
+    // 是否设置了隐藏面包屑导航
     if (hiddenHeaderContent) {
       currentRouter.hiddenHeaderContent = true
     }
