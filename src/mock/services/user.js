@@ -1,8 +1,8 @@
 import Mock from 'mockjs2'
 import { builder } from '../util'
 
-const info = options => {
-  console.log('options', options)
+// const info = options => {
+  // console.log('options', options)
   const userInfo = {
     id: '4291d7da9005377ec9aec4a71ea837f',
     name: '天野远子',
@@ -714,10 +714,11 @@ const info = options => {
   })
 
   userInfo.role = roleObj
-  return builder(userInfo)
-}
+  const info = builder(userInfo)
+  // return builder(userInfo)
+// }
 
-const userNav = options => {
+// const userNav = options => {
   const nav = [
     // dashboard
     {
@@ -1090,7 +1091,7 @@ const userNav = options => {
       parentId: 10081,
       id: 100811,
       meta: {
-        title: '公众号管理',
+        title: '菜单管理',
         keepAlive: true,
         hiddenHeaderContent: true,
         permission: ['wxManage']
@@ -1505,10 +1506,10 @@ const userNav = options => {
       component: 'NotificationSettings'
     }
   ]
-  const json = builder(nav)
-  console.log('json', json)
-  return json
-}
+  // console.log('json', json)
+  // return json
+// }
 
-Mock.mock(/\/api\/user\/info/, 'get', info)
-Mock.mock(/\/api\/user\/nav/, 'get', userNav)
+// Mock.mock(/\/api\/user\/info/, 'get', info)
+// Mock.mock(/\/api\/user\/nav/, 'get', userNav)
+export default {info,nav}

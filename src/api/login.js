@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 const userApi = {
-  Login: '/auth/login',
-  Logout: '/auth/logout',
+  Login: '/union/login',
+  Logout: '/union/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
   twoStepCode: '/auth/2step-code',
@@ -61,9 +61,9 @@ export function logout () {
   return request({
     url: userApi.Logout,
     method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    // headers: {
+    //   'Content-Type': 'application/json;charset=UTF-8'
+    // }
   })
 }
 

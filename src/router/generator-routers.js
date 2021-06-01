@@ -2,6 +2,7 @@
 import * as loginService from '@/api/login'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import user from '../mock/services/user'
 
 // 前端路由表
 const constantRouterComponents = {
@@ -124,11 +125,12 @@ const rootRouter = {
  */
 export const generatorDynamicRouter = token => {
   return new Promise((resolve, reject) => {
-    loginService
-      .getCurrentUserNav(token)
-      .then(res => {
-        console.log('res', res)
-        const { result } = res
+    // loginService
+    //   .getCurrentUserNav(token)
+    //   .then(res => {
+        // console.log('res', res)
+        
+        const result = user.nav
         const menuNav = []
         const childrenNav = []
         //      后端数据, 根级树数组,  根级 PID
@@ -140,10 +142,10 @@ export const generatorDynamicRouter = token => {
         routers.push(notFoundRouter)
         console.log('routers', routers)
         resolve(routers)
-      })
-      .catch(err => {
-        reject(err)
-      })
+      // })
+      // .catch(err => {
+      //   reject(err)
+      // })
   })
 }
 
@@ -181,7 +183,7 @@ export const generator = (routerMap, parent) => {
     if (show === false) {
       currentRouter.hidden = true
     }
-    // 是否设置了隐藏子菜单
+    // 是否设置了隐藏面包屑导航
     if (hiddenHeaderContent) {
       currentRouter.hiddenHeaderContent = true
     }
