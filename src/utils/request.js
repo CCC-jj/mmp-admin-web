@@ -54,6 +54,13 @@ request.interceptors.request.use(config => {
 
 // response interceptor
 request.interceptors.response.use((response) => {
+  if (response.data.code === 'TokenExpired') {
+    store.dispatch('Logout').then(() => {
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    })
+  }
   return response.data
 }, errorHandler)
 

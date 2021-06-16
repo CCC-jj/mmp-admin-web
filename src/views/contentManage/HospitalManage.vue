@@ -398,9 +398,9 @@ export default {
     },
     // 新增医生
     add() {
-      // this.actionTitle = '新增医生'
-      // this.actionVisible = true
-      // this.viewVisible = false
+      this.actionTitle = '新增医生'
+      this.actionVisible = true
+      this.viewVisible = false
       // window.location.href = 'http://localhost:8009/doctorManage/doctorList'
     },
     refresh() {
