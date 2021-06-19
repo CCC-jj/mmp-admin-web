@@ -1,118 +1,79 @@
-import axios from "axios";
-import Vue from "vue";
-import router from "../router";
-// import {Message,MessageBox,Loading} from 'element-ui'
+import axios from 'axios'
+import store from '@/store'
+import storage from 'store'
+import notification from 'ant-design-vue/es/notification'
+import { VueAxios } from './axios'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 
-// 创建一个axios实例
-const service = axios.create({
-  baseURL: 'http://121.37.17.123:9201/api/admin/', // api的base_url
-  timeout: 5000 // request timeout
-});
+// 创建 axios 实例
+const request = axios.create({
+  // API 请求的默认前缀
+  baseURL: 'https://121.37.17.123:9201/api/admin',
+  timeout: 6000 // 请求超时时间
+})
 
-// axios请求拦截,前端发起请求之前拦截
-service.interceptors.request.use(
-  config => {
-    if (localStorage.getItem("token")) {
-      config.headers["Authorization"] = localStorage.getItem("token");
+// 异常拦截处理器
+const errorHandler = (error) => {
+  if (error.response) {
+    const data = error.response.data
+    // 从 localstorage 获取 token
+    const token = storage.get(ACCESS_TOKEN)
+    if (error.response.status === 403) {
+      notification.error({
+        message: 'Forbidden',
+        description: data.message
+      })
     }
-    return config;
-  },
-  error => {
-    console.log(error);
-    return Promise.reject(error);
+    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+      notification.error({
+        message: 'Unauthorized',
+        description: 'Authorization verification failed'
+      })
+      if (token) {
+        store.dispatch('Logout').then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500)
+        })
+      }
+    }
   }
-);
-
-// axios响应拦截,后端返回响应后拦截
-service.interceptors.response.use(response => {
-  // console.log(response);
-    if (response.data.code == "NO_PERMISSION") {
-      localStorage.removeItem("token")
-      Vue.prototype.$message.info('请重新登录！')
-      router.push('/login')
-    }
-  return response.data;
-});
-
-/**
- * get
- * @param url
- * @param params
- * @returns {Promise<any>}
- */
-export function get(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    service
-      .get(url, {
-        params: params
-      })
-      .then(response => {
-        resolve(response);
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+  return Promise.reject(error)
 }
 
-/**
- * post请求
- * @param url
- * @param data
- * @returns {Promise<any>}
- */
-export function post(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    service({
-      method: "POST",
-      url: url,
-      data: data
+// request interceptor
+request.interceptors.request.use(config => {
+  const token = storage.get(ACCESS_TOKEN)
+  // 如果 token 存在
+  // 让每个请求携带自定义 token 请根据实际情况自行修改
+  if (token) {
+    config.headers['Authorization'] = token
+  }
+  return config
+}, errorHandler)
+
+// response interceptor
+request.interceptors.response.use((response) => {
+  if (response.data.code === 'TokenExpired') {
+    store.dispatch('Logout').then(() => {
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
     })
-      .then(response => {
-        resolve(response);
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+  }
+  return response.data
+}, errorHandler)
+
+const installer = {
+  vm: {},
+  install (Vue) {
+    Vue.use(VueAxios, request)
+  }
 }
 
-/**
- * patch请求
- * @param url
- * @param data
- * @returns {Promise<any>}
- */
-export function patch(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    service.patch(url, data).then(
-      response => {
-        resolve(response.data);
-      },
-      error => {
-        reject(error);
-      }
-    );
-  });
-}
+export default request
 
-/**
- * put请求
- * @param url
- * @param data
- * @returns {Promise<any>}
- */
-export function put(url, data = {}) {
-  return new Promise((resolve, reject) => {
-    service.put(url, data).then(
-      response => {
-        resolve(response.data);
-      },
-      error => {
-        reject(error);
-      }
-    );
-  });
+export {
+  installer as VueAxios,
+  request as axios
 }
-
-export default service;

@@ -21,7 +21,7 @@ export default {
     data() {
         return {
             init: {
-                language_url: "./tinymce/zh_CN.js", //public目录下
+                language_url: "/tinymce/zh_CN.js", //public目录下
                 language: "zh_CN",
                 height: 500,
                 plugins: "lists image media table paste link searchreplace anchor code preview pagebreak importcss",
@@ -30,7 +30,7 @@ export default {
                 image_advtab: true,
                 object_resizing: false,
                 paste_data_images: true,
-                content_css: "./tinymce/article.css",
+                content_css: "/tinymce/article.css",
                 images_upload_handler: (blobInfo, success, failure) => {
                     this.uploadFile(blobInfo.blob()).then(fileUrl => success(fileUrl)).catch(err => failure(err))
                 }
@@ -42,25 +42,28 @@ export default {
     },
     mounted() {
         // console.log('tinymce-editor mounted:',this.value)
-        tinymce.init({});
+        setTimeout(() => {
+            tinymce.init({});
+        }, 200);
+        
         this.cosInit();
     },
     methods: {
         cosInit() {
-            this.$http({
-                url: this.$http.adornUrl("/sys/oss/config"),
-                method: "get",
-                params: this.$http.adornParams()
-            }).then(({ data }) => {
-                if (data && data.code === 200) {
-                    this.cosConfig = data.config;
-                } else {
-                    this.$message.error("请先配置云存储相关信息！");
-                }
-            });
+            // this.$http({
+            //     url: this.$http.adornUrl("/sys/oss/config"),
+            //     method: "get",
+            //     params: this.$http.adornParams()
+            // }).then(({ data }) => {
+            //     if (data && data.code === 200) {
+            //         this.cosConfig = data.config;
+            //     } else {
+            //         this.$message.error("请先配置云存储相关信息！");
+            //     }
+            // });
         },
         onExecCommand(e) {
-            //console.log(e)
+            // console.log(e)
         },
         uploadFile(file) {
             this.uploading = true;

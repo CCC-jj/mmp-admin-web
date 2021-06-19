@@ -59,7 +59,7 @@
           <div class="actionBox-title">基本信息</div>
           <a-row type="flex" justify="space-between">
             <div style="flex:2">
-              <img style="margin:0 auto;width:100%;margin:20px 0;" src="../../assets/u19399.png" alt="">
+              <img style="margin:0 auto;width:100%;margin:20px 0;" src="../../assets/img/u19399.png" alt="">
             </div>
             <div style="flex:8">
               <a-descriptions :column="2" size="small" bordered>
@@ -217,6 +217,7 @@
                 <a-icon type="delete" /> 删除
               </a>
             </a-popconfirm>
+            <a :href="'http://localhost:8009/hospitalManage/hospitalInfo?'+record.key" target="_blank">管理医院</a>
           </a-space>
         </template>
       </a-table>
@@ -239,7 +240,7 @@ const columns = [
   //   width: '60px',
   // },
   {
-    title: '药品名称',
+    title: '医院名称',
     dataIndex: 'name',
   },
   {
@@ -267,7 +268,7 @@ const columns = [
     title: '操作',
     scopedSlots: { customRender: 'action' },
     align: 'center',
-    width: '230px',
+    width: '300px',
   },
 ]
 const dataSource = []
@@ -400,6 +401,7 @@ export default {
       this.actionTitle = '新增医生'
       this.actionVisible = true
       this.viewVisible = false
+      // window.location.href = 'http://localhost:8009/doctorManage/doctorList'
     },
     refresh() {
       this.reloadCard()

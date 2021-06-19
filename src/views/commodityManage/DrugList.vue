@@ -85,7 +85,7 @@
           <div class="actionBox-title">基本信息</div>
           <a-row type="flex" justify="space-between">
             <div style="flex:2">
-              <img style="margin:0 auto;width:100%;margin:10px 0;" src="../../assets/u9183.png" alt="">
+              <img style="margin:0 auto;width:100%;margin:10px 0;" src="../../assets/img/u9183.png" alt="">
             </div>
             <div style="flex:8">
               <a-descriptions :column="2" size="small" bordered>
